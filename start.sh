@@ -1,5 +1,5 @@
 BUILD_DIR="build"
-ISO_DIR="$BUILD_DIR/iso"
+ISO_DIR="iso"
 SRC_DIR="src"
 ASM_FILES=("multiboot_header" "boot")
 C_FILES=("main")

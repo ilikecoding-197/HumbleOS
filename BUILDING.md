@@ -10,4 +10,4 @@ Before you build HumbleOS, you need to install some **prerequisites**. To do tha
 | **Arch Linux/Manjaro**     | `sudo pacman -S nasm gcc xorriso grub`           |
 
 # Build!
-Now just build by simply running `bash start.sh`.
+Now just build by simply running `bash build.sh`.

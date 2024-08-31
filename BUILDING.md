@@ -1,6 +1,7 @@
 # Building
 # Prerequisites
-Before you build HumbleOS, you need to install some **prerequisites**, run the command for your distros.
+Before you build HumbleOS, you need to install some **prerequisites**. To do that, run the command below for your distro.
+
 | **Distribution**           | **Command**                                      |
 |----------------------------|--------------------------------------------------|
 | **Debian/Ubuntu**          | `sudo apt-get install nasm gcc xorriso grub-pc`  |
@@ -9,4 +10,4 @@ Before you build HumbleOS, you need to install some **prerequisites**, run the c
 | **Arch Linux/Manjaro**     | `sudo pacman -S nasm gcc xorriso grub`           |
 
 # Build!
-Now just build by simplying running `bash start.sh`.
+Now just build by simply running `bash start.sh`.

@@ -68,5 +68,5 @@ void gdt_c() {
 
 	// Set GDTR
 	gdtr.base = (uint32_t)((void *)&gdt);
-	gdtr.limit = GDT_ENTRIES * 8;
+	gdtr.limit = GDT_ENTRIES * 8 + 1;
 }

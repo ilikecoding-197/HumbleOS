@@ -5,7 +5,6 @@ extern gdtr ; C pointer to GDTR
 section .text
 bits 32
 start:
-jmp a
 	; GDT
 	cli ; Disable interupts, just in case.
 	call gdt_c ; Call the C function (C is very good)
@@ -26,7 +25,6 @@ jmp a
 	mov gs, ax
 	mov ss, ax
 
-a:
 	; Jump into C! Yay!
     call kernel_main
 

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #define GDT_ENTRIES 256
+
 // GDT structure
 struct GDT {
 	uint32_t base;
@@ -15,6 +16,8 @@ struct GDTR {
 }__attribute((packed));
 
 struct GDTR gdtr;
+
+uint8_t gdt[GDT_ENTRIES * 8];
 
 void encodeGdtEntry(uint8_t *target, struct GDT source)
 {
@@ -47,19 +50,18 @@ void gdt_c() {
 	entries[0].flags = 0;
 
 	// Code Segment
-	entries[1].base = 0 /* what here? */;
-	entries[1].limit = 0 /* what here? */;
+	entries[1].base = 0;
+	entries[1].limit = 0xFFFFF;
 	entries[1].access_byte = 0x9A;
 	entries[1].flags = 0xC;
 
 	// Data Segment
-	entries[2].base = 0 /* what here? */;
-	entries[2].limit = 0 /* what here? */;
+	entries[2].base = 0;
+	entries[2].limit = 0xFFFFF;
 	entries[2].access_byte = 0x92;
 	entries[2].flags = 0xC;
 
-	// Encode entries
-	uint8_t gdt[GDT_ENTRIES * 8];
+	// Encode entries=
 	for (int i = 0; i < GDT_ENTRIES; i++) {
 		encodeGdtEntry((uint8_t*)((&gdt) + (i*8)), entries[i]);
 	}
@@ -67,6 +69,4 @@ void gdt_c() {
 	// Set GDTR
 	gdtr.base = (uint32_t)((void *)&gdt);
 	gdtr.limit = GDT_ENTRIES * 8;
-
-	// Hopefully I did it right :P
 }

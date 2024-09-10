@@ -10,6 +10,7 @@ LD_FILE="linker.ld"
 LD_ARGS="--nmagic --output=$ISO_DIR/boot/$KERNEL --script=$LD_FILE -melf_i386"
 
 mkdir -p $BUILD_DIR
+rm -rf $BUILD_DIR/*
 
 for i in "${ASM_FILES[@]}"
 do

@@ -1,5 +1,4 @@
 ENTRY(start)
-STARTUP(build/boot.o)
 
 SECTIONS {
     . = 1M;

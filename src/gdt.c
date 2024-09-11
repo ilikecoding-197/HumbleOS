@@ -63,10 +63,10 @@ void gdt_c() {
 
 	// Encode entries=
 	for (int i = 0; i < GDT_ENTRIES; i++) {
-		encodeGdtEntry((uint8_t*)((&gdt) + (i*8)), entries[i]);
+		encodeGdtEntry((uint8_t*)&gdt[i*8], entries[i]);
 	}
 
 	// Set GDTR
 	gdtr.base = (uint32_t)((void *)&gdt);
-	gdtr.limit = GDT_ENTRIES * 8 + 1;
+	gdtr.limit = GDT_ENTRIES * 8 - 1;
 }

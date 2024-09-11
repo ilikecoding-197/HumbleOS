@@ -1,9 +1,10 @@
 BUILD_DIR="build"
 ISO_DIR="iso"
 SRC_DIR="src"
+LIB_DIR="$SRC_DIR/lib"
 ASM_FILES=("multiboot_header" "boot")
-C_FILES=("main" "gdt")
-GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -Werror -m32 -c -static -nostartfiles"
+C_FILES=("main" "gdt" "console" "port")
+GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$LIB_DIR"
 LD_INPUT=""
 KERNEL="kernel.bin"
 LD_FILE="linker.ld"

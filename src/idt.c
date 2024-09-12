@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <console.h>
 
 typedef struct {
 	uint16_t    isr_low;
@@ -18,9 +19,50 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 static idtr_t idtr;
+extern uint8_t irq;
 
 //__attribute__((noreturn))
 void exception_handler() {
+	const char *errors[] = {
+		"Divison Error",
+		"NOT ERR",
+		"NOT ERR",
+		"NOT ERR",
+		"Overflow",
+		"Bound Range Exceeded",
+		"Invaild Opcode",
+		"Device Not Available",
+		"Double Fault",
+		"NOT ERR",
+		"Invaild TSS",
+		"Segment Not Present",
+		"Stack-segment Fault",
+		"General Protection Fault",
+		"Page Fault",
+		"NOT ERR",
+		"x87 Floating-Point Exception",
+		"Alignment Check",
+		"Machine Check",
+		"SIMD Floating-Point Exception",
+		"Virtualiztion Exception",
+		"Control Protection Exception",
+		"NOT ERR",
+		"NOT ERR",
+		"NOT ERR",
+		"NOT ERR",
+		"NOT ERR",
+		"NOT ERR",
+		"Hypervisor Injection Exception",
+		"VMM Communication Exception",
+		"Security Exeption",
+		"NOT ERR",
+		"NOT ERR",
+		"NOT ERR"
+	};
+	clear_screen();
+	print("ERR!\nError: ");
+	print(errors[irq]);
+	
     __asm__ volatile ("cli; hlt");
 }
 

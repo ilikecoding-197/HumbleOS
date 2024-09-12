@@ -2,15 +2,17 @@ BUILD_DIR="build"
 ISO_DIR="iso"
 SRC_DIR="src"
 LIB_DIR="$SRC_DIR/lib"
-ASM_FILES=("multiboot_header" "boot")
-C_FILES=("main" "gdt" "console" "port")
+ASM_FILES=("multiboot_header" "boot" "idt")
+C_FILES=("main" "gdt" "console" "port" "idt")
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$LIB_DIR"
 LD_INPUT=""
 KERNEL="kernel.bin"
 LD_FILE="linker.ld"
 LD_ARGS="--nmagic --output=$ISO_DIR/boot/$KERNEL --script=$LD_FILE -melf_i386"
 
+
 mkdir -p $BUILD_DIR
+mkdir -p $ISO_DIR
 rm -rf $BUILD_DIR/*
 
 for i in "${ASM_FILES[@]}"

@@ -1,12 +1,14 @@
 %macro isr_err_stub 1
 isr_stub_%+%1:
-    call exception_handler
+	mov word [irq], %+%1
+	call exception_handler
     iret 
 %endmacro
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
-    call exception_handler
+	mov word [irq], %+%1
+	call exception_handler
     iret
 %endmacro
 
@@ -51,3 +53,6 @@ isr_stub_table:
     dd isr_stub_%+i
 %assign i i+1 
 %endrep
+
+global irq
+irq: resb 1

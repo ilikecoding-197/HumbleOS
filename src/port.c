@@ -15,3 +15,8 @@ uint8_t inb(uint16_t port) {
                       : "d"(port));     // Input: port address in DX
     return result;
 }
+
+void io_wait(void)
+{
+    outb(0x80, 0);
+}

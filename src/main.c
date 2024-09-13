@@ -1,4 +1,6 @@
 #include <console.h>
+#include <idt.h>
+//#include <pic.h>
 #include <stdbool.h>
 #include "settings.h"
 
@@ -25,24 +27,6 @@ void Component_install(Component component) {
 	print("OK");
 	set_color(LIGHTGRAY);
 	print(" ]\n");
-}
-
-void kernel_main(){
-	Component components[1] = {
-		{ "Test", test }
-	};
-	
-	console_init();
-
-	set_color(GREEN);
-	print(NAME " " VERSION ", " BUILD " build\n");
-	set_color(LIGHTGRAY);
-
-	for (int i = 0; i < 1; i++) {
-		Component_install(components[i]);
-	}
-
-	main_menu();
 }
 
 void strcpy(char *dest, char *src) {
@@ -80,3 +64,25 @@ void main_menu() {
 		return;
 	}
 }
+
+
+#define COMPONENT_AMT 1
+void kernel_main(){
+	Component components[COMPONENT_AMT] = {
+		{ "IDT", idt_init },
+		//{ "PIC", pic_init }
+	};
+	
+	console_init();
+
+	set_color(GREEN);
+	print(NAME " " VERSION ", " BUILD " build\n");
+	set_color(LIGHTGRAY);
+
+	for (int i = 0; i < COMPONENT_AMT; i++) {
+		Component_install(components[i]);
+	}
+
+	main_menu();
+}
+

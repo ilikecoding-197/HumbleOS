@@ -3,6 +3,9 @@ interupt_stub_%+%1:
 	pushad
 	mov word [irq], %+%1
 	call interupt_handler
+	mov al, 0x20
+	out 0x20, al
+	out 0xa0, al
 	popad
     iret
 %endmacro

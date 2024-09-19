@@ -23,9 +23,7 @@ extern uint8_t irq;
 
 void interupt_stub() {}
 void interupt_timer() {
-	clear_screen();
-			print("its timer time");
-			__asm__ volatile ("cli; hlt");
+	print("its timer time");
 }
 void (*interupts[256])();
 
@@ -57,11 +55,11 @@ void idt_init() {
 	for (int i = 0; i < 256; i++) {
 		interupts[i] = interupt_stub;
 	}
-	interupts[0] = interupt_timer;
+	interupts[0x20] = interupt_timer;
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
-    for (uint8_t vector = 0; vector < 32; vector++) {
+   for (uint8_t vector = 0; vector < 48; vector++) {
         idt_set_descriptor(vector, interupt_stub_table[vector], 0x8E);
         vectors[vector] = true;
     }

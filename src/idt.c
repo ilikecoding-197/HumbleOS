@@ -22,9 +22,6 @@ static idtr_t idtr;
 extern uint8_t irq;
 
 void interupt_stub() {}
-void interupt_timer() {
-	print("its timer time");
-}
 void (*interupts[256])();
 
 void interupt_handler() {
@@ -55,7 +52,7 @@ void idt_init() {
 	for (int i = 0; i < 256; i++) {
 		interupts[i] = interupt_stub;
 	}
-	interupts[0x20] = interupt_timer;
+	
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 

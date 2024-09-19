@@ -1,6 +1,7 @@
 #include <console.h>
 #include <idt.h>
-//#include <pic.h>
+#include <pic.h>
+#include <exception_handlers.h>
 #include <stdbool.h>
 #include "settings.h"
 
@@ -66,11 +67,12 @@ void main_menu() {
 }
 
 
-#define COMPONENT_AMT 1
+#define COMPONENT_AMT 3
 void kernel_main(){
 	Component components[COMPONENT_AMT] = {
+		{ "PIC", pic_init },
 		{ "IDT", idt_init },
-		//{ "PIC", pic_init }
+		{ "Exception handlers", exception_handlers_init }
 	};
 	
 	console_init();

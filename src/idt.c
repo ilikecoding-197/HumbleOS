@@ -21,49 +21,16 @@ typedef struct {
 static idtr_t idtr;
 extern uint8_t irq;
 
-//__attribute__((noreturn))
-void exception_handler() {
-	const char *errors[] = {
-		"Divison Error",
-		"NOT ERR",
-		"NOT ERR",
-		"NOT ERR",
-		"Overflow",
-		"Bound Range Exceeded",
-		"Invaild Opcode",
-		"Device Not Available",
-		"Double Fault",
-		"NOT ERR",
-		"Invaild TSS",
-		"Segment Not Present",
-		"Stack-segment Fault",
-		"General Protection Fault",
-		"Page Fault",
-		"NOT ERR",
-		"x87 Floating-Point Exception",
-		"Alignment Check",
-		"Machine Check",
-		"SIMD Floating-Point Exception",
-		"Virtualiztion Exception",
-		"Control Protection Exception",
-		"NOT ERR",
-		"NOT ERR",
-		"NOT ERR",
-		"NOT ERR",
-		"NOT ERR",
-		"NOT ERR",
-		"Hypervisor Injection Exception",
-		"VMM Communication Exception",
-		"Security Exeption",
-		"NOT ERR",
-		"NOT ERR",
-		"NOT ERR"
-	};
+void interupt_stub() {}
+void interupt_timer() {
 	clear_screen();
-	print("ERR!\nError: ");
-	print(errors[irq]);
-	
-    __asm__ volatile ("cli; hlt");
+			print("its timer time");
+			__asm__ volatile ("cli; hlt");
+}
+void (*interupts[256])();
+
+void interupt_handler() {
+	interupts[irq]();
 }
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
@@ -80,14 +47,22 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 
 static bool vectors[IDT_MAX_DESCRIPTORS];
 
-extern void* isr_stub_table[];
+extern void* interupt_stub_table[];
+
+void attach_interupt(uint8_t irqNum, void (*function)()) {
+	interupts[irqNum] = function;
+}
 
 void idt_init() {
+	for (int i = 0; i < 256; i++) {
+		interupts[i] = interupt_stub;
+	}
+	interupts[0] = interupt_timer;
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
     for (uint8_t vector = 0; vector < 32; vector++) {
-        idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
+        idt_set_descriptor(vector, interupt_stub_table[vector], 0x8E);
         vectors[vector] = true;
     }
 

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <console.h>
+#include <port.h>
 
 typedef struct {
 	uint16_t    isr_low;

@@ -9,26 +9,30 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-typedef struct Component {
+typedef struct component_t {
 	char *name;
-	void (*run)(void);
-} Component;
+	bool (*run)(void);
+	void (*after)(void);
+} component_t;
 
 void test(void) {
 	print(" Works!");
 }
 
-void Component_install(Component component) {
+void component_t_install(component_t component) {
 	print("Installing ");
 	set_color(GREEN);
 	print(component.name);
 	set_color(LIGHTGRAY);
-	component.run();
+	
+	bool result = component.run();
 	print(" [ ");
-	set_color(GREEN);
-	print("OK");
+	set_color(result ? GREEN : RED);
+	print(result ? "OK" : "FAIL");
 	set_color(LIGHTGRAY);
 	print(" ]\n");
+
+	component.after();
 }
 
 void strcpy(char *dest, char *src) {
@@ -67,14 +71,53 @@ void main_menu() {
 	}
 }
 
+bool pic_install() {
+	pic_init();
+	return true;
+}
+
+bool idt_install() {
+	idt_init();
+	return true;
+}
+
+bool exception_handlers_install() {
+	exception_handlers_init();
+	return true;
+}
+
+int keyboard_install_error;
+
+bool keyboard_install() {
+	keyboard_install_error = keyboard_init();
+	
+	return keyboard_install_error == KEYBOARD_INIT_SUCCESS;
+}
+
+void component_after_stub() {}
+
+void keyboard_after() {
+	switch (keyboard_install_error) {
+		case KEYBOARD_INIT_SELFTEST_FAIL:
+			set_color(RED);
+			print("Error: Selftest failed\n");
+			set_color(LIGHTGRAY);
+			break;
+		case KEYBOARD_INIT_NO_PORTS_LEFT:
+			set_color(RED);
+			print("Error: No ports left\n");
+			set_color(LIGHTGRAY);
+			break;
+	}
+}
 
 #define COMPONENT_AMT 4
 void kernel_main(){
-	Component components[COMPONENT_AMT] = {
-		{ "PIC", pic_init },
-		{ "IDT", idt_init },
-		{ "Exception handlers", exception_handlers_init },
-		{ "Keyboard", keyboard_init }
+	component_t components[COMPONENT_AMT] = {
+		{ "PIC", pic_install, component_after_stub },
+		{ "IDT", idt_install, component_after_stub },
+		{ "Exception handlers", exception_handlers_install, component_after_stub },
+		{ "Keyboard", keyboard_install, keyboard_after }
 	};
 	
 	console_init();
@@ -84,10 +127,10 @@ void kernel_main(){
 	set_color(LIGHTGRAY);
 
 	for (int i = 0; i < COMPONENT_AMT; i++) {
-		Component_install(components[i]);
+		component_t_install(components[i]);
 	}
 
-	//main_menu();
+	print("\nThe system has now booted!");
 
 	while (1);
 }

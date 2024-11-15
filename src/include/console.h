@@ -20,11 +20,13 @@
 #define WHITE 0xF
 void move_cursor(unsigned int x, unsigned int y);
 void scroll_up(unsigned int amt);
-void scroll_down(unsigned int amt);
+void handle_carriage_return();
+void handle_line_feed();
 void handle_newline();
 void set_color(uint8_t colorToSet);
 void update_cursor();
 void advance_cursor(int amt);
+void putchar(char c);
 void print(char *str);
 void console_init();
 void clear_screen();

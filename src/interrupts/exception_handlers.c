@@ -1,10 +1,9 @@
 #include <console.h>
 #include <idt.h>
+#include <stddef.h>
 #include <stdint.h>
 
-#define NULL 0
-
-extern uint8_t irq;
+extern uint8_t irq; // IRQ from IDT assembly
 
 char *exceptions[] = {
 	"Division Error",
@@ -62,14 +61,15 @@ void exception() {
 			uint32_t code;
 				
 			__asm__ __volatile__ ("pop %0"
-				                      : "=a" (code) );
+				                      : "=a" (code) ); // Error code is from stack
 			
-			char toPrint[5];
-			toPrint[0] = hexDigits[(code & 0xF000) >> 24];
-			toPrint[1] = hexDigits[(code & 0x0F00) >> 16];
-			toPrint[2] = hexDigits[(code & 0x00F0) >> 8];
-			toPrint[3] = hexDigits[code & 0x000F];
-			toPrint[4] = 0;
+			char toPrint[9];
+			uint32_t and_value = 0xF0000000;
+			int shift_value = 4*7;
+			for (int i = 0; i < 8; i++) {
+				toPrint[i] = hexDigits[(code & and_value) >> shift_value];
+			}
+			toPrint[8] = 0;
 			
 			print("\nError code: ");
 			print(toPrint);
@@ -85,6 +85,6 @@ void exception_handlers_init() {
 	for (int i = 0; i < 32; i++) {
 		if (exceptions[i] == NULL) continue;
 
-		attach_interupt(i, exception);
+		attach_interrupt(i, exception);
 	}
 }

@@ -15,3 +15,5 @@ header_start:
     dw 0    ; flags
     dd 8    ; size
 header_end:
+
+section .note.GNU-stack

@@ -27,3 +27,5 @@ start:
 section .bss
 resb 32000 ; 32KB stack
 stack:
+
+section .note.GNU-stack

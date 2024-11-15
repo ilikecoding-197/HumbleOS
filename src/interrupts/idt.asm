@@ -25,5 +25,8 @@ interupt_stub_table:
 %assign i i+1 
 %endrep
 
+section .bss
 global irq
 irq: resb 1
+
+section .note.GNU-stack

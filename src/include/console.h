@@ -30,4 +30,6 @@ void putchar(char c);
 void print(char *str);
 void console_init();
 void console_clear_screen();
+void put_char_at(unsigned int x, unsigned int y, char ch);
+void put_color_at(unsigned int x, unsigned int y, char color);
 #endif

@@ -15,21 +15,17 @@ typedef struct component_t {
 	void (*after)(void);
 } component_t;
 
-void test(void) {
-	print(" Works!");
-}
-
 void component_t_install(component_t component) {
 	print("Installing ");
-	set_color(GREEN);
+	console_set_color(GREEN);
 	print(component.name);
-	set_color(LIGHTGRAY);
+	console_set_color(LIGHTGRAY);
 	
 	bool result = component.run();
 	print(" [ ");
-	set_color(result ? GREEN : RED);
+	console_set_color(result ? GREEN : RED);
 	print(result ? "OK" : "FAIL");
-	set_color(LIGHTGRAY);
+	console_set_color(LIGHTGRAY);
 	print(" ]\n");
 
 	component.after();
@@ -49,13 +45,13 @@ void strcpy(char *dest, char *src) {
 
 void main_menu() {
 	while (true) {
-		clear_screen();
+		console_clear_screen();
 
-		move_cursor(1, 1);
+		console_move_cursor(1, 1);
 		print("HumbleOS Main Menu");
-		move_cursor(1, 2);
+		console_move_cursor(1, 2);
 		print("------------------------------------------------------------------------------");
-		move_cursor(1, VGA_HEIGHT-3);
+		console_move_cursor(1, VGA_HEIGHT-3);
 		print("------------------------------------------------------------------------------");
 
 		char status_bar[VGA_WIDTH-1];
@@ -64,7 +60,7 @@ void main_menu() {
 
 		strcpy(status_bar, " HumbleOS | Use arrows keys to move, enter to select.");
 		
-		move_cursor(1, VGA_HEIGHT-2);
+		console_move_cursor(1, VGA_HEIGHT-2);
 		print(status_bar);
 
 		return;
@@ -99,15 +95,37 @@ void component_after_stub() {}
 void keyboard_after() {
 	switch (keyboard_install_error) {
 		case KEYBOARD_INIT_SELFTEST_FAIL:
-			set_color(RED);
+			console_set_color(RED);
 			print("Error: Selftest failed\n");
-			set_color(LIGHTGRAY);
-			break;
+			console_set_color(LIGHTGRAY);
+			return;
 		case KEYBOARD_INIT_NO_PORTS_LEFT:
-			set_color(RED);
+			console_set_color(RED);
 			print("Error: No ports left\n");
-			set_color(LIGHTGRAY);
-			break;
+			console_set_color(LIGHTGRAY);
+			return;
+	}
+
+	print("First PS/2 port: ");
+	if (keyboard_first_ps2_works) {
+		console_set_color(GREEN);
+		print("Yes\n");
+		console_set_color(LIGHTGRAY);
+	} else {
+		console_set_color(RED);
+		print("No\n");
+		console_set_color(LIGHTGRAY);
+	}
+
+	print("Second PS/2 port: ");
+	if (keyboard_dual_channel) {
+		console_set_color(GREEN);
+		print("Yes\n");
+		console_set_color(LIGHTGRAY);
+	} else {
+		console_set_color(RED);
+		print("No\n");
+		console_set_color(LIGHTGRAY);
 	}
 }
 
@@ -122,9 +140,9 @@ void kernel_main(){
 	
 	console_init();
 
-	set_color(GREEN);
+	console_set_color(GREEN);
 	print(NAME " " VERSION ", " BUILD " build\n");
-	set_color(LIGHTGRAY);
+	console_set_color(LIGHTGRAY);
 
 	for (int i = 0; i < COMPONENT_AMT; i++) {
 		component_t_install(components[i]);

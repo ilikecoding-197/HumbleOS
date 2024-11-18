@@ -18,16 +18,16 @@
 #define LIGHTMAGENTA 0xD
 #define LIGHTYELLOW 0xE
 #define WHITE 0xF
-void move_cursor(unsigned int x, unsigned int y);
-void scroll_up(unsigned int amt);
-void handle_carriage_return();
-void handle_line_feed();
-void handle_newline();
-void set_color(uint8_t colorToSet);
-void update_cursor();
-void advance_cursor(int amt);
+void console_move_cursor(unsigned int x, unsigned int y);
+void console_scroll_up(unsigned int amt);
+void console_handle_carriage_return();
+void console_handle_line_feed();
+void console_handle_newline();
+void console_set_color(uint8_t colorToSet);
+void console_update_cursor();
+void console_advance_cursor(int amt);
 void putchar(char c);
 void print(char *str);
 void console_init();
-void clear_screen();
+void console_clear_screen();
 #endif

@@ -15,11 +15,11 @@ struct GDTR {
 	uint32_t base;
 }__attribute((packed));
 
-struct GDTR gdtr;
+struct GDTR gdt_gdtr;
 
-uint8_t gdt[GDT_ENTRIES * 8];
+uint8_t gdt_gdt[GDT_ENTRIES * 8];
 
-void encodeGdtEntry(uint8_t *target, struct GDT source)
+void gdt_encodeGdtEntry(uint8_t *target, struct GDT source)
 {
     // Encode the limit
     target[0] = source.limit & 0xFF;
@@ -40,7 +40,7 @@ void encodeGdtEntry(uint8_t *target, struct GDT source)
 }
 
 
-void gdt_c() {
+void gdt_gdt_c() {
 	struct GDT entries[GDT_ENTRIES];
 
 	// Null Descriptor
@@ -63,10 +63,10 @@ void gdt_c() {
 
 	// Encode entries=
 	for (int i = 0; i < GDT_ENTRIES; i++) {
-		encodeGdtEntry((uint8_t*)&gdt[i*8], entries[i]);
+		gdt_encodeGdtEntry((uint8_t*)&gdt_gdt[i*8], entries[i]);
 	}
 
 	// Set GDTR
-	gdtr.base = (uint32_t)((void *)&gdt);
-	gdtr.limit = GDT_ENTRIES * 8 - 1;
+	gdt_gdtr.base = (uint32_t)((void *)&gdt_gdt);
+	gdt_gdtr.limit = GDT_ENTRIES * 8 - 1;
 }

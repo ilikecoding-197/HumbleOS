@@ -2,15 +2,15 @@ global start
 
 ; Externs
 extern kernel_main ; Entry point of C
-extern gdt_c ; C function to set up GDT
-extern gdtr ; C pointer to GDTR
+extern gdt_gdt_c ; C function to set up GDT
+extern gdt_gdtr ; C pointer to GDTR
 
 section .text
 bits 32
 start:
 	; GDT
-	call gdt_c ; C handles creating the GDT
-	lgdt [gdtr] ; Load the C GDT
+	call gdt_gdt_c ; C handles creating the GDT
+	lgdt [gdt_gdtr] ; Load the C GDT
 	
 	jmp 0x08:.reload_CS ; 0x08 is code segment
 .reload_CS:
@@ -21,6 +21,8 @@ start:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
+
+	mov esp, stack ; Set up stack
 	
     call kernel_main ; Jump into C
 

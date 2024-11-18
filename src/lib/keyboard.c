@@ -41,17 +41,17 @@
 #include <console.h>
 #include <stdbool.h>
 
-bool dual_channel;
-bool first_ps2_works;
+bool keyboard_dual_channel;
+bool keyboard_first_ps2_works;
 
-uint8_t get_status() {
+uint8_t keyboard_get_status() {
 	return inb(STATUS_OR_COMMAND_REGISTER);
 }
 
-void send_data(uint8_t data, uint8_t port) {
+void keyboard_send_data(uint8_t data, uint8_t port) {
 	if (port == 0) {
 		while (1) {
-			uint8_t status = get_status(); // Get status
+			uint8_t status = keyboard_get_status(); // Get status
 						
 			if (((status & 0b00000010) == 0) && status != 0) { // If we can send data
 				break;
@@ -60,16 +60,16 @@ void send_data(uint8_t data, uint8_t port) {
 				
 		outb(DATA_PORT, data); // Send the command
 	} else {
-		if (dual_channel) {
-			send_data(WRITE_SECOND_PS2_REAL, 0); // Tell the keyboard controller the send the next command to the 2nd port
-			send_data(data, 0); // Send the command
+		if (keyboard_dual_channel) {
+			keyboard_send_data(WRITE_SECOND_PS2_REAL, 0); // Tell the keyboard controller the send the next command to the 2nd port
+			keyboard_send_data(data, 0); // Send the command
 		}
 	}
 }
 
-uint8_t recieve_data() {
+uint8_t keyboard_recieve_data() {
 	while (1) {
-		uint8_t status = get_status(); // Get status
+		uint8_t status = keyboard_get_status(); // Get status
 				
 		if ((status & 0b00000001) == 1) { // If we can recieve data
 			break;
@@ -79,21 +79,21 @@ uint8_t recieve_data() {
 	return inb(DATA_PORT);
 }
 
-uint8_t send_command(uint8_t cmd, int output, int hasArg, uint8_t arg, uint8_t port) {
+uint8_t keyboard_send_command(uint8_t cmd, int output, int hasArg, uint8_t arg, uint8_t port) {
 	outb(STATUS_OR_COMMAND_REGISTER, cmd); // Send command
 
 	if (hasArg) {
-		send_data(arg, port); // Send argument
+		keyboard_send_data(arg, port); // Send argument
 	}
 
 	if (output) {
-		return recieve_data(); // Recieve output
+		return keyboard_recieve_data(); // Recieve output
 	}
 
 	return 0;
 }
 
-void print_hex(uint8_t value) {
+void keyboard_print_hex(uint8_t value) {
     char hex_chars[] = "0123456789ABCDEF";
     char buffer[5];
 
@@ -109,60 +109,60 @@ void print_hex(uint8_t value) {
 void keyboard_interrupt() {
 	uint8_t data = inb(DATA_PORT); // Get data
 
-	print_hex(data); // Print it in hex
+	keyboard_print_hex(data); // Print it in hex
 }
 
 int keyboard_init() {
 	// Disable PS2
-	send_command(DISABLE_SECOND_PS2, 0, 0, 0, 0);
-	send_command(DISABLE_FIRST_PS2, 0, 0, 0, 0);
+	keyboard_send_command(DISABLE_SECOND_PS2, 0, 0, 0, 0);
+	keyboard_send_command(DISABLE_FIRST_PS2, 0, 0, 0, 0);
 
 	inb(DATA_PORT);
 
 	// Set config byte
-	uint8_t config_byte = send_command(READ_BYTE_0, 1, 0, 0, 0);
+	uint8_t config_byte = keyboard_send_command(READ_BYTE_0, 1, 0, 0, 0);
 	config_byte &= 0b10101110;
-	send_command(WRITE_BYTE_0, 0, 1, config_byte, 0);
+	keyboard_send_command(WRITE_BYTE_0, 0, 1, config_byte, 0);
 
 	// Test
-	uint8_t test = send_command(SELF_TEST, 1, 0, 0, 0);
+	uint8_t test = keyboard_send_command(SELF_TEST, 1, 0, 0, 0);
 	if (test != TEST_PASSED) return KEYBOARD_INIT_SELFTEST_FAIL;
 
 	// Check for dual channel
-	send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0);
+	keyboard_send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0);
 	
-	config_byte = send_command(READ_BYTE_0, 1, 0, 0, 0);
+	config_byte = keyboard_send_command(READ_BYTE_0, 1, 0, 0, 0);
 	if (config_byte & 0x00100000) {
-		dual_channel = 0;
+		keyboard_dual_channel = 0;
 	} else {
-		send_command(DISABLE_SECOND_PS2, 0, 0, 0, 0);	
+		keyboard_send_command(DISABLE_SECOND_PS2, 0, 0, 0, 0);	
 		config_byte &= 0b11011101;
-		dual_channel = 1;
+		keyboard_dual_channel = 1;
 	}
 
 	// Test first PS2
-	test = send_command(TEST_FIRST_PS2, 1, 0, 0, 0);
+	test = keyboard_send_command(TEST_FIRST_PS2, 1, 0, 0, 0);
 	if (test != 0 ) {
-		if (dual_channel == 0) return KEYBOARD_INIT_NO_PORTS_LEFT;
+		if (!keyboard_dual_channel) return KEYBOARD_INIT_NO_PORTS_LEFT;
 	} else {
-		first_ps2_works = 1;
+		keyboard_first_ps2_works = 1;
 	}
 
 	// Test second PS2
-	test = send_command(TEST_SECOND_PS2, 1, 0, 0, 0);
-	if (test != 0 && first_ps2_works == 0) return KEYBOARD_INIT_NO_PORTS_LEFT;
+	test = keyboard_send_command(TEST_SECOND_PS2, 1, 0, 0, 0);
+	if (test != 0 && keyboard_first_ps2_works == 0) return KEYBOARD_INIT_NO_PORTS_LEFT;
 
-	if (first_ps2_works) {
-		send_command(ENABLE_FIRST_PS2, 0, 0, 0, 0);
+	if (keyboard_first_ps2_works) {
+		keyboard_send_command(ENABLE_FIRST_PS2, 0, 0, 0, 0);
 	}
 
-	if (dual_channel) {
-		send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0);
-		send_command(RESET, 0, 0, 0, 1);
+	if (keyboard_dual_channel) {
+		keyboard_send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0);
+		keyboard_send_command(RESET, 0, 0, 0, 1);
 	}
 
 	// Reset
-	send_command(RESET, 0, 0, 0, 0);
+	keyboard_send_command(RESET, 0, 0, 0, 0);
 
 	attach_interrupt(0x21, keyboard_interrupt);
 	return KEYBOARD_INIT_SUCCESS;

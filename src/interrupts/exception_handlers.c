@@ -51,7 +51,6 @@ uint8_t exceptions_with_error_code[5] = {
 const char *hexDigits = "0123456789ABCDEF";
 
 void exception() {
-	clear_screen();
 	print("EXCEPTION!\nError: ");
 	print(exceptions[irq]);
 

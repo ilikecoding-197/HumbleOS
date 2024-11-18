@@ -8,7 +8,7 @@ INCLUDE_DIR="$SRC_DIR/include" # Where our incl,ude (.h files) are
 ASM_FILES=( \
 	"boot/multiboot_header" \
 	"boot/boot" \
-	"interrupts/idt" 
+	"interrupts/idt" \
 	"lib/panic" \
 )
 

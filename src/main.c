@@ -4,6 +4,7 @@
 #include <exception_handlers.h>
 #include <keyboard.h>
 #include <stdbool.h>
+#include <panic.h>
 #include "settings.h"
 
 #define VGA_WIDTH 80
@@ -147,9 +148,4 @@ void kernel_main(){
 	for (int i = 0; i < COMPONENT_AMT; i++) {
 		component_t_install(components[i]);
 	}
-
-	print("\nThe system has now booted!");
-
-	while (1);
 }
-

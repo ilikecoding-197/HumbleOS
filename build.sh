@@ -8,7 +8,8 @@ INCLUDE_DIR="$SRC_DIR/include" # Where our incl,ude (.h files) are
 ASM_FILES=( \
 	"boot/multiboot_header" \
 	"boot/boot" \
-	"interrupts/idt" \
+	"interrupts/idt" 
+	"lib/panic" \
 )
 
 # Our C files
@@ -21,6 +22,7 @@ C_FILES=( \
 	"lib/pic" \
 	"interrupts/exception_handlers" \
 	"lib/keyboard" \
+	"lib/panic" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

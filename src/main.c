@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <panic.h>
 #include "settings.h"
+#include <heap.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -36,7 +37,7 @@ void strcpy(char *dest, char *src) {
 	int i = 0;
 
 	while (true) {
-		if (src[i] == 0 || dest[i] == 0) break;
+		if (src[i] == 0) break;
 
 		dest[i] = src[i];
 
@@ -44,25 +45,18 @@ void strcpy(char *dest, char *src) {
 	}
 }
 
+void draw_box(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
+	put_char_at(x1, y1, '\xda');
+	put_char_at(x2, y1, '\xbf');
+	put_char_at(x1, y2, '\xc0');
+	put_char_at(x2, y2, '\xd9');
+}
+
 void main_menu() {
 	while (true) {
 		console_clear_screen();
 
-		console_move_cursor(1, 1);
-		print("HumbleOS Main Menu");
-		console_move_cursor(1, 2);
-		print("------------------------------------------------------------------------------");
-		console_move_cursor(1, VGA_HEIGHT-3);
-		print("------------------------------------------------------------------------------");
-
-		char status_bar[VGA_WIDTH-1];
-
-		for (int i = 0; i < VGA_WIDTH-2; i++) status_bar[i] = ' ';
-
-		strcpy(status_bar, " HumbleOS | Use arrows keys to move, enter to select.");
-		
-		console_move_cursor(1, VGA_HEIGHT-2);
-		print(status_bar);
+		draw_box(1, 1, 78, 23);
 
 		return;
 	}
@@ -80,6 +74,11 @@ bool idt_install() {
 
 bool exception_handlers_install() {
 	exception_handlers_init();
+	return true;
+}
+
+bool heap_install() {
+	heap_init();
 	return true;
 }
 
@@ -108,7 +107,7 @@ void keyboard_after() {
 	}
 
 	print("First PS/2 port: ");
-	if (keyboard_first_ps2_works) {
+	if (first_ps2_works) {
 		console_set_color(GREEN);
 		print("Yes\n");
 		console_set_color(LIGHTGRAY);
@@ -119,7 +118,7 @@ void keyboard_after() {
 	}
 
 	print("Second PS/2 port: ");
-	if (keyboard_dual_channel) {
+	if (ps2_dual_channel) {
 		console_set_color(GREEN);
 		print("Yes\n");
 		console_set_color(LIGHTGRAY);
@@ -130,12 +129,13 @@ void keyboard_after() {
 	}
 }
 
-#define COMPONENT_AMT 4
+#define COMPONENT_AMT 5
 void kernel_main(){
 	component_t components[COMPONENT_AMT] = {
 		{ "PIC", pic_install, component_after_stub },
 		{ "IDT", idt_install, component_after_stub },
 		{ "Exception handlers", exception_handlers_install, component_after_stub },
+		{ "Heap", heap_install, component_after_stub },
 		{ "Keyboard", keyboard_install, keyboard_after }
 	};
 	

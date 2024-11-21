@@ -1,4 +1,4 @@
-# Settings
+\# Settings
 BUILD_DIR="build" # Our build directory (where the .o files will be)
 ISO_DIR="iso" # Directory containing files for the output iso
 SRC_DIR="src" # Source
@@ -21,8 +21,9 @@ C_FILES=( \
 	"interrupts/idt" \
 	"lib/pic" \
 	"interrupts/exception_handlers" \
-	"lib/keyboard" \
+	"lib/keyboard/keyboard" \
 	"lib/panic" \
+	"lib/heap" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

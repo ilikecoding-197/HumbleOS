@@ -74,7 +74,20 @@ int keyboard_controller_send_command(uint8_t command, int hasArg, uint8_t arg, i
  * Handler for keyboard interrupt.
  */
 void keyboard_handler() {
-	print("KBD INTERRUPT");
+	print("KBD INTERRUPT: 0x");
+
+	char hex[] = "0123456789ABCDEF";
+
+	uint8_t data = inb(DATA_PORT);
+	
+	char buf[3];
+	buf[0] = hex[(data & 0xF0) >> 4];
+	buf[1] = hex[data & 0x0F];
+	buf[2] = 0;
+
+	print(buf);
+	print("\n");
+	
 }
 
 /*

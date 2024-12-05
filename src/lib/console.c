@@ -42,8 +42,7 @@ void console_scroll_up(unsigned int amt) {
 
 		return;
 	}
-
-	// Scrool rows up
+	
 	for (unsigned int row = amt; row < VGA_HEIGHT; row++) {
 		for (unsigned int col = 0; col < VGA_WIDTH; col++) {
 			console_vgaBuff[((row - amt) * VGA_WIDTH + col) * 2] = console_vgaBuff[(row * VGA_WIDTH + col) * 2]; // Character
@@ -51,11 +50,10 @@ void console_scroll_up(unsigned int amt) {
 		}
 	}
 
-	// Clear empty rows
 	for (unsigned int row = VGA_HEIGHT-amt; row < VGA_HEIGHT; row++) {
 		for (unsigned int col = 0; col < VGA_WIDTH; col++) {
 			console_vgaBuff[(col+row*VGA_WIDTH)*2] = ' ';
-			console_vgaBuff[(col+row*VGA_WIDTH)*2+1] = console_color;r
+			console_vgaBuff[(col+row*VGA_WIDTH)*2+1] = console_color;
 		}
 	}
 }
@@ -73,7 +71,7 @@ void console_handle_line_feed() {
 	}
 
 	console_scroll_up(1);
-	console_move_cursor(console_cursorX, VGA_HEIGHT-1);n
+	console_move_cursor(console_cursorX, VGA_HEIGHT-1);
 	console_amountOfLines++;
 }
 

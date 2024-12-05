@@ -128,6 +128,18 @@ void putchar(char c) {
 	case '\n':
 		console_handle_newline();
 		break;
+	case '\t':
+		for (int i = 0; i < 4; i++) putchar(' ');
+		break;
+	case '\b':
+		console_cursorX--;
+		if (console_cursorX == 255) {
+			console_cursorX = VGA_WIDTH-1;
+			console_cursorY--;
+			console_cursorY = console_cursorY == 255 ? 0 : console_cursorY;
+		}
+		console_update_cursor();
+		break;
 	default:
 		uint16_t pos = (console_cursorY * VGA_WIDTH + console_cursorX) * 2;
 		console_vgaBuff[pos] = c;

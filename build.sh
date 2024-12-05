@@ -1,4 +1,4 @@
-\# Settings
+# Settings
 BUILD_DIR="build" # Our build directory (where the .o files will be)
 ISO_DIR="iso" # Directory containing files for the output iso
 SRC_DIR="src" # Source

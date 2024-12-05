@@ -16,8 +16,8 @@ uint8_t console_color;
 unsigned int console_amountOfLines;
 
 void console__move_cursor(unsigned int x, unsigned int y) {
-	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x); // Limit X
-	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y); // Limit Y
+	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x);
+	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y);
 	
 	console_cursorX = x;
 	console_cursorY = y;
@@ -30,9 +30,9 @@ void console_move_cursor(unsigned int x, unsigned int y) {
 }
 
 void console_scroll_up(unsigned int amt) {
-	if (amt == 0) return; // Nothing to scroll by
+	if (amt == 0) return;
 	
-	if (amt >= VGA_HEIGHT) { // Scroll that is off the screen
+	if (amt >= VGA_HEIGHT) {
 		unsigned int tempCursorX = console_cursorX;
 		unsigned int tempCursorY = console_cursorY;
 		
@@ -54,26 +54,26 @@ void console_scroll_up(unsigned int amt) {
 	// Clear empty rows
 	for (unsigned int row = VGA_HEIGHT-amt; row < VGA_HEIGHT; row++) {
 		for (unsigned int col = 0; col < VGA_WIDTH; col++) {
-			console_vgaBuff[(col+row*VGA_WIDTH)*2] = ' '; // Space character
-			console_vgaBuff[(col+row*VGA_WIDTH)*2+1] = console_color; // Color
+			console_vgaBuff[(col+row*VGA_WIDTH)*2] = ' ';
+			console_vgaBuff[(col+row*VGA_WIDTH)*2+1] = console_color;r
 		}
 	}
 }
 
 void console_handle_carriage_return() {
-	console_move_cursor(0, console_cursorY); // Send cursor to start of line
+	console_move_cursor(0, console_cursorY);
 }
 
 void console_handle_line_feed() {
 	if (console_amountOfLines < VGA_HEIGHT) {
-		console_move_cursor(console_cursorX, console_amountOfLines+1); // Move cursor down
+		console_move_cursor(console_cursorX, console_amountOfLines+1);
 		console_amountOfLines++;
 	
 		return;
 	}
 
-	console_scroll_up(1); // Scroll up to leave space for next line
-	console_move_cursor(console_cursorX, VGA_HEIGHT-1); // Move cursor down
+	console_scroll_up(1);
+	console_move_cursor(console_cursorX, VGA_HEIGHT-1);n
 	console_amountOfLines++;
 }
 
@@ -90,7 +90,6 @@ void console_update_cursor()
 {
 	uint16_t pos = console_cursorY * VGA_WIDTH + console_cursorX; // Get position of cursor
 
-	// Send to VGA
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
@@ -100,7 +99,6 @@ void console_update_cursor()
 void console__advance_cursor(int amt) {
     console_cursorX += amt;
 
-	// Remove the excess cursorX
     while (console_cursorX >= VGA_WIDTH) {
         console_cursorX -= VGA_WIDTH;
         console_cursorY++;
@@ -173,16 +171,16 @@ void console_clear_screen() {
 }
 
 void put_char_at(unsigned int x, unsigned int y, char ch) {
-	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x); // Limit X
-	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y); // Limit Y
+	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x);
+	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y);
 
 	uint16_t pos = (x * VGA_WIDTH + y) * 2;
 	console_vgaBuff[pos] = ch;
 }
 
 void put_color_at(unsigned int x, unsigned int y, char color) {
-	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x); // Limit X
-	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y); // Limit Y
+	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x);
+	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y);
 
 	uint16_t pos = (x * VGA_WIDTH + y) * 2;
 	console_vgaBuff[pos+1] = color;

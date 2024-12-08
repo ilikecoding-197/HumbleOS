@@ -74,8 +74,8 @@ const char KEYBOARD_SCANCODE_TO_ACSII[] =
 	"\0\0\0\0\0\0\0\0\0\0\0\0\0\t`\0\0\0\0\0\0q1\0\0\0"
 	"zsaw2\0\0cxde43\0\0 vftr5\0\0nbhgy6\0\0\0mju78\0\0,"
 	"kio09\0\0./l;p-\0\0\0'\0[=\0\0\0\0\n]\0\\\0\0\0\0"
-	"\0\0\0\0\b\0\0001\0\00047\0\0\0000.2568\0\0\0+\0"
-	"-*9\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+	"\0\0\0\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+	"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -86,7 +86,6 @@ const char KEYBOARD_SHIFTED_VALUE[] = "!@#$%^&*()?><|\":}{+_}~";
 
 int keyboard_shift;
 int keyboard_capslock;
-int keyboard_numlock;
 int keyboard_key_break;
 
 char keyboard_buffer[256];
@@ -152,13 +151,6 @@ void keyboard_handler() {
 
 	if (data == 0x58) {
 		keyboard_capslock = !keyboard_capslock;
-
-		return;
-	}
-
-
-	if (data == 0x77) {
-		keyboard_numlock = !keyboard_numlock;
 
 		return;
 	}

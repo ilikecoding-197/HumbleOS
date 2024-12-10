@@ -164,7 +164,7 @@ void put_char_at(unsigned int x, unsigned int y, char ch) {
 	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x);
 	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y);
 
-	uint16_t pos = (x * VGA_WIDTH + y) * 2;
+	uint16_t pos = (y * VGA_WIDTH + x) * 2;
 	console_vgaBuff[pos] = ch;
 }
 
@@ -172,7 +172,7 @@ void put_color_at(unsigned int x, unsigned int y, char color) {
 	x = (x > VGA_WIDTH-1 ? VGA_WIDTH-1 : x);
 	y = (y > VGA_HEIGHT-1 ? VGA_HEIGHT-1 : y);
 
-	uint16_t pos = (x * VGA_WIDTH + y) * 2;
+	uint16_t pos = (y * VGA_WIDTH + x) * 2;
 	console_vgaBuff[pos+1] = color;
 }
 

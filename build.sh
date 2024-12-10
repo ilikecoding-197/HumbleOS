@@ -14,6 +14,7 @@ ASM_FILES=( \
 
 # Our C files
 C_FILES=( \
+	"apps/hello" \
 	"main" \
 	"boot/gdt" \
 	"lib/console" \

@@ -7,6 +7,7 @@
 #include <panic.h>
 #include "settings.h"
 #include <heap.h>
+#include "apps/hello.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -50,15 +51,85 @@ void draw_box(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2
 	put_char_at(x2, y1, '\xbf');
 	put_char_at(x1, y2, '\xc0');
 	put_char_at(x2, y2, '\xd9');
+
+	for (unsigned int x = x1+1; x < x2; x++) {
+		put_char_at(x, y1, '\xc4');
+		put_char_at(x, y2, '\xc4');
+	}
+
+	for (unsigned int y = y1+1; y < y2; y++) {
+		put_char_at(x1, y, '\xb3');
+		put_char_at(x2, y, '\xb3');
+	}
 }
 
+typedef struct {
+	char *name;
+	char *desc;
+	void (*main)(void);
+} app_t;
+
 void main_menu() {
+	app_t apps[] = {
+		{ "Hello", "\"Hello, world!\" app", hello_main }
+	};
+
+	int select = 0;
+
 	while (true) {
 		console_clear_screen();
 
-		draw_box(1, 1, 78, 23);
+		draw_box(1, 1, VGA_WIDTH-2, VGA_HEIGHT-2);
 
-		return;
+		console_move_cursor(30, 0);
+		print("HumbleOS Main Menu");
+
+		console_move_cursor(1,VGA_HEIGHT-1);
+		print("\x18\x19 to move, Enter to select. \xb3 ");
+		print(apps[select].desc);
+
+		for (unsigned int i = 0; i < sizeof(apps)/sizeof(app_t); i++) {
+			console_move_cursor(3, 3+i);
+
+			if (select == i) {
+				console_set_color(0x70);
+			} else {
+				console_set_color(0x07);
+			}
+
+			print(apps[i].name);
+		}
+
+		console_set_color(0x07);
+
+		while (1) {
+			char ch = getch();
+
+			if (ch == 0) {
+				switch (getch()) {
+					case 'W':
+						select--;
+						
+						break;
+					case 'S':
+						select++;
+						
+						break;
+				}
+
+				select = select < 0 ? 0 : select;
+				select = select >= sizeof(apps)/sizeof(app_t) ? (sizeof(apps)/sizeof(app_t))-1 : select;
+
+				break;
+			} else if (ch == '\n') {
+				console_clear_screen();
+
+				apps[select].main();
+				break;
+			}
+		}
+
+		//return;
 	}
 }
 
@@ -129,9 +200,10 @@ void keyboard_after() {
 	}
 }
 
-#define COMPONENT_AMT 5
+
+
 void kernel_main(){
-	component_t components[COMPONENT_AMT] = {
+	component_t components[] = {
 		{ "PIC", pic_install, component_after_stub },
 		{ "IDT", idt_install, component_after_stub },
 		{ "Exception handlers", exception_handlers_install, component_after_stub },
@@ -145,26 +217,11 @@ void kernel_main(){
 	print(NAME " " VERSION ", " BUILD " build\n");
 	console_set_color(LIGHTGRAY);
 
-	for (int i = 0; i < COMPONENT_AMT; i++) {
+	for (unsigned int i = 0; i < sizeof(components)/sizeof(component_t); i++) {
 		component_t_install(components[i]);
 	}
 
-	do {
-		if (getch() == 0) {
-			switch (getch()) {
-			case 'W':
-				console_move_cursor(console_cursorX, console_cursorY-1);
-				break;
-			case 'A':
-				console_move_cursor(console_cursorX-1, console_cursorY);
-				break;
-			case 'S':
-				console_move_cursor(console_cursorX, console_cursorY+1);
-				break;
-			case 'D':
-				console_move_cursor(console_cursorX+1, console_cursorY);
-				break;
-			}
-		}
-	} while (1);
+	
+
+	main_menu();
 }

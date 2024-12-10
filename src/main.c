@@ -76,7 +76,7 @@ void main_menu() {
 		{ "Reboot...", "Reboots the system.", reboot_main }
 	};
 
-	int select = 0;
+	unsigned int select = 0;
 
 	while (true) {
 		console_clear_screen();
@@ -110,17 +110,14 @@ void main_menu() {
 			if (ch == 0) {
 				switch (getch()) {
 					case 'W':
-						select--;
+						if (select != 0) select--;
 						
 						break;
 					case 'S':
-						select++;
+						if (select != (sizeof(apps)/sizeof(app_t))-1) select++;
 						
 						break;
 				}
-
-				select = select < 0 ? 0 : select;
-				select = select >= sizeof(apps)/sizeof(app_t) ? (sizeof(apps)/sizeof(app_t))-1 : select;
 
 				break;
 			} else if (ch == '\n') {
@@ -216,7 +213,7 @@ void kernel_main(){
 	console_init();
 
 	console_set_color(GREEN);
-	print(NAME " " VERSION ", " BUILD " build\n");
+	print(NAME " v" VERSION "\n");
 	console_set_color(LIGHTGRAY);
 
 	for (unsigned int i = 0; i < sizeof(components)/sizeof(component_t); i++) {
@@ -225,5 +222,5 @@ void kernel_main(){
 
 	
 
-	main_menu();
+	//main_menu();
 }

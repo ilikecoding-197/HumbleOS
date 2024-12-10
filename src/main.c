@@ -148,4 +148,23 @@ void kernel_main(){
 	for (int i = 0; i < COMPONENT_AMT; i++) {
 		component_t_install(components[i]);
 	}
+
+	do {
+		if (getch() == 0) {
+			switch (getch()) {
+			case 'W':
+				console_move_cursor(console_cursorX, console_cursorY-1);
+				break;
+			case 'A':
+				console_move_cursor(console_cursorX-1, console_cursorY);
+				break;
+			case 'S':
+				console_move_cursor(console_cursorX, console_cursorY+1);
+				break;
+			case 'D':
+				console_move_cursor(console_cursorX+1, console_cursorY);
+				break;
+			}
+		}
+	} while (1);
 }

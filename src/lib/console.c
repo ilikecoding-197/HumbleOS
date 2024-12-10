@@ -1,4 +1,5 @@
 #include <console.h>
+#include <keyboard.h>
 #include <port.h>
 #include <stdint.h>
 
@@ -127,15 +128,6 @@ void putchar(char c) {
 	case '\t':
 		for (int i = 0; i < 4; i++) putchar(' ');
 		break;
-	case '\b':
-		console_cursorX--;
-		if (console_cursorX == 255) {
-			console_cursorX = VGA_WIDTH-1;
-			console_cursorY--;
-			console_cursorY = console_cursorY == 255 ? 0 : console_cursorY;
-		}
-		console_update_cursor();
-		break;
 	default:
 		uint16_t pos = (console_cursorY * VGA_WIDTH + console_cursorX) * 2;
 		console_vgaBuff[pos] = c;
@@ -182,4 +174,10 @@ void put_color_at(unsigned int x, unsigned int y, char color) {
 
 	uint16_t pos = (x * VGA_WIDTH + y) * 2;
 	console_vgaBuff[pos+1] = color;
+}
+
+char getch() {
+	do {} while (keyboard_buffer_read_ptr == keyboard_buffer_write_ptr);
+
+	return keyboard_buffer[keyboard_buffer_read_ptr++];
 }

@@ -32,4 +32,8 @@ void console_init();
 void console_clear_screen();
 void put_char_at(unsigned int x, unsigned int y, char ch);
 void put_color_at(unsigned int x, unsigned int y, char color);
+char getch();
+
+extern unsigned int console_cursorX;
+extern unsigned int console_cursorY;
 #endif

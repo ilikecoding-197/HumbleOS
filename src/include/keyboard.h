@@ -9,4 +9,8 @@ int keyboard_init();
 extern int ps2_dual_channel;
 extern int first_ps2_works;
 
+extern char keyboard_buffer[256];
+extern int keyboard_buffer_read_ptr;
+extern int keyboard_buffer_write_ptr;
+
 #endif

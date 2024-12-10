@@ -87,6 +87,7 @@ const char KEYBOARD_SHIFTED_VALUE[] = "!@#$%^&*()?><|\":}{+_}~";
 int keyboard_shift;
 int keyboard_capslock;
 int keyboard_key_break;
+int keyboard_ext;
 
 char keyboard_buffer[256];
 int keyboard_buffer_read_ptr;
@@ -121,11 +122,53 @@ char  keyboard_scancode_to_acsii(char scancode) {
 	return acsii;
 }
 
+void keyboard_buf_push(char data) {
+	keyboard_buffer[keyboard_buffer_write_ptr++] = data;
+}
+
 /*
  * Handler for keyboard interrupt.
  */
 void keyboard_handler() {
 	uint8_t data = inb(DATA_PORT);
+
+	if (keyboard_ext) {
+		if (data == 0xF0) {
+			keyboard_key_break = 1;
+			return;
+		}
+
+		if (keyboard_key_break) {
+			keyboard_key_break = 0;
+			keyboard_ext = 0;
+			
+			return;
+		}
+
+		keyboard_buf_push(0);
+
+		switch (data) {
+			case 0x6B:
+				keyboard_buf_push('A');
+
+				break;
+			case 0x72:
+				keyboard_buf_push('S');
+
+				break;
+			case 0x74:
+				keyboard_buf_push('D');
+
+				break;
+			case 0x75:
+				keyboard_buf_push('W');
+
+				break;
+		}
+
+		keyboard_ext = 0;
+		return;
+	}
 
 	if (data == 0xF0) {
 		keyboard_key_break = 1;
@@ -155,13 +198,12 @@ void keyboard_handler() {
 		return;
 	}
 
-	char buf[2];
-	buf[1] = 0;
-	buf[0] =  keyboard_scancode_to_acsii(data);
+	if (data == 0xE0 && !keyboard_key_break) {
+		keyboard_ext = 1;
+		return;
+	}
 
-	keyboard_key_break = 0;
-
-	print(buf);
+	keyboard_buf_push(keyboard_scancode_to_acsii(data));
 }
 
 /*
@@ -219,7 +261,7 @@ int keyboard_init() {
 	// Step 9: Attach interrupt
 	attach_interrupt(0x21, keyboard_handler);
 
-	keyboard_key_break = keyboard_shift = 0;
+	keyboard_key_break = keyboard_shift = keyboard_ext = 0;
 
 	return KEYBOARD_INIT_SUCCESS;
 }

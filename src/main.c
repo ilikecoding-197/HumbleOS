@@ -199,8 +199,6 @@ void keyboard_after() {
 	}
 }
 
-
-
 void kernel_main(){
 	component_t components[] = {
 		{ "PIC", pic_install, component_after_stub },
@@ -220,7 +218,5 @@ void kernel_main(){
 		component_t_install(components[i]);
 	}
 
-	
-
-	//main_menu();
+	main_menu();
 }

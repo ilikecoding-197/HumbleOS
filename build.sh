@@ -23,7 +23,7 @@ C_FILES=( \
 	"interrupts/idt" \
 	"lib/pic" \
 	"interrupts/exception_handlers" \
-	"lib/keyboard/keyboard" \
+	"lib/keyboard" \
 	"lib/panic" \
 	"lib/heap" \
 )

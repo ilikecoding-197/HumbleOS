@@ -8,6 +8,7 @@
 #include "settings.h"
 #include <heap.h>
 #include "apps/hello.h"
+#include "apps/reboot.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -71,7 +72,8 @@ typedef struct {
 
 void main_menu() {
 	app_t apps[] = {
-		{ "Hello", "\"Hello, world!\" app", hello_main }
+		{ "Hello", "\"Hello, world!\" app", hello_main },
+		{ "Reboot...", "Reboots the system.", reboot_main }
 	};
 
 	int select = 0;

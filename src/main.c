@@ -9,6 +9,9 @@
 #include <heap.h>
 #include "apps/hello.h"
 #include "apps/reboot.h"
+#include <cpuid.h>
+#include <rand.h>
+#include "apps/info.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -73,7 +76,8 @@ typedef struct {
 void main_menu() {
 	app_t apps[] = {
 		{ "Hello", "\"Hello, world!\" app", hello_main },
-		{ "Reboot...", "Reboots the system.", reboot_main }
+		{ "Reboot...", "Reboots the system.", reboot_main },
+		{ "Info", "Info about HumbleOS.", info_main }
 	};
 
 	unsigned int select = 0;
@@ -160,7 +164,23 @@ bool keyboard_install() {
 	return keyboard_install_error == KEYBOARD_INIT_SUCCESS;
 }
 
+bool cpuid_install() {
+	return cpuid_init();
+}
+
 void component_after_stub() {}
+
+void print_yes_no(bool val) {
+	if (val) {
+		console_set_color(GREEN);
+		print("Yes\n");
+		console_set_color(LIGHTGRAY);
+	} else {
+		console_set_color(RED);
+		print("No\n");
+		console_set_color(LIGHTGRAY);
+	}
+}
 
 void keyboard_after() {
 	switch (keyboard_install_error) {
@@ -177,35 +197,53 @@ void keyboard_after() {
 	}
 
 	print("First PS/2 port: ");
-	if (first_ps2_works) {
-		console_set_color(GREEN);
-		print("Yes\n");
-		console_set_color(LIGHTGRAY);
-	} else {
-		console_set_color(RED);
-		print("No\n");
-		console_set_color(LIGHTGRAY);
-	}
+	print_yes_no(first_ps2_works);
 
 	print("Second PS/2 port: ");
-	if (ps2_dual_channel) {
-		console_set_color(GREEN);
-		print("Yes\n");
-		console_set_color(LIGHTGRAY);
-	} else {
-		console_set_color(RED);
-		print("No\n");
-		console_set_color(LIGHTGRAY);
-	}
+	print_yes_no(ps2_dual_channel);
 }
 
-void kernel_main(){
+void cpuid_after() {
+	print("CPUID: ");
+	print_yes_no(cpuid_exists);
+	if (!cpuid_exists) return;
+
+	print("Vector string: ");
+	print(cpuid_vector_str);
+	print("\nRDRAND: ");
+	print_yes_no(cpuid_features_ecx & CPUID_FEAT_ECX_RDRAND);
+	print("RDSEED: ");
+	print_yes_no(cpuid_rdseed);
+}
+
+#define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
+void print_hex(int val) {
+	char hexChars[] = "0123456789ABCDEF";
+	
+	char buffer[11];
+	buffer[0] = '0';
+	buffer[1] = 'x';
+	buffer[2] = hexChars[GET_NIBBLE(val, 7)];
+	buffer[3] = hexChars[GET_NIBBLE(val, 6)];
+	buffer[4] = hexChars[GET_NIBBLE(val, 5)];
+	buffer[5] = hexChars[GET_NIBBLE(val, 4)];
+	buffer[6] = hexChars[GET_NIBBLE(val, 3)];
+	buffer[7] = hexChars[GET_NIBBLE(val, 2)];
+	buffer[8] = hexChars[GET_NIBBLE(val, 1)];
+	buffer[9] = hexChars[GET_NIBBLE(val, 0)];
+	buffer[10] = 0;
+
+	print(buffer);
+}
+
+void kernel_main() {
 	component_t components[] = {
 		{ "PIC", pic_install, component_after_stub },
 		{ "IDT", idt_install, component_after_stub },
 		{ "Exception handlers", exception_handlers_install, component_after_stub },
 		{ "Heap", heap_install, component_after_stub },
-		{ "Keyboard", keyboard_install, keyboard_after }
+		{ "Keyboard", keyboard_install, keyboard_after },
+		{ "CPUID", cpuid_install, cpuid_after }
 	};
 	
 	console_init();

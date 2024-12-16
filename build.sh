@@ -10,6 +10,8 @@ ASM_FILES=( \
 	"boot/boot" \
 	"interrupts/idt" \
 	"lib/panic" \
+	"lib/cpuid" \
+	"lib/rand" \
 )
 
 # Our C files
@@ -26,6 +28,9 @@ C_FILES=( \
 	"lib/keyboard" \
 	"lib/panic" \
 	"lib/heap" \
+	"lib/cpuid" \
+	"lib/rand" \
+	"apps/info" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

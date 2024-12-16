@@ -116,8 +116,8 @@ int keyboard_key_break;
 int keyboard_ext;
 
 char keyboard_buffer[256];
-int keyboard_buffer_read_ptr;
-int keyboard_buffer_write_ptr;
+char keyboard_buffer_read_ptr;
+char keyboard_buffer_write_ptr;
 
 /*
  * Translate a keyboard scancode to ACSII.

@@ -31,6 +31,7 @@ C_FILES=( \
 	"lib/cpuid" \
 	"lib/rand" \
 	"apps/info" \
+	"apps/shutdown" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

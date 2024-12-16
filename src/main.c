@@ -12,6 +12,7 @@
 #include <cpuid.h>
 #include <rand.h>
 #include "apps/info.h"
+#include "apps/shutdown.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -77,7 +78,8 @@ void main_menu() {
 	app_t apps[] = {
 		{ "Hello", "\"Hello, world!\" app", hello_main },
 		{ "Reboot...", "Reboots the system.", reboot_main },
-		{ "Info", "Info about HumbleOS.", info_main }
+		{ "Info", "Info about HumbleOS.", info_main },
+		{ "Shutdown...", "Shutdowns the system.", shutdown_main }
 	};
 
 	unsigned int select = 0;

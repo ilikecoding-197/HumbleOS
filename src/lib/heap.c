@@ -3,20 +3,20 @@
 /*
     2014 Leonard Kevin McGuire Jr (www.kmcg3413.net) (kmcg3413@gmail.com)
     2016 Clément Gallet (provided bug fixes)
-    2024 ilikecoding=-197 (added into HumbleOS)
+    2024 ilikecoding-197 (added into HumbleOS)
 */
 
 // CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
 typedef struct _KHEAPBLOCKBM {
-	struct _KHEAPBLOCKBM	                *next;
-	uint32_t					size;
-	uint32_t					used;
-	uint32_t					bsize;
-        uint32_t                                  lfb;
+	struct _KHEAPBLOCKBM *next;
+	uint32_t              size;
+	uint32_t              used;
+	uint32_t              bsize;
+    uint32_t              lfb;
 } KHEAPBLOCKBM;
 
 typedef struct _KHEAPBM {
-	KHEAPBLOCKBM			*fblock;
+	KHEAPBLOCKBM *fblock;
 } KHEAPBM;
 
 void k_heapBMInit(KHEAPBM *heap) {

@@ -39,18 +39,6 @@ void component_t_install(component_t component) {
 	component.after();
 }
 
-void strcpy(char *dest, char *src) {
-	int i = 0;
-
-	while (true) {
-		if (src[i] == 0) break;
-
-		dest[i] = src[i];
-
-		i++;
-	}
-}
-
 void draw_box(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
 	put_char_at(x1, y1, '\xda');
 	put_char_at(x2, y1, '\xbf');

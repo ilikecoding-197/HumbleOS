@@ -1,8 +1,12 @@
+// Humble OS file: cpuid.h
+// Purpose: Header file for CPUID.
+
 #ifndef CPUID_H
 #define CPUID_H
 
 #include <stdbool.h>
 
+// Vector strings
 #define CPUID_VENDOR_AMD           "AuthenticAMD"
 #define CPUID_VENDOR_AMD_OLD       "AMDisbetter!"
 #define CPUID_VENDOR_INTEL         "GenuineIntel"
@@ -23,6 +27,7 @@
 #define CPUID_VENDOR_HYGON         "HygonGenuine"
 #define CPUID_VENDOR_ELBRUS        "E2K MACHINE "
 
+// Hypervisors
 #define CPUID_VENDOR_QEMU          "TCGTCGTCGTCG"
 #define CPUID_VENDOR_KVM           " KVMKVMKVM  "
 #define CPUID_VENDOR_VMWARE        "VMwareVMware"
@@ -34,6 +39,7 @@
 #define CPUID_VENDOR_BHYVE         "bhyve bhyve "
 #define CPUID_VENDOR_QNX           " QNXQVMBSQG "
 
+/// @brief CPUID features for ECX.
 typedef enum {
     CPUID_FEAT_ECX_SSE3         = 1 << 0,
     CPUID_FEAT_ECX_PCLMUL       = 1 << 1,
@@ -67,6 +73,8 @@ typedef enum {
     CPUID_FEAT_ECX_RDRAND       = 1 << 30,
     CPUID_FEAT_ECX_HYPERVISOR   = 1 << 31,
 } cpuid_feature_ecx;
+
+/// @brief CPUID features for EDX.
 typedef enum {
     CPUID_FEAT_EDX_FPU          = 1 << 0,
     CPUID_FEAT_EDX_VME          = 1 << 1,
@@ -100,13 +108,23 @@ typedef enum {
     CPUID_FEAT_EDX_PBE          = 1 << 31
 } cpuid_feature_edx;
 
-extern const char *cpuid_feature_strs_ecx[];
-extern const char *cpuid_feature_strs_edx[];
 
+/// @brief Initalizes CPUID.
+/// @return If it worked.
 bool cpuid_init();
+
+/// @brief If CPUID exists.
 extern int cpuid_exists;
+/// @brief Vector string of CPUID.
 extern char cpuid_vector_str[13];
-extern int cpuid_features_ecx, cpuid_features_edx;
+
+/// @brief ECX part of features.
+extern int cpuid_features_ecx;
+
+/// @brief EDX part of features.
+extern int cpuid_features_edx;
+
+/// @brief If the CPU supports rdseed.
 extern int cpuid_rdseed;
 
 #endif

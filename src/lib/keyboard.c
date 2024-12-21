@@ -1,9 +1,13 @@
+// HumbleOS file: keyboard.c
+// Purpose: Keyboard driver.
+
 #include <keyboard.h>
 #include <console.h>
 #include <stdint.h>
 #include <port.h>
 #include <idt.h>
 
+// Commands
 #define DATA_PORT 0x60
 #define STATUS_OR_COMMAND_REGISTER 0x64
 #define READ_BYTE_0 0x20
@@ -32,18 +36,16 @@
 #define SYS_RESET 0xFE
 
 // Controller functions
+
+/// @brief Get keyboard status.
 #define keyboard_controller_get_status() inb(STATUS_OR_COMMAND_REGISTER)
 
 int first_ps2_works;
 int ps2_dual_channel;
 
-/*
- * Sends data to the keyboard controller.
- *
- * Arguments:
- *   * data (uint8_t) - Data to send.
- *   * port (int)     - Port to send it to.
- */
+/// @brief Sends data to the keyboard controller.
+/// @param data Data to send.
+/// @param port Port to send to
 void keyboard_controller_send_data(uint8_t data, int port) {
 	if (port == 0) {
 		while (1) { // Wait until the input buffer is empty
@@ -59,10 +61,8 @@ void keyboard_controller_send_data(uint8_t data, int port) {
 	}
 }
 
-/*
- * Receives data from the keyboard controller.
- *
- */
+/// @brief Receives data from the keyboard controller.
+/// @return Data received.
 uint8_t keyboard_controller_receive_data() {
 	while (1) { // Wait until we can receive
 		if (!(keyboard_controller_get_status() & 0b00000010))
@@ -72,16 +72,13 @@ uint8_t keyboard_controller_receive_data() {
 	return inb(DATA_PORT); // Receive
 }
 
-/*
- * Sends a command to the controller.
- *
- * Arguments:
- *   * command (uint8_t) - Command to send.
- *   * hasArg (int)      - If the command has a argument.
- *   * arg (uint8_t)     - The argument to send (if hasArg is 1.)
- *   * hasOutput (int)   - If the command has a output.
- *   * port (int)        - The port to send the command to.
- */
+/// @brief Send a command to the controller.
+/// @param command The command to send.
+/// @param hasArg If the command has a argument
+/// @param arg If hasArg is true, argument to send.
+/// @param hasOutput If the command outputs something.
+/// @param port Port to send to.
+/// @return If hasOutput is true, output. Else 0.
 int keyboard_controller_send_command(uint8_t command, int hasArg, uint8_t arg, int hasOutput, int port) {
 	outb(STATUS_OR_COMMAND_REGISTER, command); // Send command
 
@@ -90,12 +87,13 @@ int keyboard_controller_send_command(uint8_t command, int hasArg, uint8_t arg, i
 	}
 
 	if (hasOutput) {
-		return keyboard_controller_receive_data();
+		return keyboard_controller_receive_data(); // Return output
 	}
 
-	return 0;
+	return 0; // Else, return 0.
 }
 
+// ACSII for each scancode
 const char KEYBOARD_SCANCODE_TO_ACSII[] = 
 	"\0\0\0\0\0\0\0\0\0\0\0\0\0\t`\0\0\0\0\0\0q1\0\0\0"
 	"zsaw2\0\0cxde43\0\0 vftr5\0\0nbhgy6\0\0\0mju78\0\0,"
@@ -107,13 +105,13 @@ const char KEYBOARD_SCANCODE_TO_ACSII[] =
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
     "\0\0\0\0\0\0\0\0\0\0\0";
-const char KEYBOARD_SHIFTED_KEY[]   = "1234567890/.,\\';][=-`";
-const char KEYBOARD_SHIFTED_VALUE[] = "!@#$%^&*()?><|\":}{+_}~";
+const char KEYBOARD_SHIFTED_KEY[]   = "1234567890/.,\\';][=-]`"; // Shifted key
+const char KEYBOARD_SHIFTED_VALUE[] = "!@#$%^&*()?><|\":}{+_}~"; // Shifted value
 
-int keyboard_shift;
-int keyboard_capslock;
-int keyboard_key_break;
-int keyboard_ext;
+int keyboard_shift;     // If shift is held
+int keyboard_capslock;  // If capslock is on
+int keyboard_key_break; // If the last key was a break scancode
+int keyboard_ext;       // If the last key was a EXT scancode
 
 char keyboard_buffer[256];
 char keyboard_buffer_read_ptr;
@@ -123,21 +121,28 @@ char keyboard_buffer_write_ptr;
  * Translate a keyboard scancode to ACSII.
  */
 char  keyboard_scancode_to_acsii(char scancode) {
-	char acsii =  KEYBOARD_SCANCODE_TO_ACSII[(int)scancode];
+	char acsii = KEYBOARD_SCANCODE_TO_ACSII[(int)scancode]; // ACSII of scancode
 
 	if (keyboard_capslock) {
-		if (acsii >= 65 && acsii <= 90) acsii += 32;
+		// If in lowercase range, turn to uppercase
+		if (acsii >= 65 && acsii <= 90) 
+			acsii += 32;               
 	}
 
 	if (keyboard_shift) {
-		if (acsii >= 97 && acsii <= 122) {
+		// If in uppercase range, turn to lowercase
+		if (acsii >= 97 && acsii <= 122)
 			acsii -= 32;
-		} else if (acsii >= 65 && acsii <= 90) {
+		// If in lowercase range, turn to uppercase
+		else if (acsii >= 65 && acsii <= 90)
 			acsii += 32;
-		} else {
+		// Shifted keys
+		else {
+			// For each shifted keys
 			for (unsigned int i = 0; i < sizeof(KEYBOARD_SHIFTED_KEY)-1; i++) {
-				if (KEYBOARD_SHIFTED_KEY[i] == acsii) {
-					acsii = KEYBOARD_SHIFTED_VALUE[i];
+				if (KEYBOARD_SHIFTED_KEY[i] == acsii) { // If this is the same
+				                                        // as out ACSII value
+					acsii = KEYBOARD_SHIFTED_VALUE[i];  // Change it
 
 					break;
 				}
@@ -145,90 +150,103 @@ char  keyboard_scancode_to_acsii(char scancode) {
 		}
 	}
 
-	return acsii;
+	return acsii; // Return our transformed value
 }
 
+/// @brief Push data to the keyboard buffer.
+/// @param data The data.
 void keyboard_buf_push(char data) {
-	keyboard_buffer[keyboard_buffer_write_ptr++] = data;
+	keyboard_buffer[(int)keyboard_buffer_write_ptr++] = data; // Push
 }
 
-/*
- * Handler for keyboard interrupt.
- */
+/// @brief Handler for keyboard interrupt.
 void keyboard_handler() {
-	uint8_t data = inb(DATA_PORT);
+	uint8_t data = inb(DATA_PORT); // Get our data!
 
-	if (keyboard_ext) {
-		if (data == 0xF0) {
+	if (keyboard_ext) { // Extended mode
+		if (data == 0xF0) { // Break code
+			// Set it and return
 			keyboard_key_break = 1;
 			return;
 		}
 
-		if (keyboard_key_break) {
+		if (keyboard_key_break) { // We're on a break code! We ignore it
+			// Set values to good values. Epic values
 			keyboard_key_break = 0;
 			keyboard_ext = 0;
 			
 			return;
 		}
 
-		keyboard_buf_push(0);
+		keyboard_buf_push(0); // Push zero. We do DOS-style extended keys.
 
 		switch (data) {
-			case 0x6B:
+			// Arrows keys. We use WASD (im a hardcode gamer)
+			case 0x6B: // Left
 				keyboard_buf_push('A');
 
 				break;
-			case 0x72:
+			case 0x72: // Down
 				keyboard_buf_push('S');
 
 				break;
-			case 0x74:
+			case 0x74: // Right
 				keyboard_buf_push('D');
 
 				break;
-			case 0x75:
+			case 0x75: // Up
 				keyboard_buf_push('W');
+
+				break;
+
+			// Default case. We just add zero.
+			default:
+				keyboard_buf_push('\0');
 
 				break;
 		}
 
-		keyboard_ext = 0;
+		keyboard_ext = 0; // Set extended to zero; we are done
 		return;
 	}
 
-	if (data == 0xF0) {
+	if (data == 0xF0) { // Break scancode
+		// Set it and exit.
 		keyboard_key_break = 1;
 
 		return;
 	}
 
-	if (keyboard_key_break) {
-		if (data == 0x12) {
+	if (keyboard_key_break) { // We're on a break.
+		if (data == 0x12) { // Handle shift
 			keyboard_shift = 0;
 		}
 
-		keyboard_key_break = 0;
+		keyboard_key_break = 0; // Set back to 0
 
 		return;
 	}
 
-	if (data == 0x12) {
+	if (data == 0x12) { // Shift
+		// Set it and leave
 		keyboard_shift = 1;
 
 		return;
 	}
 
-	if (data == 0x58) {
+	if (data == 0x58) { // Caps lock
+		// Set it and leave
 		keyboard_capslock = !keyboard_capslock;
 
 		return;
 	}
 
-	if (data == 0xE0 && !keyboard_key_break) {
+	if (data == 0xE0 && !keyboard_key_break) { // Extended code
 		keyboard_ext = 1;
 		return;
 	}
 
+	// Else, just push our data
 	keyboard_buf_push(keyboard_scancode_to_acsii(data));
 }
 
@@ -245,49 +263,56 @@ int keyboard_init() {
 
 	// Step 3: Set config byte
 	uint8_t config_byte = keyboard_controller_send_command(READ_BYTE_0, 0, 0, 1, 0);
-	config_byte &= 0b10101110;
-	keyboard_controller_send_command(WRITE_BYTE_0, 1, config_byte, 1, 0);
+	config_byte &= 0b10101110; // Clear a couple bits
+	keyboard_controller_send_command(WRITE_BYTE_0, 1, config_byte, 1, 0); // Set it back
 
 	// Step 4: Perform self test
-	if (keyboard_controller_send_command(SELF_TEST, 0, 0, 0, 0) == TEST_PASSED) {
-		return KEYBOARD_INIT_SELFTEST_FAIL;
+	if (keyboard_controller_send_command(SELF_TEST, 0, 0, 0, 0) == TEST_PASSED) { // Send test
+		return KEYBOARD_INIT_SELFTEST_FAIL; // Report fail
 	}
 
 	// Step 5: Are there 2 channels?
-	keyboard_controller_send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0);
-	config_byte = keyboard_controller_send_command(READ_BYTE_0, 0, 0, 1, 0);
-	if (config_byte & 0b00100000) {
-		ps2_dual_channel = 0;
+	keyboard_controller_send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0); // Enable 
+	config_byte = keyboard_controller_send_command(READ_BYTE_0, 0, 0, 1, 0); // Get config byte
+	if (config_byte & 0b00100000) { // If this bit is zero (false), that mean the second port isnt
+	                                // enabled. If so, its not dual channel, as it should be
+									// enabled.
+		ps2_dual_channel = 0;       // No dual channel!
 
-		keyboard_controller_send_command(DISABLE_SECOND_PS2, 0, 0, 0, 0);
-		config_byte &= 0b11011101;
-		keyboard_controller_send_command(WRITE_BYTE_0, 1, config_byte, 1, 0);
+		
+	} else { // Dual channel!
+		ps2_dual_channel = 1;
+
+		keyboard_controller_send_command(DISABLE_SECOND_PS2, 0, 0, 0, 0); // Disable second PS2
+		                                                                  // again
+		config_byte &= 0b11011101; // Enable clock and disable IRQS
+		keyboard_controller_send_command(WRITE_BYTE_0, 1, config_byte, 1, 0); // Write it back
 	}
 
 	// Step 6: Test ports
-	first_ps2_works = keyboard_controller_send_command(TEST_FIRST_PS2, 0, 0, 0, 0) == 0;
-	ps2_dual_channel = ps2_dual_channel && keyboard_controller_send_command(TEST_SECOND_PS2, 0, 0, 0, 0) == 0;
+	first_ps2_works = keyboard_controller_send_command(TEST_FIRST_PS2, 0, 0, 0, 0) == 0; // Test it
+	ps2_dual_channel = ps2_dual_channel && 
+	                   keyboard_controller_send_command(TEST_SECOND_PS2, 0, 0, 0, 0) == 0; // Test it
 
-	if (!first_ps2_works && !ps2_dual_channel) {
+	if (!first_ps2_works && !ps2_dual_channel) { // No ports left!
 		return KEYBOARD_INIT_NO_PORTS_LEFT;
 	}
 
 	// Step 7: Enable ports
-	if (first_ps2_works) keyboard_controller_send_command(ENABLE_FIRST_PS2, 0, 0, 0, 0);
-	if (ps2_dual_channel) keyboard_controller_send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0);
+	if (first_ps2_works) keyboard_controller_send_command(ENABLE_FIRST_PS2, 0, 0, 0, 0); // First
+	if (ps2_dual_channel) keyboard_controller_send_command(ENABLE_SECOND_PS2, 0, 0, 0, 0); // Second
 
-	config_byte = keyboard_controller_send_command(READ_BYTE_0, 0, 0, 1, 0);
-	if (first_ps2_works) config_byte |= 0x00000001;
-	if (ps2_dual_channel) config_byte |= 0x00000010;
-	keyboard_controller_send_command(WRITE_BYTE_0, 1, config_byte, 1, 0);
+	config_byte = keyboard_controller_send_command(READ_BYTE_0, 0, 0, 1, 0); // Read config byte
+	if (first_ps2_works) config_byte |= 0x00000001;  // Enable first PS2 IRQs
+	if (ps2_dual_channel) config_byte |= 0x00000010; // Enable second PS2 IRQs
+	keyboard_controller_send_command(WRITE_BYTE_0, 1, config_byte, 1, 0); // Write it back
 
-	// Step 8: Reset Devices
-	// I need the keyboard command sending and recieving for this...
+	// TODO: Reset devices
 
 	// Step 9: Attach interrupt
 	attach_interrupt(0x21, keyboard_handler);
 
-	keyboard_key_break = keyboard_shift = keyboard_ext = 0;
+	keyboard_key_break = keyboard_shift = keyboard_ext = 0; // Set control values
 
-	return KEYBOARD_INIT_SUCCESS;
+	return KEYBOARD_INIT_SUCCESS; // Success!
 }

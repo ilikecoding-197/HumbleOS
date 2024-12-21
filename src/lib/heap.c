@@ -7,6 +7,7 @@
 */
 
 // CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
+// Not explaining it as.... Its not mine. Its their fault they didnt comment.
 typedef struct _KHEAPBLOCKBM {
 	struct _KHEAPBLOCKBM *next;
 	uint32_t              size;
@@ -152,6 +153,7 @@ void k_heapBMFree(KHEAPBM *heap, void *ptr) {
 	/* this error needs to be raised or reported somehow */
 	return;
 }
+
 // END OF CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
 
 // Wrapper functions

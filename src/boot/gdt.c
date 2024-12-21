@@ -1,26 +1,34 @@
-#include <stdint.h>
-#define GDT_ENTRIES 256
+// HumbleOS file: gdt.c
+// Purpose: C code for GDT. Called from boot.asm.
+// Mainly tooken from https://wiki.osdev.org/Global_Descriptor_Table; see that
+// for GDT info.
+
+#include <stdint.h>      // Needed for custom siZe ints
+#define GDT_ENTRIES 0xFF // Amount of GDT entries
 
 // GDT structure
 struct GDT {
-	uint32_t base;
-	uint32_t limit;
-	uint8_t access_byte;
-	uint8_t flags;
+	uint32_t base;       // Base
+	uint32_t limit;      // Limit
+	uint8_t access_byte; // Access byte
+	uint8_t flags;       // flag
 };
 
 // GDTR structure
 struct GDTR {
-	uint16_t limit;
-	uint32_t base;
+	uint16_t limit; // Limit
+	uint32_t base;  // base
 }__attribute((packed));
 
-struct GDTR gdt_gdtr;
+struct GDTR gdt_gdtr; // GDTR to GDT, used in boot.asm
 
-uint8_t gdt_gdt[GDT_ENTRIES * 8];
+uint8_t gdt_gdt[GDT_ENTRIES * 8]; // GDT bytes
 
-void gdt_encodeGdtEntry(uint8_t *target, struct GDT source)
-{
+// Encode a GDT entry.
+void gdt_encodeGdtEntry(
+	uint8_t *target, // Target (where to encode to)
+	struct GDT source // Source (where to encode from)
+) {
     // Encode the limit
     target[0] = source.limit & 0xFF;
     target[1] = (source.limit >> 8) & 0xFF;
@@ -61,9 +69,9 @@ void gdt_gdt_c() {
 	entries[2].access_byte = 0x92;
 	entries[2].flags = 0xC;
 
-	// Encode entries=
+	// Encode entries
 	for (int i = 0; i < GDT_ENTRIES; i++) {
-		gdt_encodeGdtEntry((uint8_t*)&gdt_gdt[i*8], entries[i]);
+		gdt_encodeGdtEntry((uint8_t*)&gdt_gdt[i*8], entries[i]); // Encode the segment.
 	}
 
 	// Set GDTR

@@ -1,3 +1,5 @@
+# Build script for HumbleOS
+
 # Settings
 BUILD_DIR="build" # Our build directory (where the .o files will be)
 ISO_DIR="iso" # Directory containing files for the output iso
@@ -32,6 +34,7 @@ C_FILES=( \
 	"lib/rand" \
 	"apps/info" \
 	"apps/shutdown" \
+	"lib/string" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

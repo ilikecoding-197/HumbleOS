@@ -1,3 +1,6 @@
+// HumbleOS file: main.c
+// Purpose: The kernel code!
+
 #include <console.h>
 #include <idt.h>
 #include <pic.h>
@@ -246,5 +249,5 @@ void kernel_main() {
 		component_t_install(components[i]);
 	}
 
-	main_menu();
+	//main_menu();
 }

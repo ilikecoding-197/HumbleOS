@@ -1,13 +1,29 @@
+// HumbleOS file: pic.h
+// Purpose: Header file for PIC.
+
 #include <stdint.h>
 
 #ifndef PIC_H
 #define PIC_H
+
+/// @brief Send a EOI to the PIC.
+/// @param irq IRQ used to send to EOI.
 void PIC_sendEOI(uint8_t irq);
+
+/// @brief Remaps the PIC.
+/// @param offset1 Vector offset for master PIC
+/// @param offset2 Vector offset for slave PIC
 void PIC_remap(int offset1, int offset2);
+
+/// @brief Initalize the PIC.
 void pic_init();
+
+/// @brief Set a mask for a IRQ.
+/// @param IRQline The IRQ to set.
 void IRQ_set_mask(uint8_t IRQline);
+
+/// @brief Clear a mask for a IRQ.
+/// @param IRQline The IRQ to clear.
 void IRQ_clear_mask(uint8_t IRQline);
-uint16_t __pic_get_irq_reg(int ocw3);
-uint16_t pic_get_irr(void);
-uint16_t pic_get_isr(void);
+
 #endif

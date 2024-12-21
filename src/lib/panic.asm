@@ -1,3 +1,6 @@
+; HumbleOS file: panic.asm
+; Purpose: Assmebly for panic
+
 ; Regs
 global panic_reg_eax
 global panic_reg_ebx
@@ -22,14 +25,14 @@ global panic_save_regs
 section .text
 
 panic_save_regs:
-mov dword [panic_reg_eax], eax
-mov dword [panic_reg_ebx], ebx
-mov dword [panic_reg_ecx], ecx
-mov dword [panic_reg_edx], edx
-mov dword [panic_reg_esi], esi
-mov dword [panic_reg_edi], edi
-mov dword [panic_reg_esp], esp
-mov dword [panic_reg_ebp], ebp
+mov dword [panic_reg_eax], eax ; Save EAX
+mov dword [panic_reg_ebx], ebx ; Save EBX
+mov dword [panic_reg_ecx], ecx ; Save ECX
+mov dword [panic_reg_edx], edx ; Save EDX
+mov dword [panic_reg_esi], esi ; Save ESI
+mov dword [panic_reg_edi], edi ; Save EDI
+mov dword [panic_reg_esp], esp ; Save ESP
+mov dword [panic_reg_ebp], ebp ; Save EBP
 ret
 
-section .note.GNU-stack
+section .note.GNU-stack ; Stop LD from complaining

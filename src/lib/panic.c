@@ -1,42 +1,50 @@
+// HumbleOS file: panic.c
+// Purpose: C file for panic
+
 #include <panic.h>
 #include <console.h>
 
+// Get a nibble from a value.
 #define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
 
-extern int panic_reg_eax;
-extern int panic_reg_ebx;
-extern int panic_reg_ecx;
-extern int panic_reg_edx;
-extern int panic_reg_esi;
-extern int panic_reg_edi;
-extern int panic_reg_esp;
-extern int panic_reg_ebp;
+extern int panic_reg_eax; // Saved EAX
+extern int panic_reg_ebx; // Saved EBX
+extern int panic_reg_ecx; // Saved ECX
+extern int panic_reg_edx; // Saved EDX
+extern int panic_reg_esi; // Saved ESI
+extern int panic_reg_edi; // Saved EDI
+extern int panic_reg_esp; // Saved ESP
+extern int panic_reg_ebp; // Saved EBP
 
+/// @brief Print a hex value.
+/// @param val Value to print.
 void _panic_print_hex(int val) {
-	char hexChars[] = "0123456789ABCDEF";
+	char hexChars[] = "0123456789ABCDEF"; // Hex character
 	
-	char buffer[11];
+	char buffer[11]; // Buffer
 	buffer[0] = '0';
 	buffer[1] = 'x';
-	buffer[2] = hexChars[GET_NIBBLE(val, 7)];
-	buffer[3] = hexChars[GET_NIBBLE(val, 6)];
-	buffer[4] = hexChars[GET_NIBBLE(val, 5)];
-	buffer[5] = hexChars[GET_NIBBLE(val, 4)];
-	buffer[6] = hexChars[GET_NIBBLE(val, 3)];
-	buffer[7] = hexChars[GET_NIBBLE(val, 2)];
-	buffer[8] = hexChars[GET_NIBBLE(val, 1)];
-	buffer[9] = hexChars[GET_NIBBLE(val, 0)];
+	buffer[2] = hexChars[GET_NIBBLE(val, 7)]; // 0xX0000000
+	buffer[3] = hexChars[GET_NIBBLE(val, 6)]; // 0x0X000000
+	buffer[4] = hexChars[GET_NIBBLE(val, 5)]; // 0x00X00000
+	buffer[5] = hexChars[GET_NIBBLE(val, 4)]; // 0x000X0000
+	buffer[6] = hexChars[GET_NIBBLE(val, 3)]; // 0x0000X000
+	buffer[7] = hexChars[GET_NIBBLE(val, 2)]; // 0x00000X00
+	buffer[8] = hexChars[GET_NIBBLE(val, 1)]; // 0x000000X0
+	buffer[9] = hexChars[GET_NIBBLE(val, 0)]; // 0x0000000X
 	buffer[10] = 0;
 
-	print(buffer);
+	print(buffer); // Print it
 }
 
-void panic_panic(char *msg) {
+__attribute__((noreturn)) void panic_panic(char *msg) {
+	// Header
 	console_set_color(RED);
 	print("!!! KERNEL PANIC !!!\n");
 	console_set_color(LIGHTGRAY);
 	print("---REGS---\n");
 	
+	// Regs
 	print("EAX: ");
 	_panic_print_hex(panic_reg_eax);
 	print(" EBX: ");
@@ -57,11 +65,15 @@ void panic_panic(char *msg) {
 	_panic_print_hex(panic_reg_ebp);
 	console_handle_newline();
 
+	// Footer
 	print("Reason: ");
 	print(msg);
 	print("\nSystem will now ");
 	console_set_color(RED);
 	print("halt.");
 
-	__asm__ __volatile__ ("cli; hlt");
+	__asm__ __volatile__ ("cli; hlt"); // Halt
+
+	while (1) {} // Infinte loop to stop GCC from complaining (it doesnt notice the __asm__) line 
+	             // halts the computer.
 }

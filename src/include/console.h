@@ -1,7 +1,13 @@
+// HumbleOS file: console.h
+// Purpose: Header file for console
+
 #include <stdbool.h>
 #include <stdint.h>
+
 #ifndef CONSOLE_H
 #define CONSOLE_H
+
+// Colors
 #define BLACK 0x0
 #define BLUE 0x1
 #define GREEN 0x2
@@ -18,22 +24,72 @@
 #define LIGHTMAGENTA 0xD
 #define LIGHTYELLOW 0xE
 #define WHITE 0xF
+
+
+// Functions
+
+/// @brief Move console cursor.
+/// @param x The X position to move to. (0-79)
+/// @param y The Y position to move to. (0-24)
 void console_move_cursor(unsigned int x, unsigned int y);
+
+/// @brief Scroll up the screen.
+/// @param amt Amount to scroll up by.
 void console_scroll_up(unsigned int amt);
+
+/// @brief Handle a carriage return.
 void console_handle_carriage_return();
+
+/// @brief Handle a line feed.
 void console_handle_line_feed();
+
+/// @brief Handle a newline.
 void console_handle_newline();
+
+/// @brief Set the color of the console,
+/// @param colorToSet The color to set to.
 void console_set_color(uint8_t colorToSet);
+
+/// @brief Update the cursor.
 void console_update_cursor();
+
+/// @brief Advance the cursor.
+/// @param amt Amount to advance
 void console_advance_cursor(int amt);
+
+/// @brief Print a character to the screen.
+/// @param c What character to print.
 void putchar(char c);
+
+/// @brief Print a string to the console.
+/// @param str What string to print
 void print(char *str);
+
+/// @brief Initalize the console
 void console_init();
+
+/// @brief Clear the screen
 void console_clear_screen();
+
+/// @brief Put a character at a certain position.
+/// @param x X position. (0-79)
+/// @param y Y position. (0-24)
+/// @param ch Character to place.
 void put_char_at(unsigned int x, unsigned int y, char ch);
-void put_color_at(unsigned int x, unsigned int y, char color);
+
+/// @brief Put a color at a certain position.
+/// @param x X position. (0-79)
+/// @param y Y position. (0-24)
+/// @param color Color to place.
+void put_color_at(unsigned int x,unsigned int y,char color);
+
+/// @brief Get a character from the user
 char getch();
 
+/// @brief The current cursor X.
 extern unsigned int console_cursorX;
+
+/// @brief The current cursor Y.
 extern unsigned int console_cursorY;
-#endif
+
+#endif // CONSOLE_H

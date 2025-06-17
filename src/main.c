@@ -12,7 +12,6 @@
 #include <heap.h>
 #include "apps/hello.h"
 #include "apps/reboot.h"
-#include <cpuid.h>
 #include <rand.h>
 #include "apps/info.h"
 #include "apps/shutdown.h"
@@ -196,19 +195,6 @@ void keyboard_after() {
 	print_yes_no(ps2_dual_channel);
 }
 
-void cpuid_after() {
-	print("CPUID: ");
-	print_yes_no(cpuid_exists);
-	if (!cpuid_exists) return;
-
-	print("Vector string: ");
-	print(cpuid_vector_str);
-	print("\nRDRAND: ");
-	print_yes_no(cpuid_features_ecx & CPUID_FEAT_ECX_RDRAND);
-	print("RDSEED: ");
-	print_yes_no(cpuid_rdseed);
-}
-
 #define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
 void print_hex(int val) {
 	char hexChars[] = "0123456789ABCDEF";
@@ -235,8 +221,7 @@ void kernel_main() {
 		{ "IDT", idt_install, component_after_stub },
 		{ "Exception handlers", exception_handlers_install, component_after_stub },
 		{ "Heap", heap_install, component_after_stub },
-		{ "Keyboard", keyboard_install, keyboard_after },
-		{ "CPUID", cpuid_install, cpuid_after }
+		{ "Keyboard", keyboard_install, keyboard_after }
 	};
 	
 	console_init();

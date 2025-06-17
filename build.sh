@@ -12,7 +12,6 @@ ASM_FILES=( \
 	"boot/boot" \
 	"interrupts/idt" \
 	"lib/panic" \
-	"lib/cpuid" \
 	"lib/rand" \
 )
 
@@ -30,7 +29,6 @@ C_FILES=( \
 	"lib/keyboard" \
 	"lib/panic" \
 	"lib/heap" \
-	"lib/cpuid" \
 	"lib/rand" \
 	"apps/info" \
 	"apps/shutdown" \

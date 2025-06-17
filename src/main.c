@@ -135,9 +135,4 @@ void kernel_main() {
 	exception_handlers_init();
 	heap_init();
 	ps2_controller_init();
-
-	// Test keyboard driver
-	while (1) {
-		putchar(getch());
-	}
 }

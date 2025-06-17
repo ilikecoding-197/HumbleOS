@@ -18,28 +18,6 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-typedef struct component_t {
-	char *name;
-	bool (*run)(void);
-	void (*after)(void);
-} component_t;
-
-void component_t_install(component_t component) {
-	print("Installing ");
-	console_set_color(GREEN);
-	print(component.name);
-	console_set_color(LIGHTGRAY);
-	
-	bool result = component.run();
-	print(" [ ");
-	console_set_color(result ? GREEN : RED);
-	print(result ? "OK" : "FAIL");
-	console_set_color(LIGHTGRAY);
-	print(" ]\n");
-
-	component.after();
-}
-
 void draw_box(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
 	put_char_at(x1, y1, '\xda');
 	put_char_at(x2, y1, '\xbf');
@@ -127,44 +105,6 @@ void main_menu() {
 	}
 }
 
-bool pic_install() {
-	pic_init();
-	return true;
-}
-
-bool idt_install() {
-	idt_init();
-	return true;
-}
-
-bool exception_handlers_install() {
-	exception_handlers_init();
-	return true;
-}
-
-bool heap_install() {
-	heap_init();
-	return true;
-}
-
-bool controller_install() {
-	return ps2_controller_init();
-}
-
-void component_after_stub() {}
-
-void print_yes_no(bool val) {
-	if (val) {
-		console_set_color(GREEN);
-		print("Yes\n");
-		console_set_color(LIGHTGRAY);
-	} else {
-		console_set_color(RED);
-		print("No\n");
-		console_set_color(LIGHTGRAY);
-	}
-}
-
 #define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
 void print_hex(int val) {
 	char hexChars[] = "0123456789ABCDEF";
@@ -186,23 +126,18 @@ void print_hex(int val) {
 }
 
 void kernel_main() {
-	component_t components[] = {
-		{ "PIC", pic_install, component_after_stub },
-		{ "IDT", idt_install, component_after_stub },
-		{ "Exception handlers", exception_handlers_install, component_after_stub },
-		{ "Heap", heap_install, component_after_stub },
-		{ "PS2 Controller", controller_install, component_after_stub }
-	};
-	
 	console_init();
 
 	console_set_color(GREEN);
 	print(NAME " v" VERSION "\n");
 	console_set_color(LIGHTGRAY);
 
-	for (unsigned int i = 0; i < sizeof(components)/sizeof(component_t); i++) {
-		component_t_install(components[i]);
-	}
+	// Initalize stuff
+	pic_init();
+	idt_init();
+	exception_handlers_init();
+	heap_init();
+	ps2_controller_init();
 
 	// Test keyboard driver
 	while (1) {

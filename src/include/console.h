@@ -92,4 +92,7 @@ extern unsigned int console_cursorX;
 /// @brief The current cursor Y.
 extern unsigned int console_cursorY;
 
+/// @brief Log something with (for right now) a "[KRNL]" prefix.
+void klog(char *str);
+
 #endif // CONSOLE_H

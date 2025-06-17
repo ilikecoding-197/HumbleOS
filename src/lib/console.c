@@ -167,3 +167,9 @@ char getch() {
 	// We dont have the keyboard driver yet, so just return A
 	return 'A';
 }
+
+void klog(char *str) {
+	print("[KRNL] "); // Print prefix
+	print(str);     // Print string
+	print("\n");     // New line
+}

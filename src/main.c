@@ -127,10 +127,7 @@ void print_hex(int val) {
 
 void kernel_main() {
 	console_init();
-
-	console_set_color(GREEN);
-	print(NAME " v" VERSION "\n");
-	console_set_color(LIGHTGRAY);
+	klog(NAME " v" VERSION "\n");
 
 	// Initalize stuff
 	pic_init();

@@ -229,5 +229,8 @@ void kernel_main() {
 		component_t_install(components[i]);
 	}
 
-	//main_menu();
+	// Test keyboard driver
+	while (1) {
+		putchar(getch());
+	}
 }

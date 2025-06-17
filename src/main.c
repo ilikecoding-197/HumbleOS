@@ -12,7 +12,6 @@
 #include <heap.h>
 #include "apps/hello.h"
 #include "apps/reboot.h"
-#include <rand.h>
 #include "apps/info.h"
 #include "apps/shutdown.h"
 
@@ -154,10 +153,6 @@ bool keyboard_install() {
 	keyboard_install_error = keyboard_init();
 	
 	return keyboard_install_error == KEYBOARD_INIT_SUCCESS;
-}
-
-bool cpuid_install() {
-	return cpuid_init();
 }
 
 void component_after_stub() {}

@@ -13,4 +13,4 @@ Before you build HumbleOS, you need to install some **prerequisites**. To do tha
 Now just build by simply running `bash build.sh`.
 
 # Running
-To run, make sure you have QEMU and start it with the ISo file `build/os.iso`.
+To run, make sure you have QEMU and start it with the ISO file `build/os.iso`.

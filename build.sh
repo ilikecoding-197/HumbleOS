@@ -25,7 +25,7 @@ C_FILES=( \
 	"interrupts/idt" \
 	"lib/pic" \
 	"interrupts/exception_handlers" \
-	"lib/keyboard" \
+	"lib/ps2_controller" \
 	"lib/panic" \
 	"lib/heap" \
 	"apps/info" \

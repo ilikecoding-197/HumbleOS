@@ -2,7 +2,6 @@
 // Purpose: Console functions
 
 #include <console.h>
-#include <keyboard.h>
 #include <port.h>
 #include <stdint.h>
 
@@ -165,7 +164,6 @@ void put_color_at(unsigned int x, unsigned int y, char color) {
 }
 
 char getch() {
-	do {} while (keyboard_buffer_read_ptr == keyboard_buffer_write_ptr); // Wait for buffer
-
-	return keyboard_buffer[(int)keyboard_buffer_read_ptr++]; // Get the character
+	// We dont have the keyboard driver yet, so just return A
+	return 'A';
 }

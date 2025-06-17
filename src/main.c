@@ -5,7 +5,7 @@
 #include <idt.h>
 #include <pic.h>
 #include <exception_handlers.h>
-#include <keyboard.h>
+#include <ps2_controller.h>
 #include <stdbool.h>
 #include <panic.h>
 #include "settings.h"
@@ -147,12 +147,8 @@ bool heap_install() {
 	return true;
 }
 
-int keyboard_install_error;
-
-bool keyboard_install() {
-	keyboard_install_error = keyboard_init();
-	
-	return keyboard_install_error == KEYBOARD_INIT_SUCCESS;
+bool controller_install() {
+	return ps2_controller_init();
 }
 
 void component_after_stub() {}
@@ -167,27 +163,6 @@ void print_yes_no(bool val) {
 		print("No\n");
 		console_set_color(LIGHTGRAY);
 	}
-}
-
-void keyboard_after() {
-	switch (keyboard_install_error) {
-		case KEYBOARD_INIT_SELFTEST_FAIL:
-			console_set_color(RED);
-			print("Error: Selftest failed\n");
-			console_set_color(LIGHTGRAY);
-			return;
-		case KEYBOARD_INIT_NO_PORTS_LEFT:
-			console_set_color(RED);
-			print("Error: No ports left\n");
-			console_set_color(LIGHTGRAY);
-			return;
-	}
-
-	print("First PS/2 port: ");
-	print_yes_no(first_ps2_works);
-
-	print("Second PS/2 port: ");
-	print_yes_no(ps2_dual_channel);
 }
 
 #define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
@@ -216,7 +191,7 @@ void kernel_main() {
 		{ "IDT", idt_install, component_after_stub },
 		{ "Exception handlers", exception_handlers_install, component_after_stub },
 		{ "Heap", heap_install, component_after_stub },
-		{ "Keyboard", keyboard_install, keyboard_after }
+		{ "PS2 Controller", controller_install, component_after_stub }
 	};
 	
 	console_init();

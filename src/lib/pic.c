@@ -1,10 +1,11 @@
 // HumbleOS file: pic.c
 // Purpose: PIC code.
 
-// Not going to explain this code, as I just copied it from OSDev. Sorry :(
+// Not going to explain this code, as I just copied (most) of it from OSDev. Sorry :(
 
 #include <port.h>
 #include <stdint.h>
+#include <console.h>
 
 #define PIC1			0x20
 #define PIC2			0xA0
@@ -69,7 +70,9 @@ void PIC_remap(int offset1, int offset2)
 }
 
 void pic_init() {
+	klog("PIC", "initalizing...");
 	PIC_remap(PIC_OFFSET1, PIC_OFFSET2);
+	klog("PIC", "done");
 }
 
 void IRQ_set_mask(uint8_t IRQline) {

@@ -93,6 +93,6 @@ extern unsigned int console_cursorX;
 extern unsigned int console_cursorY;
 
 /// @brief Log something with (for right now) a "[KRNL]" prefix.
-void klog(char *str);
+void klog(char *section, char *str);
 
 #endif // CONSOLE_H

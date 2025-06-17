@@ -168,8 +168,10 @@ char getch() {
 	return 'A';
 }
 
-void klog(char *str) {
+void klog(char *section, char *str) {
 	print("[KRNL] "); // Print prefix
-	print(str);     // Print string
-	print("\n");     // New line
+	print(section);   // Print section
+	print(": ");      // Print colon
+	print(str);       // Print string
+	print("\n");      // Print newline
 }

@@ -50,11 +50,15 @@ void attach_interrupt(uint8_t irqNum, void (*function)()) {
 }
 
 void idt_init() {
+    klog("IDT", "initializing...");
+
+    klog("IDT", "setting stubs...");
 	for (int i = 0; i < 256; i++) {
 		interrupts[i] = interrupt_stub; // Fill the interupt list with stubs
 	}
 
 	// Set up IDTR
+    klog("IDT", "setting IDTR...");
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
@@ -64,4 +68,6 @@ void idt_init() {
 
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // Load IDT
     __asm__ volatile ("sti");                   // Enable interupts
+
+    klog("IDT", "done");
 }

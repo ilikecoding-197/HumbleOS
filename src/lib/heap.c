@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <console.h>
 
 /*
     2014 Leonard Kevin McGuire Jr (www.kmcg3413.net) (kmcg3413@gmail.com)
@@ -168,5 +169,7 @@ void heap_free(void *ptr) {
 }
 
 void heap_init() {
+	klog("HEAP", "initializing...");
 	k_heapBMInit(&heap_heap);
+	klog("HEAP", "done");
 }

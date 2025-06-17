@@ -81,9 +81,11 @@ void exception() {
 }
 
 void exception_handlers_init() {
+	klog("EXCEPT", "initializing...");
 	for (int i = 0; i < 32; i++) {
 		if (exceptions[i] == NULL) continue;
 
 		attach_interrupt(i, exception);
 	}
+	klog("EXCEPT", "done");
 }

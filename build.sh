@@ -16,8 +16,6 @@ ASM_FILES=( \
 
 # Our C files
 C_FILES=( \
-	"apps/hello" \
-	"apps/reboot" \
 	"main" \
 	"boot/gdt" \
 	"lib/console" \
@@ -28,8 +26,6 @@ C_FILES=( \
 	"lib/ps2_controller" \
 	"lib/panic" \
 	"lib/heap" \
-	"apps/info" \
-	"apps/shutdown" \
 	"lib/string" \
 )
 

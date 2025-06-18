@@ -2,7 +2,7 @@
 // Purpose: Header file for console
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <ints.h>
 
 #ifndef CONSOLE_H
 #define CONSOLE_H
@@ -31,11 +31,11 @@
 /// @brief Move console cursor.
 /// @param x The X position to move to. (0-79)
 /// @param y The Y position to move to. (0-24)
-void console_move_cursor(unsigned int x, unsigned int y);
+void console_move_cursor(uint x, uint y);
 
 /// @brief Scroll up the screen.
 /// @param amt Amount to scroll up by.
-void console_scroll_up(unsigned int amt);
+void console_scroll_up(uint amt);
 
 /// @brief Handle a carriage return.
 void console_handle_carriage_return();
@@ -48,7 +48,7 @@ void console_handle_newline();
 
 /// @brief Set the color of the console,
 /// @param colorToSet The color to set to.
-void console_set_color(uint8_t colorToSet);
+void console_set_color(u8 colorToSet);
 
 /// @brief Update the cursor.
 void console_update_cursor();
@@ -80,22 +80,22 @@ void console_clear_screen();
 /// @param x X position. (0-79)
 /// @param y Y position. (0-24)
 /// @param ch Character to place.
-void put_char_at(unsigned int x, unsigned int y, char ch);
+void put_char_at(uint x, uint y, char ch);
 
 /// @brief Put a color at a certain position.
 /// @param x X position. (0-79)
 /// @param y Y position. (0-24)
 /// @param color Color to place.
-void put_color_at(unsigned int x,unsigned int y,char color);
+void put_color_at(uint x, uint y,char color);
 
 /// @brief Get a character from the user
 char getch();
 
 /// @brief The current cursor X.
-extern unsigned int console_cursorX;
+extern uint console_cursorX;
 
 /// @brief The current cursor Y.
-extern unsigned int console_cursorY;
+extern uint console_cursorY;
 
 /// @brief Log something with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.
 void klog(char *section, char *str);

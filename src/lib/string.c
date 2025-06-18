@@ -3,7 +3,7 @@
 
 #include <string.h>
 #include <stddef.h>
-#include <stdint.h>
+#include <ints.h>
 #include <heap.h>
 
 void memcpy(char *destination, const char *source, size_t num) {
@@ -25,7 +25,7 @@ size_t strlen(char *str) {
 void strcpy(char *dest, char *src) {
     size_t len = strlen(src); // Get length
 
-    for (unsigned int i = 0; i < (unsigned int)len; i++) {
+    for (uint i = 0; i < (uint)len; i++) {
         dest[i] = src[i]; // Copy each byte
     }
 }

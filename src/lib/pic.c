@@ -4,7 +4,7 @@
 // Not going to explain this code, as I just copied (most) of it from OSDev. Sorry :(
 
 #include <port.h>
-#include <stdint.h>
+#include <ints.h>
 #include <console.h>
 
 #define PIC1			0x20
@@ -32,7 +32,7 @@
 #define PIC_READ_IRR                0x0a
 #define PIC_READ_ISR                0x0b
 
-void PIC_sendEOI(uint8_t irq)
+void PIC_sendEOI(u8 irq)
 {
 	if(irq >= 8)
 		outb(PIC2_COMMAND,PIC_EOI);
@@ -42,7 +42,7 @@ void PIC_sendEOI(uint8_t irq)
 
 void PIC_remap(int offset1, int offset2)
 {
-	uint8_t a1, a2;
+	u8 a1, a2;
 	
 	a1 = inb(PIC1_DATA);
 	a2 = inb(PIC2_DATA);
@@ -75,9 +75,9 @@ void pic_init() {
 	klog("PIC", "done");
 }
 
-void IRQ_set_mask(uint8_t IRQline) {
-    uint16_t port;
-    uint8_t value;
+void IRQ_set_mask(u8 IRQline) {
+    u16 port;
+    u8 value;
 
     if(IRQline < 8) {
         port = PIC1_DATA;
@@ -89,9 +89,9 @@ void IRQ_set_mask(uint8_t IRQline) {
     outb(port, value);        
 }
 
-void IRQ_clear_mask(uint8_t IRQline) {
-    uint16_t port;
-    uint8_t value;
+void IRQ_clear_mask(u8 IRQline) {
+    u16 port;
+    u8 value;
 
     if(IRQline < 8) {
         port = PIC1_DATA;

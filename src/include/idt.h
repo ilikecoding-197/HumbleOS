@@ -1,7 +1,7 @@
 /// HumbleOS file: idt.h
 /// Purpose: Header file for idt
 
-#include <stdint.h>
+#include <ints.h>
 
 #ifndef IDT_H
 #define IDT_H
@@ -15,6 +15,6 @@ typedef void (*interrupt_function)();
 /// @brief Attach an interrupt.
 /// @param irq The IRQ to attach to,
 /// @param function Function to attach.
-void attach_interrupt(uint8_t irq, interrupt_function function);
+void attach_interrupt(u8 irq, interrupt_function function);
 
 #endif

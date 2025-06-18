@@ -2,14 +2,14 @@
 // Purpose: Code for cpuid.h
 
 #include <cpuid.h>
-#include <stdint.h>
+#include <ints.h>
 #include <panic.h>
 #include <console.h>
 
 // Variables for cpuid.asm (and from)
-uint32_t _cpuid_feat_ecx;
-uint32_t _cpuid_feat_edx;
-extern uint8_t _cpuid_supported;
+u32 _cpuid_feat_ecx;
+u32 _cpuid_feat_edx;
+extern u8 _cpuid_supported;
 
 void cpuid_init() {
     klog("CPUID", "checking for cpuid...");

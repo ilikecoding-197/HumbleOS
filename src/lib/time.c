@@ -4,10 +4,11 @@
 #include <time.h>
 #include <console.h>
 #include <idt.h>
+#include <ints.h>
 
-int time_ms;
-int time_can_use_for_klog = 0;
-int time_sleep_ms_start;
+uint time_ms;
+uint time_can_use_for_klog = 0;
+uint time_sleep_ms_start;
 
 void time_interrupt() {
     time_ms++;

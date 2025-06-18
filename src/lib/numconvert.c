@@ -3,11 +3,12 @@
 
 #include <numconvert.h>
 #include <string.h>
+#include <ints.h>
 
 const char NUMCONVERT_BASE_CHARS[] = "0123456789ABCDEF";
 const char NUMCONVERT_ERROR[] = "?";
 
-unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int pad) {
+uint num_to_str(int num, char *buffer, uint base, uint pad) {
     // Check for invalid base
     if (base < 2 || base > 16) {
         strcpy(buffer, (char *) NUMCONVERT_ERROR);
@@ -19,7 +20,7 @@ unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int p
         pad = 1;
     }
 
-    unsigned int i = 0;
+    uint i = 0;
 
     // Check sign
     if (num < 0) {
@@ -29,7 +30,7 @@ unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int p
 
     // Convert that number!
     int temp = num;
-    unsigned int start = i;
+    uint start = i;
     
     // Get digits in reverse order
     while (temp > 0) {
@@ -43,7 +44,7 @@ unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int p
     }
 
     // Reverse the digits
-    unsigned int end = i - 1;
+    uint end = i - 1;
     while (start < end) {
         char temp = buffer[start];
         buffer[start] = buffer[end];

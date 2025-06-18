@@ -1,7 +1,7 @@
 // HumbleOS file: heap.h
 // Purpose: Header file for heap. 
 
-#include <stdint.h>
+#include <ints.h>
 
 #ifndef HEAP_H
 #define HEAP_H
@@ -9,7 +9,7 @@
 /// @brief Dynamically allocate some memory.
 /// @param size Amount to allocate.
 /// @return On fail, returns NULL, else the pointer to the memory.
-void *heap_malloc(uint32_t size);
+void *heap_malloc(u32 size);
 
 /// @brief Free a heap pointer.
 /// @param ptr Pointer to free. If NULL, return. If not a heap pointer, who knows what will happen.

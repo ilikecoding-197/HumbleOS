@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <ints.h>
 #include <console.h>
 #include <panic.h>
 #include <stddef.h>
@@ -6,16 +6,16 @@
 /*
     2014 Leonard Kevin McGuire Jr (www.kmcg3413.net) (kmcg3413@gmail.com)
     2016 Clément Gallet (provided bug fixes)
-    2024 ilikecoding-197 (added into HumbleOS)
+    2024 ilikecoding-197 (added into HumbleOS, changed int types to our own)
 */
 
 // CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
 typedef struct _KHEAPBLOCKBM {
 	struct _KHEAPBLOCKBM *next;
-	uint32_t              size;
-	uint32_t              used;
-	uint32_t              bsize;
-    uint32_t              lfb;
+	u32              size;
+	u32              used;
+	u32              bsize;
+    u32              lfb;
 } KHEAPBLOCKBM;
 
 typedef struct _KHEAPBM {
@@ -26,11 +26,11 @@ void k_heapBMInit(KHEAPBM *heap) {
 	heap->fblock = 0;
 }
 
-int k_heapBMAddBlock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsize) {
+int k_heapBMAddBlock(KHEAPBM *heap, uintptr_t addr, u32 size, u32 bsize) {
 	KHEAPBLOCKBM		*b;
-	uint32_t				bcnt;
-	uint32_t				x;
-	uint8_t				*bm;
+	u32				bcnt;
+	u32				x;
+	u8				*bm;
 	
 	b = (KHEAPBLOCKBM*)addr;
 	b->size = size - sizeof(KHEAPBLOCKBM);
@@ -40,7 +40,7 @@ int k_heapBMAddBlock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsiz
 	heap->fblock = b;
 
 	bcnt = b->size / b->bsize;
-	bm = (uint8_t*)&b[1];
+	bm = (u8*)&b[1];
 	
 	/* clear bitmap */
 	for (x = 0; x < bcnt; ++x) {
@@ -60,19 +60,19 @@ int k_heapBMAddBlock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsiz
 	return 1;
 }
 
-static uint8_t k_heapBMGetNID(uint8_t a, uint8_t b) {
-	uint8_t		c;	
+static u8 k_heapBMGetNID(u8 a, u8 b) {
+	u8		c;	
 	for (c = a + 1; c == b || c == 0; ++c);
 	return c;
 }
 
-void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
+void *k_heapBMAlloc(KHEAPBM *heap, u32 size) {
 	KHEAPBLOCKBM		*b;
-	uint8_t				*bm;
-	uint32_t				bcnt;
-	uint32_t				x, y, z;
-	uint32_t				bneed;
-	uint8_t				nid;
+	u8				*bm;
+	u32				bcnt;
+	u32				x, y, z;
+	u32				bneed;
+	u8				nid;
 
 	/* iterate blocks */
 	for (b = heap->fblock; b; b = b->next) {
@@ -81,7 +81,7 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 			
 			bcnt = b->size / b->bsize;		
 			bneed = (size / b->bsize) * b->bsize < size ? size / b->bsize + 1 : size / b->bsize;
-			bm = (uint8_t*)&b[1];
+			bm = (u8*)&b[1];
 			
 			for (x = (b->lfb + 1 >= bcnt ? 0 : b->lfb + 1); x < bcnt; ++x) {
 				if (bm[x] == 0) {	
@@ -121,10 +121,10 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 void k_heapBMFree(KHEAPBM *heap, void *ptr) {
 	KHEAPBLOCKBM		*b;	
 	uintptr_t				ptroff;
-	uint32_t				bi, x;
-	uint8_t				*bm;
-	uint8_t				id;
-	uint32_t				max;
+	u32				bi, x;
+	u8				*bm;
+	u8				id;
+	u32				max;
 	
 	for (b = heap->fblock; b; b = b->next) {
 		if ((uintptr_t)ptr > (uintptr_t)b && (uintptr_t)ptr < (uintptr_t)b + sizeof(KHEAPBLOCKBM) + b->size) {
@@ -133,7 +133,7 @@ void k_heapBMFree(KHEAPBM *heap, void *ptr) {
 			/* block offset in BM */
 			bi = ptroff / b->bsize;
 			/* .. */
-			bm = (uint8_t*)&b[1];
+			bm = (u8*)&b[1];
 			/* clear allocation */
 			id = bm[bi];
 			/* oddly.. GCC did not optimize this */
@@ -163,7 +163,7 @@ KHEAPBM heap_heap;
 
 char heap_heap_memory[HEAP_SIZE] __attribute__((aligned(16)));
 
-void *heap_malloc(uint32_t size) {
+void *heap_malloc(u32 size) {
 	return k_heapBMAlloc(&heap_heap, size);
 }
 
@@ -178,7 +178,7 @@ void heap_init() {
 	klog("HEAP", "done");
 }
 
-void *_kmalloc(uint32_t size, char *file, char *line) {
+void *_kmalloc(u32 size, char *file, char *line) {
 	void *ptr = heap_malloc(size);
 	if (ptr == NULL) {
 		__asm__ __volatile__ ("call panic_save_regs");

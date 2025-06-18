@@ -3,7 +3,7 @@
 
 #include <console.h>
 #include <port.h>
-#include <stdint.h>
+#include <ints.h>
 #include <time.h>
 #include <numconvert.h>
 #include <stdarg.h>
@@ -16,13 +16,13 @@
 /// @brief The VGA buffer.
 char *console_vgaBuff = (char *)0xB8000;
 
-unsigned int console_cursorX;
-unsigned int console_cursorY;
+uint console_cursorX;
+uint console_cursorY;
 
 /// @brief Console color.
-uint8_t console_color;
+u8 console_color;
 
-void console_move_cursor(unsigned int x, unsigned int y)
+void console_move_cursor(uint x, uint y)
 {
 	x = (x > VGA_WIDTH - 1 ? VGA_WIDTH - 1 : x);   // Limit X
 	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
@@ -33,16 +33,16 @@ void console_move_cursor(unsigned int x, unsigned int y)
 	console_update_cursor(); // update cursor
 }
 
-void console_scroll_up(unsigned int amt)
+void console_scroll_up(uint amt)
 {
 	if (amt == 0 || amt >= VGA_HEIGHT)
 		return; // If amount is out of bounds, it does nothing.
 
 	// Scroll everything up
-	for (unsigned int row = amt; row < VGA_HEIGHT; row++)
+	for (uint row = amt; row < VGA_HEIGHT; row++)
 	{
 		// For each column
-		for (unsigned int col = 0; col < VGA_WIDTH; col++)
+		for (uint col = 0; col < VGA_WIDTH; col++)
 		{
 			console_vgaBuff[((row - amt) * VGA_WIDTH + col) * 2] = console_vgaBuff[(row * VGA_WIDTH + col) * 2];		 // Character
 			console_vgaBuff[((row - amt) * VGA_WIDTH + col) * 2 + 1] = console_vgaBuff[(row * VGA_WIDTH + col) * 2 + 1]; // Color
@@ -50,10 +50,10 @@ void console_scroll_up(unsigned int amt)
 	}
 
 	// Clear bottom lines
-	for (unsigned int row = VGA_HEIGHT - amt; row < VGA_HEIGHT; row++)
+	for (uint row = VGA_HEIGHT - amt; row < VGA_HEIGHT; row++)
 	{
 		// For each column
-		for (unsigned int col = 0; col < VGA_WIDTH; col++)
+		for (uint col = 0; col < VGA_WIDTH; col++)
 		{
 			console_vgaBuff[(col + row * VGA_WIDTH) * 2] = ' ';				  // Space (blank character)
 			console_vgaBuff[(col + row * VGA_WIDTH) * 2 + 1] = console_color; // Color
@@ -85,19 +85,19 @@ void console_handle_newline()
 	console_handle_line_feed();		  // ...and line feed
 }
 
-void console_set_color(uint8_t colorToSet)
+void console_set_color(u8 colorToSet)
 {
 	console_color = colorToSet; // Set the color
 }
 
 void console_update_cursor()
 {
-	uint16_t pos = console_cursorY * VGA_WIDTH + console_cursorX; // Get position of cursor
+	u16 pos = console_cursorY * VGA_WIDTH + console_cursorX; // Get position of cursor
 
 	outb(0x3D4, 0x0F);						   // Low byte command
-	outb(0x3D5, (uint8_t)(pos & 0xFF));		   // Low byte
+	outb(0x3D5, (u8)(pos & 0xFF));		   // Low byte
 	outb(0x3D4, 0x0E);						   // High byte command
-	outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF)); // High byte
+	outb(0x3D5, (u8)((pos >> 8) & 0xFF)); // High byte
 }
 
 void console_advance_cursor(int amt)
@@ -138,7 +138,7 @@ void putchar(char c)
 			putchar(' '); // 4 spaces for tab
 		break;
 	default:
-		uint16_t pos = ((console_cursorY * VGA_WIDTH) + console_cursorX) * 2; // Calcuate Position
+		u16 pos = ((console_cursorY * VGA_WIDTH) + console_cursorX) * 2; // Calcuate Position
 		console_vgaBuff[pos] = c;											  // Set character
 		console_vgaBuff[pos + 1] = console_color;							  // Set color
 
@@ -173,21 +173,21 @@ void console_clear_screen()
 	console_move_cursor(0, 0); // Update cursor
 }
 
-void put_char_at(unsigned int x, unsigned int y, char ch)
+void put_char_at(uint x, uint y, char ch)
 {
 	x = (x > VGA_WIDTH - 1 ? VGA_WIDTH - 1 : x);   // Limit X
 	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
 
-	uint16_t pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
+	u16 pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
 	console_vgaBuff[pos] = ch;				// Set character
 }
 
-void put_color_at(unsigned int x, unsigned int y, char color)
+void put_color_at(uint x, uint y, char color)
 {
 	x = (x > VGA_WIDTH - 1 ? VGA_WIDTH - 1 : x);   // Limit X
 	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
 
-	uint16_t pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
+	u16 pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
 	console_vgaBuff[pos + 1] = color;		// Set color
 }
 

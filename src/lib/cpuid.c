@@ -21,4 +21,7 @@ void cpuid_init() {
     klog("CPUID", "cpuid is supported, getting features...");
     __asm__ ("call _cpuid_get_features");
     klog("CPUID", "features gotten.");
+
+    klogf("CPUID", "ECX: %x", _cpuid_feat_ecx);
+    klogf("CPUID", "EDX: %x", _cpuid_feat_edx);
 }

@@ -277,9 +277,9 @@ void _printf(char *fmt, va_list args)
 			}
 			case 'x':
 			{
-				int i = va_arg(args, int);		  // Get the integer
+				uint i = va_arg(args, uint);		  // Get the integer
 				char buf[GET_MAX_CHARS_BASE(16)]; // Create a buffer
-				num_to_str(i, buf, 16, 0);		  // Convert it to a string
+				unsigned_num_to_str(i, buf, 16, 0);		  // Convert it to a string
 				print(buf);						  // Print it
 				continue;
 			}

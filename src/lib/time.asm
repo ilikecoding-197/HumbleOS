@@ -105,3 +105,5 @@ init_PIT:
  
     popad
     ret
+
+section .note.GNU-stack ; Stop LD from complaining

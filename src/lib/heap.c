@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <console.h>
+#include <panic.h>
+#include <stddef.h>
 
 /*
     2014 Leonard Kevin McGuire Jr (www.kmcg3413.net) (kmcg3413@gmail.com)
@@ -8,7 +10,7 @@
 */
 
 // CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
-// Not explaining it as.... Its not mine. Its their fault they didnt comment.
+
 typedef struct _KHEAPBLOCKBM {
 	struct _KHEAPBLOCKBM *next;
 	uint32_t              size;
@@ -82,12 +84,13 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 			bneed = (size / b->bsize) * b->bsize < size ? size / b->bsize + 1 : size / b->bsize;
 			bm = (uint8_t*)&b[1];
 			
-			for (x = (b->lfb + 1 >= bcnt ? 0 : b->lfb + 1); x < b->lfb; ++x) {
-				/* just wrap around */
-				if (x >= bcnt) {
-					x = 0;
-				}		
 
+
+
+
+
+
+			for (x = (b->lfb + 1 >= bcnt ? 0 : b->lfb + 1); x < bcnt; ++x) {
 				if (bm[x] == 0) {	
 					/* count free blocks */
 					for (y = 0; bm[x + y] == 0 && y < bneed && (x + y) < bcnt; ++y);
@@ -95,7 +98,8 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 					/* we have enough, now allocate them */
 					if (y == bneed) {
 						/* find ID that does not match left or right */
-						nid = k_heapBMGetNID(bm[x - 1], bm[x + y]);
+
+						nid = k_heapBMGetNID(x > 0 ? bm[x - 1] : 0, (x + y) < bcnt ? bm[x + y] : 0);
 						
 						/* allocate by setting id */
 						for (z = 0; z < y; ++z) {
@@ -103,7 +107,8 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 						}
 						
 						/* optimization */
-						b->lfb = (x + bneed) - 2;
+
+						b->lfb = x;
 						
 						/* count used blocks NOT bytes */
 						b->used += y;
@@ -150,15 +155,22 @@ void k_heapBMFree(KHEAPBM *heap, void *ptr) {
 			return;
 		}
 	}
-	
-	/* this error needs to be raised or reported somehow */
-	return;
+
+
+
 }
 
 // END OF CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
 
 // Wrapper functions
 KHEAPBM heap_heap;
+
+// I really know we should use real memory management, but who cares? We won't need that much
+// memory in HumbleOS anyway, (1MB is way more than enough).
+#define BLOCK_SIZE 16
+#define HEAP_SIZE 1000000
+
+char heap_heap_memory[HEAP_SIZE] __attribute__((aligned(16)));
 
 void *heap_malloc(uint32_t size) {
 	return k_heapBMAlloc(&heap_heap, size);
@@ -171,5 +183,15 @@ void heap_free(void *ptr) {
 void heap_init() {
 	klog("HEAP", "initializing...");
 	k_heapBMInit(&heap_heap);
+	k_heapBMAddBlock(&heap_heap, (uintptr_t)&heap_heap_memory, HEAP_SIZE, BLOCK_SIZE);
 	klog("HEAP", "done");
+}
+
+void *_kmalloc(uint32_t size, char *file, char *line) {
+	void *ptr = heap_malloc(size);
+	if (ptr == NULL) {
+		__asm__ __volatile__ ("call panic_save_regs");
+		panic_panic("could not malloc in kernel - memory out", file, line);
+	}
+	return ptr;
 }

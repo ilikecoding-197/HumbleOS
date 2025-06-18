@@ -18,4 +18,10 @@ void heap_free(void *ptr);
 /// @brief Initalize Heap.
 void heap_init();
 
+#define _STR(x) #x
+#define STR(x) _STR(x)
+
+#define kmalloc(size) _kmalloc(size, __FILE__, STR(__LINE__))
+#define kfree(ptr) heap_free(ptr)
+
 #endif // HEAP_H

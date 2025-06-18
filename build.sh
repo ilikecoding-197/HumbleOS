@@ -52,6 +52,7 @@ for i in "${ASM_FILES[@]}"
 do
    LD_INPUT="$LD_INPUT $BUILD_DIR/asm/$i.o"
    mkdir -p $BUILD_DIR/asm/$(dirname $i)
+   echo nasm -o $BUILD_DIR/asm/$i.o $SRC_DIR/$i.asm -felf32
    nasm -o $BUILD_DIR/asm/$i.o $SRC_DIR/$i.asm -felf32
 done
 
@@ -61,19 +62,23 @@ for i in "${C_FILES[@]}"
 do
    LD_INPUT="$LD_INPUT $BUILD_DIR/c/$i.o"
    mkdir -p $BUILD_DIR/c/$(dirname $i)
+   echo gcc -o $BUILD_DIR/c/$i.o $SRC_DIR/$i.c $GCC_ARGS
    gcc -o $BUILD_DIR/c/$i.o $SRC_DIR/$i.c $GCC_ARGS
 done
 
 # Link
 echo "LD..."
+echo ld $LD_ARGS $LD_INPUT
 ld $LD_ARGS $LD_INPUT
 
 # Strip
 echo "STRIP..."
+echo strip $ISO_DIR/boot/$KERNEL
 strip $ISO_DIR/boot/$KERNEL
 
 # Grub ISO
 echo "ISO..."
-grub-mkrescue -o build/os.iso $ISO_DIR
+echo grub-mkrescue -o build/os.iso $ISO_DIR
+grub-mkrescue -o build/os.iso $ISO_DIR -quiet
 
 echo "Compiling done."

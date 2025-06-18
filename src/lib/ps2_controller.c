@@ -4,7 +4,7 @@
 #include <ps2_controller.h>
 #include <stdint.h>
 #include <port.h>
-
+#include <console.h>
 
 // Ports
 #define CONTROLLER_DATA_PORT 0x60

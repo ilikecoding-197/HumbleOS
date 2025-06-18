@@ -10,7 +10,7 @@ const char NUMCONVERT_ERROR[] = "?";
 unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int pad) {
     // Check for invalid base
     if (base < 2 || base > 16) {
-        strcpy(buffer, NUMCONVERT_ERROR);
+        strcpy(buffer, (char *) NUMCONVERT_ERROR);
         return 2;
     }
 
@@ -19,7 +19,7 @@ unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int p
         pad = 1;
     }
 
-    int i = 0;
+    unsigned int i = 0;
 
     // Check sign
     if (num < 0) {
@@ -29,7 +29,7 @@ unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int p
 
     // Convert that number!
     int temp = num;
-    int start = i;
+    unsigned int start = i;
     
     // Get digits in reverse order
     while (temp > 0) {
@@ -43,7 +43,7 @@ unsigned int num_to_str(int num, char *buffer, unsigned int base, unsigned int p
     }
 
     // Reverse the digits
-    int end = i - 1;
+    unsigned int end = i - 1;
     while (start < end) {
         char temp = buffer[start];
         buffer[start] = buffer[end];

@@ -37,8 +37,9 @@ void _panic_print_hex(int val) {
 	print(buffer); // Print it
 }
 
-__attribute__((noreturn)) void panic_panic(char *msg) {
+__attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line) {
 	// Header
+	console_clear_screen();
 	console_set_color(RED);
 	print("!!! KERNEL PANIC !!!\n");
 	console_set_color(LIGHTGRAY);
@@ -68,7 +69,11 @@ __attribute__((noreturn)) void panic_panic(char *msg) {
 	// Footer
 	print("Reason: ");
 	print(msg);
-	print("\nSystem will now ");
+	print("\nHappened in C file ");
+	print(file);
+	print(" at line ");
+	print(line);
+	print(".\nSystem will now ");
 	console_set_color(RED);
 	print("halt.");
 

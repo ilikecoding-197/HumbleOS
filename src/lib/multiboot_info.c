@@ -13,7 +13,7 @@ struct multiboot_tag *multiboot_info_get_tag(uint32_t type) {
         if (tag->type == type) {
             return tag;
         }
-        tag = (struct multiboot_tag *)((uint8_t *)tag + tag->size);
+        tag = (struct multiboot_tag *)((uint8_t *)tag + ((tag->size + 7) & ~7));
     }
     return NULL;
 }
@@ -23,7 +23,7 @@ void *multiboot_info_get_tag_data(uint32_t type) {
     if (tag == NULL) {
         return NULL;
     }
-    return (void *)((uint8_t *)tag + sizeof(struct multiboot_tag));
+    return (void *)((uint8_t *)tag + 8);
 }
 
 int multiboot_info_get_tag_size(uint32_t type) {
@@ -31,5 +31,5 @@ int multiboot_info_get_tag_size(uint32_t type) {
     if (tag == NULL) {
         return 0;
     }
-    return tag->size - sizeof(struct multiboot_tag);
+    return tag->size - 8;
 }

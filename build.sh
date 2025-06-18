@@ -31,6 +31,7 @@ C_FILES=( \
 	"lib/time" \
 	"lib/numconvert" \
 	"lib/multiboot_info" \
+	"lib/sys_info" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

@@ -3,7 +3,7 @@
 
 section .multiboot_header ; The header has its own section
 
-%define MAGIC 0xe85250d6 ; Nagic code for multiboot
+%define MAGIC 0xe85250d6 ; Magic code for multiboot
 %define CODE 0 ; Protected mode code
 %define HEADER_LENGTH (header_end - header_start) ; Length of header
 header_start:

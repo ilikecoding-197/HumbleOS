@@ -100,6 +100,9 @@ extern unsigned int console_cursorY;
 /// @brief Log something with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.
 void klog(char *section, char *str);
 
+/// @brief Print the prefix for klog.
+void klog_prefix(char *section);
+
 /// @brief Log a formatted string with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.
 void klogf(char *section, char *format, ...);
 

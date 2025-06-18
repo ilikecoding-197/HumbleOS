@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <numconvert.h>
+#include <stdarg.h>
 
 // Constants
 #define VGA_WIDTH 80
@@ -170,8 +171,8 @@ char getch() {
 	return 'A';
 }
 
-void klog(char *section, char *str) {
-	if (!time_can_use_for_klog) {
+void _console_klog_prefix() {
+if (!time_can_use_for_klog) {
 		print("[KRNL] "); // Print prefix
 	} else {
 		// I want to print the time in seconds ([sec].[ms]). So, we extract the seconds and milliseconds:
@@ -191,8 +192,69 @@ void klog(char *section, char *str) {
 		print(ms_buf);
 		print("s] ");
 	}
+}
+
+void klog(char *section, char *str) {
+	_console_klog_prefix();
+
 	print(section);   // Print section
 	print(": ");      // Print colon
 	print(str);       // Print string
 	print("\n");      // Print newline
+}
+
+void _printf(char *fmt, va_list args) {
+	for (char *cPtr = fmt; *cPtr; cPtr++) { // Loop through characters
+		char c = *cPtr; // Get the character
+
+		// Check for %
+		if (c == '%') {
+			cPtr++; // Advance
+			c = *cPtr; // Get the character
+			if (c == 0) { return; } // NUL
+			switch (c) {
+			case '%':
+				putchar('%'); // Print %
+				continue;
+			case 's': {
+				char *str = va_arg(args, char *); // Get the string
+				print(str); // Print it
+				continue;
+			}
+			case 'c': {
+				char c = va_arg(args, int); // Get the character
+				putchar(c); // Print it
+				continue;
+			}
+			case 'd': {
+				int i = va_arg(args, int); // Get the integer
+				char buf[GET_MAX_CHARS_BASE(10)]; // Create a buffer
+				num_to_str(i, buf, 10, 0); // Convert it to a string
+				print(buf); // Print it
+				continue;
+			}
+			}
+		}
+
+		putchar(c); // Print it
+	}
+}
+
+void printf(char *fmt, ...) {
+	va_list args; // Create a list of arguments
+	va_start(args, fmt); // Start it
+	_printf(fmt, args); // Print it
+	va_end(args); // End it
+}
+
+void klogf(char *section, char *fmt, ...) {
+	_console_klog_prefix();
+
+	print(section);   // Print section
+	print(": ");      // Print colon
+	
+	va_list args; // Create a list of arguments
+	va_start(args, fmt); // Start it
+	_printf(fmt, args); // Print it
+	va_end(args); // End it
 }

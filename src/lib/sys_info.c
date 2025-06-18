@@ -13,9 +13,5 @@ void sys_info_gather() {
 
     // Bootloader name
     sys_info.bootloaderName = multiboot_info_get_tag_data(MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME);
-    char buffer[100];
-    const char *BOOTLOADER_PREFIX = "bootloader name: ";
-    strcpy(buffer, BOOTLOADER_PREFIX);
-    strcpy(buffer+strlen(BOOTLOADER_PREFIX), sys_info.bootloaderName);
-    klog("sys_info", buffer);
+    klogf("sys_info", "bootloader name: %s", sys_info.bootloaderName);
 }

@@ -65,6 +65,11 @@ void putchar(char c);
 /// @param str What string to print
 void print(char *str);
 
+/// @brief Print a formatted string to the console.
+/// @param format The format string.
+/// @param ... The arguments.
+void printf(char *format, ...);
+
 /// @brief Initalize the console
 void console_init();
 
@@ -92,7 +97,10 @@ extern unsigned int console_cursorX;
 /// @brief The current cursor Y.
 extern unsigned int console_cursorY;
 
-/// @brief Log something with (for right now) a "[KRNL]" prefix.
+/// @brief Log something with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.
 void klog(char *section, char *str);
+
+/// @brief Log a formatted string with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.
+void klogf(char *section, char *format, ...);
 
 #endif // CONSOLE_H

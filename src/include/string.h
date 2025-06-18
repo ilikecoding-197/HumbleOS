@@ -24,7 +24,7 @@ void strcpy(char *destination, char *source);
 
 /// @brief Duplicate a string.
 /// @param str The string to duplicate.
-/// @return Returns NULL on failure, copyied string if no.
+/// @return Returns NULL on failure, copyied string if not.
 char *strdup(char *str);
 
 #endif

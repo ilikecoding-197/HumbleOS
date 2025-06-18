@@ -25,4 +25,10 @@ void kernel_main() {
 	heap_init();
 	ps2_controller_init();
 	klog("main", "done!");
+
+	// sleep test
+	while (1) {
+		klog("main", "10ms");
+		sleep(10);
+	}
 }

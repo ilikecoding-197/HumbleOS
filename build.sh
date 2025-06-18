@@ -29,6 +29,7 @@ C_FILES=( \
 	"lib/heap" \
 	"lib/string" \
 	"lib/time" \
+	"lib/numconvert" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

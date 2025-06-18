@@ -5,6 +5,7 @@
 #include <port.h>
 #include <stdint.h>
 #include <time.h>
+#include <numconvert.h>
 
 // Constants
 #define VGA_WIDTH 80
@@ -173,33 +174,22 @@ void klog(char *section, char *str) {
 	if (!time_can_use_for_klog) {
 		print("[KRNL] "); // Print prefix
 	} else {
-		// We need to convert time_ms to a string. Right now, we dont have number
-		// to string functions. So I've decided to just do that conversion here for now
-		char buf[11]; // Just enough space for a 10 digit number (the biggest size of int)
-		int temp = time_ms;
-		int i = 0;
-		if (temp == 0) {
-			buf[i] = '0'; // Add a 0
-			i++; // Increment i
-		}
-		while (temp > 0) {
-			buf[i] = (temp % 10) + '0'; // Add the last digit
-			temp /= 10; // Remove the last digit
-			i++; // Increment i
-		}
-		buf[i] = '\0'; // Add null terminator
+		// I want to print the time in seconds ([sec].[ms]). So, we extract the seconds and milliseconds:
+		int seconds = time_ms / 1000;
+		int ms = time_ms % 1000;
 
-		// Reverse the string
-		for (int i = 0; i < strlen(buf)/2; i++) {
-			char temp = buf[i];
-			buf[i] = buf[strlen(buf)-i-1];
-			buf[strlen(buf)-i-1] = temp;
-		}
+		// Convert them to strings
+		char seconds_buf[GET_MAX_CHARS_BASE(10)];
+		char ms_buf[GET_MAX_CHARS_BASE(10)];
+		num_to_str(seconds, seconds_buf, 10, 0);
+		num_to_str(ms, ms_buf, 10, 3);
 
 		// Print it
 		print("[");
-		print(buf);
-		print("ms] ");
+		print(seconds_buf);
+		print(".");
+		print(ms_buf);
+		print("s] ");
 	}
 	print(section);   // Print section
 	print(": ");      // Print colon

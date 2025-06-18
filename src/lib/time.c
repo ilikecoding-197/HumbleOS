@@ -16,7 +16,6 @@ void time_interrupt() {
 void time_init() {
     klog("time", "initalizing time");
     time_ms = 0;
-    time_can_use_for_klog = 1;
 
     // We will use the PIT to get the time, at a rate of 1000Hz (every millisecond the 
     // time_interrupt function will be called to increate time_ms)
@@ -28,7 +27,8 @@ void time_init() {
     // Set up the interrupt handler for the PIT
     klog("time", "setting up time interrupt");
     attach_interrupt(32, time_interrupt);
-    klog("time", "done!");
+    klog("time", "done! kernel log messages can now use the time");
+    time_can_use_for_klog = 1;
 }
 
 void sleep(int ms) {

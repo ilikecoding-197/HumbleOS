@@ -37,4 +37,6 @@ void *multiboot_info_get_tag_data(uint32_t type);
 /// @return The size of the tag, or 0 if not found
 int multiboot_info_get_tag_size(uint32_t type);
 
+#define MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME 2
+
 #endif // MULTIBOOT_INFO_H

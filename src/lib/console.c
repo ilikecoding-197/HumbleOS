@@ -209,7 +209,8 @@ void klog_prefix(char *section)
 		int seconds = time_ms / 1000;
 		int ms = time_ms % 1000;
 
-		// Convert them to strings
+		// Convert them to strings (we still have to do this instead of printf, cuz printf doesn't have
+		// padding options yet)
 		char seconds_buf[GET_MAX_CHARS_BASE(10)];
 		char ms_buf[GET_MAX_CHARS_BASE(10)];
 		num_to_str(seconds, seconds_buf, 10, 0);

@@ -24,15 +24,15 @@
 #define CONTROLLER_WRITE_OUTPUT_PORT 0xD1
 
 // Functions from the header file
-u16 controller_read_status() {
+u8 controller_read_status() {
     return inb(CONTROLLER_STATUS_COMMAND_PORT);
 }
 
-void controller_send_command(u16 command) {
+void controller_send_command(u8 command) {
     outb(CONTROLLER_STATUS_COMMAND_PORT, command);
 }
 
-void controller_send_command_with_argument(u16 command, u16 argument) {
+void controller_send_command_with_argument(u8 command, u8 argument) {
     outb(CONTROLLER_STATUS_COMMAND_PORT, command);
 
 	// Wait for the controller to be ready
@@ -40,7 +40,7 @@ void controller_send_command_with_argument(u16 command, u16 argument) {
 	outb(CONTROLLER_DATA_PORT, argument);
 }
 
-u16 controller_send_command_with_output(u16 command) {
+u8 controller_send_command_with_output(u8 command) {
 	outb(CONTROLLER_STATUS_COMMAND_PORT, command);
 
 	// Wait until it arrived
@@ -48,7 +48,7 @@ u16 controller_send_command_with_output(u16 command) {
 	return inb(CONTROLLER_DATA_PORT);
 }
 
-u16 controller_send_command_with_output_and_argument(u16 command, u16 argument) {
+u8 controller_send_command_with_output_and_argument(u8 command, u8 argument) {
 	outb(CONTROLLER_STATUS_COMMAND_PORT, command);
 
 	// Wait for the controller to be ready
@@ -60,11 +60,11 @@ u16 controller_send_command_with_output_and_argument(u16 command, u16 argument) 
 	return inb(CONTROLLER_DATA_PORT);
 }
 
-u16 controller_read_configuration_byte() {
+u8 controller_read_configuration_byte() {
 	return controller_send_command_with_output(CONTROLLER_READ_BYTE_0);
 }
 
-void controller_write_configuration_byte(u16 configuration) {
+void controller_write_configuration_byte(u8 configuration) {
 	controller_send_command_with_argument(CONTROLLER_WRITE_BYTE_0, configuration);
 }
 
@@ -88,14 +88,14 @@ int ps2_controller_init() {
 	// 3.2) Clear bits 0, 6, and 4
 	// 3.3) Write the configuration byte
 	klog("PS2", "updating configuration byte...");
-	u16 configuration = controller_read_configuration_byte();
+	u8 configuration = controller_read_configuration_byte();
 	configuration &= 0x10111110; // Clear bits 0 and 6 (IRQ and translation from port 1)
 	configuration &= 0x11101111; // Clear bit 4 (enable clock signal)
 	controller_write_configuration_byte(configuration);
 
 	// 4) Perform self-test
 	klog("PS2", "performing self-test...");
-	u16 result = controller_send_command_with_output(CONTROLLER_SELF_TEST);
+	u8 result = controller_send_command_with_output(CONTROLLER_SELF_TEST);
 	if (result != 0x55) {
 		klog("PS2", "FAIL");
 		return 0;

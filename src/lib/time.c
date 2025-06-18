@@ -32,7 +32,7 @@ void time_init() {
     time_can_use_for_klog = 1;
 }
 
-void sleep(int ms) {
+void sleep(uint ms) {
     time_sleep_ms_start = time_ms;
     while (time_ms - time_sleep_ms_start < ms) {
         // Do nothing

@@ -4,7 +4,7 @@
 #include <console.h>
 #include <port.h>
 #include <ints.h>
-#include <time.h>
+#include "../include/time.h"
 #include <numconvert.h>
 #include <stdarg.h>
 

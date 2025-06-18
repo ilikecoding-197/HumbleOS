@@ -22,7 +22,7 @@ start:
 	mov ds, ax   ; Data segment
 	mov es, ax   ; Extra segment
 	mov fs, ax   ; Another extra segment
-	mov gs, ax   ; Yet another extra segnet
+	mov gs, ax   ; Yet another extra segment
 	mov ss, ax   ; Stack segment
 
 	mov esp, stack ; Set up stack

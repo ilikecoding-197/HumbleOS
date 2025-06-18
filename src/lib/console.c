@@ -296,5 +296,6 @@ void klogf(char *section, char *fmt, ...)
 	va_list args;		 // Create a list of arguments
 	va_start(args, fmt); // Start it
 	_printf(fmt, args);	 // Print it
+	console_handle_newline();
 	va_end(args);		 // End it
 }

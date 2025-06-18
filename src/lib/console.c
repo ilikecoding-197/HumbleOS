@@ -94,9 +94,9 @@ void console_update_cursor()
 {
 	u16 pos = console_cursorY * VGA_WIDTH + console_cursorX; // Get position of cursor
 
-	outb(0x3D4, 0x0F);						   // Low byte command
-	outb(0x3D5, (u8)(pos & 0xFF));		   // Low byte
-	outb(0x3D4, 0x0E);						   // High byte command
+	outb(0x3D4, 0x0F);					  // Low byte command
+	outb(0x3D5, (u8)(pos & 0xFF));		  // Low byte
+	outb(0x3D4, 0x0E);					  // High byte command
 	outb(0x3D5, (u8)((pos >> 8) & 0xFF)); // High byte
 }
 
@@ -139,8 +139,8 @@ void putchar(char c)
 		break;
 	default:
 		u16 pos = ((console_cursorY * VGA_WIDTH) + console_cursorX) * 2; // Calcuate Position
-		console_vgaBuff[pos] = c;											  // Set character
-		console_vgaBuff[pos + 1] = console_color;							  // Set color
+		console_vgaBuff[pos] = c;										 // Set character
+		console_vgaBuff[pos + 1] = console_color;						 // Set color
 
 		console_advance_cursor(1); // Advance cursor
 	}
@@ -179,7 +179,7 @@ void put_char_at(uint x, uint y, char ch)
 	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
 
 	u16 pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
-	console_vgaBuff[pos] = ch;				// Set character
+	console_vgaBuff[pos] = ch;		   // Set character
 }
 
 void put_color_at(uint x, uint y, char color)
@@ -188,7 +188,7 @@ void put_color_at(uint x, uint y, char color)
 	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
 
 	u16 pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
-	console_vgaBuff[pos + 1] = color;		// Set color
+	console_vgaBuff[pos + 1] = color;  // Set color
 }
 
 char getch()
@@ -231,8 +231,8 @@ void klog_prefix(char *section)
 void klog(char *section, char *str)
 {
 	klog_prefix(section);
-	print(str);		// Print string
-	print("\n");	// Print newline
+	print(str);	 // Print string
+	print("\n"); // Print newline
 }
 
 void _printf(char *fmt, va_list args)
@@ -275,6 +275,14 @@ void _printf(char *fmt, va_list args)
 				print(buf);						  // Print it
 				continue;
 			}
+			case 'x':
+			{
+				int i = va_arg(args, int);		  // Get the integer
+				char buf[GET_MAX_CHARS_BASE(16)]; // Create a buffer
+				num_to_str(i, buf, 16, 0);		  // Convert it to a string
+				print(buf);						  // Print it
+				continue;
+			}
 			}
 		}
 
@@ -298,5 +306,5 @@ void klogf(char *section, char *fmt, ...)
 	va_start(args, fmt); // Start it
 	_printf(fmt, args);	 // Print it
 	console_handle_newline();
-	va_end(args);		 // End it
+	va_end(args); // End it
 }

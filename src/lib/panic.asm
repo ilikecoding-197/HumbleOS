@@ -1,6 +1,8 @@
 ; HumbleOS file: panic.asm
 ; Purpose: Assmebly for panic
 
+[bits 32]
+
 ; Regs
 global panic_reg_eax
 global panic_reg_ebx

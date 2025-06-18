@@ -5,6 +5,7 @@
 #include <console.h>
 #include <multiboot_info.h>
 #include "../include/string.h"
+#include "../include/cpuid.h"
 
 struct _sys_info sys_info;
 
@@ -14,4 +15,7 @@ void sys_info_gather() {
     // Bootloader name
     sys_info.bootloaderName = multiboot_info_get_tag_data(MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME);
     klogf("sys_info", "bootloader name: %s", sys_info.bootloaderName);
+
+    // CPUID
+    cpuid_init();
 }

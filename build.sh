@@ -13,6 +13,7 @@ ASM_FILES=( \
 	"interrupts/idt" \
 	"lib/panic" \
 	"lib/time" \
+	"lib/cpuid" \
 )
 
 # Our C files
@@ -32,6 +33,7 @@ C_FILES=( \
 	"lib/numconvert" \
 	"lib/multiboot_info" \
 	"lib/sys_info" \
+	"lib/cpuid" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

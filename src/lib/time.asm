@@ -1,6 +1,8 @@
 ; HumbleOS file: time.asm
 ; Purpose: NASM part of time module (only used so we can use the code from OSDev... sorry again.)]
 
+[bits 32]
+
 section .bss
 extern time_ms                           ; time_ms from C file
 IRQ0_fractions:          resd 1          ; Fractions of 1 ms between IRQs

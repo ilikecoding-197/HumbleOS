@@ -4,6 +4,7 @@
 #include <console.h>
 #include <port.h>
 #include <stdint.h>
+#include <time.h>
 
 // Constants
 #define VGA_WIDTH 80
@@ -169,7 +170,37 @@ char getch() {
 }
 
 void klog(char *section, char *str) {
-	print("[KRNL] "); // Print prefix
+	if (!time_can_use_for_klog) {
+		print("[KRNL] "); // Print prefix
+	} else {
+		// We need to convert time_ms to a string. Right now, we dont have number
+		// to string functions. So I've decided to just do that conversion here for now
+		char buf[11]; // Just enough space for a 10 digit number (the biggest size of int)
+		int temp = time_ms;
+		int i = 0;
+		if (temp == 0) {
+			buf[i] = '0'; // Add a 0
+			i++; // Increment i
+		}
+		while (temp > 0) {
+			buf[i] = (temp % 10) + '0'; // Add the last digit
+			temp /= 10; // Remove the last digit
+			i++; // Increment i
+		}
+		buf[i] = '\0'; // Add null terminator
+
+		// Reverse the string
+		for (int i = 0; i < strlen(buf)/2; i++) {
+			char temp = buf[i];
+			buf[i] = buf[strlen(buf)-i-1];
+			buf[strlen(buf)-i-1] = temp;
+		}
+
+		// Print it
+		print("[");
+		print(buf);
+		print("ms] ");
+	}
 	print(section);   // Print section
 	print(": ");      // Print colon
 	print(str);       // Print string

@@ -12,6 +12,7 @@ ASM_FILES=( \
 	"boot/boot" \
 	"interrupts/idt" \
 	"lib/panic" \
+	"lib/time" \
 )
 
 # Our C files
@@ -27,6 +28,7 @@ C_FILES=( \
 	"lib/panic" \
 	"lib/heap" \
 	"lib/string" \
+	"lib/time" \
 )
 
 GCC_ARGS="-ffreestanding -mgeneral-regs-only -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC

@@ -10,7 +10,6 @@
 */
 
 // CODE FROM https://wiki.osdev.org/User:Pancakes/BitmapHeapImplementation
-
 typedef struct _KHEAPBLOCKBM {
 	struct _KHEAPBLOCKBM *next;
 	uint32_t              size;
@@ -84,12 +83,6 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 			bneed = (size / b->bsize) * b->bsize < size ? size / b->bsize + 1 : size / b->bsize;
 			bm = (uint8_t*)&b[1];
 			
-
-
-
-
-
-
 			for (x = (b->lfb + 1 >= bcnt ? 0 : b->lfb + 1); x < bcnt; ++x) {
 				if (bm[x] == 0) {	
 					/* count free blocks */
@@ -98,7 +91,6 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 					/* we have enough, now allocate them */
 					if (y == bneed) {
 						/* find ID that does not match left or right */
-
 						nid = k_heapBMGetNID(x > 0 ? bm[x - 1] : 0, (x + y) < bcnt ? bm[x + y] : 0);
 						
 						/* allocate by setting id */
@@ -107,7 +99,6 @@ void *k_heapBMAlloc(KHEAPBM *heap, uint32_t size) {
 						}
 						
 						/* optimization */
-
 						b->lfb = x;
 						
 						/* count used blocks NOT bytes */

@@ -7,10 +7,13 @@ global start
 extern kernel_main ; Entry point of C
 extern gdt_gdt_c ; C function to set up GDT
 extern gdt_gdtr ; C pointer to GDTR
+extern multiboot_info ; Multiboot info struct pointer
 
 section .text ; Code section
 bits 32 ; 32 bits code
 start:
+	mov [multiboot_info], ebx ; Multiboot info struct pointer
+	
 	; GDT
 	call gdt_gdt_c ; C handles creating the GDT
 	lgdt [gdt_gdtr] ; Load the C GDT

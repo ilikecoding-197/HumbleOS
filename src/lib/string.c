@@ -1,40 +1,253 @@
 // HumbleOS file: string.c
 // Purpose: String functions
 
+// Note that we dont have a string.h. This is because this string library is mostly
+// compatible with the C standard library (except for the locale-specfic functions),
+// so we can just use the C header.
+
 #include <string.h>
 #include <stddef.h>
 #include <ints.h>
 #include <heap.h>
 
-void memcpy(char *destination, const char *source, size_t num) {
-    for (unsigned int i = 0; i < num; i++) { // For each byte up to num
-        destination[i] = source[i]; // Copy memoru
+// All function defs (not the code) are taken from https://en.cppreference.com/w/c/header/string.
+
+char* strcpy( char* restrict dest, const char* restrict src ) {
+    char* result = dest;
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
     }
+    *dest = '\0';
+    return result;
 }
 
-size_t strlen(char *str) {
-    size_t len = 0; // Length starting at zero
-
-    for (char *ch = str; *ch; ch++) { // Get character
-        len++; // Update length
+char *strncpy( char *restrict dest, const char *restrict src, size_t count ) {
+    char* result = dest;
+    while (count > 0 && *src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+        count--;
     }
-
-    return len;
+    *dest = '\0';
+    return result;
 }
 
-void strcpy(char *dest, char *src) {
-    size_t len = strlen(src); // Get length
-
-    for (uint i = 0; i < (uint)len; i++) {
-        dest[i] = src[i]; // Copy each byte
+char *strcat( char *restrict dest, const char *restrict src ) {
+    char* result = dest;
+    while (*dest != '\0') {
+        dest++;
     }
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
+    return result;
 }
 
-char *strdup(char *str) {
-    char *out = heap_malloc(strlen(str)); // Allocate enough memory
-    if (out == NULL) return NULL;         // Error
-    
-    strcpy(out, str); // Copy string into copy
+char *strdup( const char *src ) {
+    size_t length = strlen(src) + 1;
+    char* result = (char*) heap_malloc(length);
+    if (result == NULL) return NULL;
+    strcpy(result, src);
+    return result;
+}
 
-    return out;
+char *strndup( const char *src, size_t size ) {
+    size_t length = strlen(src) + 1;
+    if (length > size) length = size;
+    char* result = (char*) heap_malloc(length);
+    if (result == NULL) return NULL;
+    strncpy(result, src, size);
+    return result;
+}
+
+size_t strlen( const char* str ) {
+    size_t length = 0;
+    while (*str != '\0') {
+        length++;
+        str++;
+    }
+    return length;
+}
+
+int strcmp( const char* lhs, const char* rhs ) {
+    while (*lhs != '\0' && *rhs != '\0') {
+        if (*lhs < *rhs) return -1;
+        if (*lhs > *rhs) return 1;
+        lhs++;
+        rhs++;
+    }
+    if (*lhs == '\0' && *rhs == '\0') return 0;
+    if (*lhs == '\0') return -1;
+    return 1;
+}
+
+int strncmp( const char* lhs, const char* rhs, size_t count ) {
+    while (*lhs != '\0' && *rhs != '\0' && count > 0) {
+        if (*lhs < *rhs) return -1;
+        if (*lhs > *rhs) return 1;
+        lhs++;
+        rhs++;
+        count--;
+    }
+    if (count == 0) return 0;
+    if (*lhs == '\0' && *rhs == '\0') return 0;
+    if (*lhs == '\0') return -1;
+    return 1;
+}
+
+char* strchr( const char* str, int ch ) {
+    while (*str != '\0') {
+        if (*str == ch) return (char*) str;
+        str++;
+    }
+    return NULL;
+}
+
+char* strrchr( const char* str, int ch ) {
+    char* result = NULL;
+    while (*str != '\0') {
+        if (*str == ch) result = (char*) str;
+        str++;
+    }
+    return result;
+}
+
+size_t strspn( const char* dest, const char* src ) {
+    size_t length = 0;
+    while (*dest != '\0') {
+        if (strchr(src, *dest) == NULL) return length;
+        length++;
+        dest++;
+    }
+    return length;
+}
+
+size_t strcspn( const char *dest, const char *src ) {
+    size_t length = 0;
+    while (*dest != '\0') {
+        if (strchr(src, *dest) != NULL) return length;
+        length++;
+        dest++;
+    }
+    return length;
+}
+
+char *strpbrk( const char *dest, const char *breakset ) {
+    while (*dest != '\0') {
+        if (strchr(breakset, *dest) != NULL) return (char*) dest;
+        dest++;
+    }
+    return NULL;
+}
+
+char* strstr( const char* str, const char* substr ) {
+    while (*str != '\0') {
+        if (strncmp(str, substr, strlen(substr)) == 0) return (char*) str;
+        str++;
+    }
+    return NULL;
+}
+
+char* strtok( char* restrict str, const char* restrict delim ) {
+    static char* last_str = NULL;
+    if (str != NULL) last_str = str;
+    if (last_str == NULL) return NULL;
+    char* result = last_str;
+    while (*last_str != '\0') {
+        if (strchr(delim, *last_str) != NULL) {
+            *last_str = '\0';
+            last_str++;
+            return result;
+        }
+        last_str++;
+    }
+    last_str = NULL;
+    return result;
+}
+
+void* memchr( const void* ptr, int ch, size_t count ) {
+    char* result = (char*) ptr;
+    while (count > 0) {
+        if (*result == ch) return result;
+        result++;
+        count--;
+    }
+    return NULL;
+}
+
+int memcmp( const void* lhs, const void* rhs, size_t count ) {
+    char* l = (char*) lhs;
+    char* r = (char*) rhs;
+    while (count > 0) {
+        if (*l < *r) return -1;
+        if (*l > *r) return 1;
+        l++;
+        r++;
+        count--;
+    }
+    return 0;
+}
+
+void *memset( void *dest, int ch, size_t count ) {
+    char* result = (char*) dest;
+    while (count > 0) {
+        *result = ch;
+        result++;
+        count--;
+    }
+    return dest;
+}
+
+void* memcpy( void *restrict dest, const void *restrict src, size_t count ) {
+    char* result = (char*) dest;
+    char* s = (char*) src;
+    while (count > 0) {
+        *result = *s;
+        result++;
+        s++;
+        count--;
+    }
+    return dest;
+}
+
+void* memmove( void* dest, const void* src, size_t count ) {
+    char* result = (char*) dest;
+    char* s = (char*) src;
+    if (dest < src) {
+        while (count > 0) {
+            *result = *s;
+            result++;
+            s++;
+            count--;
+        }
+    } else {
+        result += count;
+        s += count;
+        while (count > 0) {
+            *result = *s;
+            result--;
+            s--;
+            count--;
+        }
+    }
+    return dest;
+}
+
+void* memccpy( void* restrict dest, const void* restrict src, int c, size_t count ) {
+    char* result = (char*) dest;
+    char* s = (char*) src;
+    while (count > 0) {
+        *result = *s;
+        if (*result == c) return result + 1;
+        result++;
+        s++;
+        count--;
+    }
+    return NULL;
 }

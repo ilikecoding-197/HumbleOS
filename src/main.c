@@ -11,12 +11,17 @@
 #include "settings.h"
 #include <heap.h>
 #include <time.h>
-#include <multiboot_info.h>
+#include <multiboot.h>
 #include <sys_info.h>
-
-void kernel_main() {
+#include <ints.h>
+void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
 	klog("main", NAME " v" VERSION);
+
+	// Check for correct magic
+	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+		PANIC("Invalid magic number! Expecting 0x%x, got 0x%x.", MULTIBOOT_BOOTLOADER_MAGIC, magic);
+	}
 
 	// Initalize stuff
 	pic_init();
@@ -27,5 +32,5 @@ void kernel_main() {
 	ps2_controller_init();
 
 	// Gather system information
-	sys_info_gather();
+	sys_info_gather((multiboot_info_t*)magic);
 }

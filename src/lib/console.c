@@ -235,7 +235,7 @@ void klog(char *section, char *str)
 	print("\n"); // Print newline
 }
 
-void _printf(char *fmt, va_list args)
+void vprintf(char *fmt, va_list args)
 {
 	for (char *cPtr = fmt; *cPtr; cPtr++)
 	{					// Loop through characters
@@ -279,7 +279,7 @@ void _printf(char *fmt, va_list args)
 			{
 				uint i = va_arg(args, uint);		  // Get the integer
 				char buf[GET_MAX_CHARS_BASE(16)]; // Create a buffer
-				unsigned_num_to_str(i, buf, 16, 0);		  // Convert it to a string
+				unsigned_num_to_str(i, buf, 16, 8);		  // Convert it to a string
 				print(buf);						  // Print it
 				continue;
 			}
@@ -294,7 +294,7 @@ void printf(char *fmt, ...)
 {
 	va_list args;		 // Create a list of arguments
 	va_start(args, fmt); // Start it
-	_printf(fmt, args);	 // Print it
+	vprintf(fmt, args);	 // Print it
 	va_end(args);		 // End it
 }
 
@@ -304,7 +304,7 @@ void klogf(char *section, char *fmt, ...)
 
 	va_list args;		 // Create a list of arguments
 	va_start(args, fmt); // Start it
-	_printf(fmt, args);	 // Print it
+	vprintf(fmt, args);	 // Print it
 	console_handle_newline();
 	va_end(args); // End it
 }

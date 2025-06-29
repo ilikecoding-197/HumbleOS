@@ -7,12 +7,13 @@ global start
 extern kernel_main ; Entry point of C
 extern gdt_gdt_c ; C function to set up GDT
 extern gdt_gdtr ; C pointer to GDTR
-extern multiboot_info ; Multiboot info struct pointer
 
 section .text ; Code section
 bits 32 ; 32 bits code
 start:
-	mov [multiboot_info], ebx ; Multiboot info struct pointer
+	; Back up EAX and EBX
+	mov [stack-8], eax
+	mov [stack-4], ebx
 	
 	; GDT
 	call gdt_gdt_c ; C handles creating the GDT
@@ -28,14 +29,17 @@ start:
 	mov gs, ax   ; Yet another extra segment
 	mov ss, ax   ; Stack segment
 
-	mov esp, stack ; Set up stack
+	mov esp, stack-8 ; Set up stack
 	
-    call kernel_main ; Jump into 
+    call kernel_main ; Kernel time!
 
     jmp $ ; Hang if kernel returns
 
 section .bss
 resb 32767 ; 32KB stack
 stack:
+
+eax_backup: resb 4 ; Reserve space for EAX backup
+ebx_backup: resb 4 ; Reserve space for EBX backup
 
 section .note.GNU-stack ; Needed for LD to not complain.

@@ -31,7 +31,6 @@ C_FILES=( \
 	"lib/string" \
 	"lib/time" \
 	"lib/numconvert" \
-	"lib/multiboot_info" \
 	"lib/sys_info" \
 	"lib/cpuid" \
 )

@@ -3,6 +3,7 @@
 
 #include <panic.h>
 #include <console.h>
+#include <stdarg.h>
 
 // Get a nibble from a value.
 #define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
@@ -37,7 +38,7 @@ void _panic_print_hex(int val) {
 	print(buffer); // Print it
 }
 
-__attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line) {
+__attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ...) {
 	// Header
 	console_clear_screen();
 	console_set_color(RED);
@@ -68,7 +69,12 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line) {
 
 	// Footer
 	print("Reason: ");
-	print(msg);
+
+	va_list args;
+	va_start(args, line);
+	vprintf(msg, args);
+	va_end(args);
+	
 	print("\nHappened in C file ");
 	print(file);
 	print(" at line ");
@@ -79,6 +85,6 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line) {
 
 	__asm__ __volatile__ ("cli; hlt"); // Halt
 
-	while (1) {} // Infinte loop to stop GCC from complaining (it doesnt notice the __asm__) line 
-	             // halts the computer.
+	while (1) {} // Infinte loop to stop GCC from complaining (it doesnt notice the __asm__ line 
+	             // halts the computer.)
 }

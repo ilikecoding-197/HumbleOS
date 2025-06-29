@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <ints.h>
+#include <stdarg.h>
 
 #ifndef CONSOLE_H
 #define CONSOLE_H
@@ -64,6 +65,11 @@ void putchar(char c);
 /// @brief Print a string to the console.
 /// @param str What string to print
 void print(char *str);
+
+/// @brief Print a formatted string to the console, using va_list
+/// @param format The format string.
+/// @param list The arguments, in va_list form
+void vprintf(char *format, va_list args);
 
 /// @brief Print a formatted string to the console.
 /// @param format The format string.

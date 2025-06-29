@@ -6,9 +6,7 @@
 #include <panic.h>
 #include <console.h>
 
-// Variables for cpuid.asm (and from)
-u32 _cpuid_feat_ecx;
-u32 _cpuid_feat_edx;
+// Variables from cpuid.asm
 extern u8 _cpuid_supported;
 
 struct {
@@ -77,6 +75,31 @@ struct {
     {PBE, "PBE"},
 };
 
+typedef struct {
+    u32 eax;
+    u32 ebx;
+    u32 ecx;
+    u32 edx;
+} cpuid_result;
+static cpuid_result cpuid(u32 leaf) {
+    cpuid_result result;
+
+    __asm__ volatile (
+        "cpuid"
+        : "=a"(result.eax), "=b"(result.ebx), "=c"(result.ecx), "=d"(result.edx)
+        : "a"(leaf)
+    );
+
+    return result;
+}
+
+enum {
+    CPUID_GET_VENDOR_ID,
+    CPUID_GET_FEATURES
+};
+
+u32 _cpuid_feat_ecx, _cpuid_feat_edx;
+
 void cpuid_init()
 {
     klog("CPUID", "checking for cpuid...");
@@ -87,7 +110,12 @@ void cpuid_init()
     }
 
     klog("CPUID", "cpuid is supported, getting features...");
-    __asm__("call _cpuid_get_features");
+
+    cpuid_result result;
+    result = cpuid(CPUID_GET_FEATURES);
+    _cpuid_feat_ecx = result.ecx; // Store ECX features
+    _cpuid_feat_edx = result.edx; // Store EDX features
+
     klog("CPUID", "features gotten.");
 
     klogf("CPUID", "ECX: %x", _cpuid_feat_ecx);
@@ -103,7 +131,6 @@ void cpuid_init()
     }
     print("\n");
 }
-
 
 u8 cpuid_get_feat(cpuid_feat feat) {
     if (feat < 32) {

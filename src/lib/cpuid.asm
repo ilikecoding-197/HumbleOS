@@ -4,8 +4,6 @@
 [bits 32]
 
 section .bss
-extern _cpuid_feat_ecx
-extern _cpuid_feat_edx
 global _cpuid_supported
 
 _cpuid_supported: resb 1
@@ -13,7 +11,6 @@ _cpuid_supported: resb 1
 section .text
 
 global _cpuid_check
-global _cpuid_get_features
 
 ; Check if CPUID is supported (most taken from https://wiki.osdev.org/CPUID)
 _cpuid_check:
@@ -35,14 +32,4 @@ _cpuid_check:
     jmp .done                            ; Exit
 .done:
     popad                                ; Restore regisgters
-    ret                                  ; Return
-
-; Get the features from CPUID
-_cpuid_get_features:
-    pushad                               ; Save registers
-    mov eax, 1                           ; Get features
-    cpuid                                ; Call into CPUID
-    mov dword [_cpuid_feat_ecx], ecx     ; Save ECX
-    mov dword [_cpuid_feat_edx], edx     ; Save EDX
-    popad                                ; Restore registers
     ret                                  ; Return

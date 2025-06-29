@@ -104,7 +104,7 @@ void console_advance_cursor(int amt)
 {
 	console_cursorX += amt; // Increase X
 
-	int scroll_up_amt; // Amount to scroll up by at the end
+	int scroll_up_amt = 0; // Amount to scroll up by at the end - initialize to 0
 
 	while (console_cursorX >= VGA_WIDTH)
 	{								  // While it is overflowing
@@ -118,7 +118,9 @@ void console_advance_cursor(int amt)
 		}
 	}
 
-	console_scroll_up(scroll_up_amt); // Scroll screen up
+	if (scroll_up_amt > 0) {
+		console_scroll_up(scroll_up_amt); // Scroll screen up
+	}
 
 	console_update_cursor(); // Update the cursor
 }

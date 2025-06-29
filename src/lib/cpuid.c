@@ -6,6 +6,7 @@
 #include <panic.h>
 #include <console.h>
 #include <sys_info.h>
+#include <stdbool.h>
 
 // Variables from cpuid.asm
 extern u8 _cpuid_supported;
@@ -94,6 +95,18 @@ static cpuid_result cpuid(u32 leaf) {
     return result;
 }
 
+static cpuid_result cpuid_with_subleaf(u32 leaf, u32 subleaf) {
+    cpuid_result result;
+
+    __asm__ volatile (
+        "cpuid"
+        : "=a"(result.eax), "=b"(result.ebx), "=c"(result.ecx), "=d"(result.edx)
+        : "a"(leaf), "c"(subleaf)
+    );
+
+    return result;
+}
+
 enum {
     CPUID_GET_VENDOR_ID,
     CPUID_GET_FEATURES
@@ -170,4 +183,9 @@ u8 cpuid_get_feat(cpuid_feat feat) {
     } else {
         return (_cpuid_feat_edx >> (feat - 32)) & 1;
     }
+}
+
+bool cpuid_supports_rdseed() {
+    cpuid_result result = cpuid_with_subleaf(7, 0);
+    return (result.ebx >> 18) & 1; // Check the RDSEED
 }

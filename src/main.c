@@ -14,6 +14,7 @@
 #include <multiboot.h>
 #include <sys_info.h>
 #include <ints.h>
+#include <rand.h>
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
@@ -31,7 +32,10 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	time_init();
 	heap_init();
 	ps2_controller_init();
-
-	// Gather system information
 	sys_info_gather(mbd);
+	rand_init();
+
+	// randomness test
+	klogf("main", "random number: %d", rand());
+	klogf("main", "random number from -100 to 100: %d", rand_in_range(-100, 100));
 }

@@ -33,6 +33,7 @@ C_FILES=( \
 	"lib/numconvert" \
 	"lib/sys_info" \
 	"lib/cpuid" \
+	"lib/rand" \
 )
 
 GCC_ARGS="-ffreestanding -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR -nostdinc" # Args for GCC

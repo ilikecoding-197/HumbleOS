@@ -5,6 +5,7 @@
 #define CPUID_H
 
 #include <ints.h>
+#include <stdbool.h>
 
 /// @brief Initalize CPUID
 /// @note  If CPUID is not supported, a PANIC will happen.
@@ -22,5 +23,9 @@ typedef enum {
 /// @param feat Feature to get.
 /// @return 1 if the feature is supported, 0 otherwise.
 u8 cpuid_get_feat(cpuid_feat feat);
+
+/// @brief Check if this CPU supports RDSEED
+/// @return true if supported, false otherwise.
+bool cpuid_supports_rdseed();
 
 #endif // CPUID_H

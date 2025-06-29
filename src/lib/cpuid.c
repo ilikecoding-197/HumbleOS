@@ -5,6 +5,7 @@
 #include <ints.h>
 #include <panic.h>
 #include <console.h>
+#include <sys_info.h>
 
 // Variables from cpuid.asm
 extern u8 _cpuid_supported;
@@ -100,6 +101,7 @@ enum {
 
 u32 _cpuid_feat_ecx, _cpuid_feat_edx;
 
+#define GET_BYTE(val, index) ((val >> (index * 8)) & 0xFF)
 void cpuid_init()
 {
     klog("CPUID", "checking for cpuid...");
@@ -130,6 +132,36 @@ void cpuid_init()
         }
     }
     print("\n");
+
+    klog("CPUID", "moving on to cpu vendor...");
+
+    result = cpuid(CPUID_GET_VENDOR_ID);
+
+    // So the vendor ID is stored in EBX, ECX, and EDX. Below is a table where each character is.
+    // MSB = Most Significant Byte
+    // LSB = Least Significant Byte
+    // Cell in table - character position
+    //       MSB         LSB
+    // EBX = '3' '2' '1' '0'
+    // EDX = '7' '6' '5' '4'
+    // ECX = 'B' 'A' '9' '8'
+    //
+    // So this part gets each character.
+    sys_info.cpu_vendor_id[0] =  GET_BYTE(result.ebx, 0);
+    sys_info.cpu_vendor_id[1] =  GET_BYTE(result.ebx, 1);
+    sys_info.cpu_vendor_id[2] =  GET_BYTE(result.ebx, 2);
+    sys_info.cpu_vendor_id[3] =  GET_BYTE(result.ebx, 3);
+    sys_info.cpu_vendor_id[4] =  GET_BYTE(result.edx, 0);
+    sys_info.cpu_vendor_id[5] =  GET_BYTE(result.edx, 1);
+    sys_info.cpu_vendor_id[6] =  GET_BYTE(result.edx, 2);
+    sys_info.cpu_vendor_id[7] =  GET_BYTE(result.edx, 3);
+    sys_info.cpu_vendor_id[8] =  GET_BYTE(result.ecx, 0);
+    sys_info.cpu_vendor_id[9] =  GET_BYTE(result.ecx, 1);
+    sys_info.cpu_vendor_id[10] = GET_BYTE(result.ecx, 2);
+    sys_info.cpu_vendor_id[11] = GET_BYTE(result.ecx, 3);
+    sys_info.cpu_vendor_id[12] = '\0';
+
+    klogf("CPUID", "CPU vendor ID gotten: %s", sys_info.cpu_vendor_id);
 }
 
 u8 cpuid_get_feat(cpuid_feat feat) {

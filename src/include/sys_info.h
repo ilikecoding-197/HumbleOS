@@ -9,6 +9,9 @@
 struct _sys_info {
     /// @brief The name of the bootloader that started HumbleOS.
     char *bootloaderName;
+
+    /// @brief The CPU vendor ID, gotten from CPUID.
+    char cpu_vendor_id[13];
 };
 
 /// @brief The system information.

@@ -36,7 +36,7 @@ C_FILES=( \
 	"lib/cpuid" \
 )
 
-GCC_ARGS="-ffreestanding -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR" # Args for GCC
+GCC_ARGS="-ffreestanding -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR -nostdinc" # Args for GCC
 LD_INPUT="" # Input for LD
 KERNEL="kernel.bin" # Kernel output file
 LD_FILE="linker.ld" # Linker script

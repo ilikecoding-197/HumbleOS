@@ -1,9 +1,9 @@
 #include <console.h>
 #include <idt.h>
 #include <stddef.h>
-#include <stdint.h>
+#include <ints.h>
 
-extern uint8_t irq; // IRQ from IDT assembly
+extern u8 irq; // IRQ from IDT assembly
 
 char *exceptions[] = {
 	"Division Error",
@@ -40,7 +40,7 @@ char *exceptions[] = {
 	NULL
 };
 
-uint8_t exceptions_with_error_code[5] = {
+u8 exceptions_with_error_code[5] = {
 	10,
 	11,
 	12,
@@ -57,13 +57,13 @@ void exception() {
 	for (int i = 0; i < 5; i++) {
 		if (exceptions_with_error_code[i] == irq) {
 			// Get error code
-			uint32_t code;
+			u32 code;
 				
 			__asm__ __volatile__ ("pop %0"
 				                      : "=a" (code) ); // Error code is from stack
 			
 			char toPrint[9];
-			uint32_t and_value = 0xF0000000;
+			u32 and_value = 0xF0000000;
 			int shift_value = 4*7;
 			for (int i = 0; i < 8; i++) {
 				toPrint[i] = hexDigits[(code & and_value) >> shift_value];

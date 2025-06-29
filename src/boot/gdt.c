@@ -3,30 +3,30 @@
 // Mainly tooken from https://wiki.osdev.org/Global_Descriptor_Table; see that
 // for GDT info.
 
-#include <stdint.h>      // Needed for custom siZe ints
+#include <ints.h>
 #define GDT_ENTRIES 0xFF // Amount of GDT entries
 
 // GDT structure
 struct GDT {
-	uint32_t base;       // Base
-	uint32_t limit;      // Limit
-	uint8_t access_byte; // Access byte
-	uint8_t flags;       // flag
+	u32 base;       // Base
+	u32 limit;      // Limit
+	u8 access_byte; // Access byte
+	u8 flags;       // flag
 };
 
 // GDTR structure
 struct GDTR {
-	uint16_t limit; // Limit
-	uint32_t base;  // base
+	u16 limit; // Limit
+	u32 base;  // base
 }__attribute((packed));
 
 struct GDTR gdt_gdtr; // GDTR to GDT, used in boot.asm
 
-uint8_t gdt_gdt[GDT_ENTRIES * 8]; // GDT bytes
+u8 gdt_gdt[GDT_ENTRIES * 8]; // GDT bytes
 
 // Encode a GDT entry.
 void gdt_encodeGdtEntry(
-	uint8_t *target, // Target (where to encode to)
+	u8 *target, // Target (where to encode to)
 	struct GDT source // Source (where to encode from)
 ) {
     // Encode the limit
@@ -70,11 +70,11 @@ void gdt_gdt_c() {
 	entries[2].flags = 0xC;
 
 	// Encode entries
-	for (int i = 0; i < GDT_ENTRIES; i++) {
-		gdt_encodeGdtEntry((uint8_t*)&gdt_gdt[i*8], entries[i]); // Encode the segment.
+	for (u8 i = 0; i < GDT_ENTRIES; i++) {
+		gdt_encodeGdtEntry((u8*)&gdt_gdt[i*8], entries[i]); // Encode the segment.
 	}
 
 	// Set GDTR
-	gdt_gdtr.base = (uint32_t)((void *)&gdt_gdt);
+	gdt_gdtr.base = (u32)((void *)&gdt_gdt);
 	gdt_gdtr.limit = GDT_ENTRIES * 8 - 1;
 }

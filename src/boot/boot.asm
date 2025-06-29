@@ -11,9 +11,9 @@ extern gdt_gdtr ; C pointer to GDTR
 section .text ; Code section
 bits 32 ; 32 bits code
 start:
-	; Back up EAX and EBX
-	mov [stack-8], eax
-	mov [stack-4], ebx
+	mov esp, stack-8 ; Set up stack
+    push eax
+    push ebx
 	
 	; GDT
 	call gdt_gdt_c ; C handles creating the GDT
@@ -28,8 +28,6 @@ start:
 	mov fs, ax   ; Another extra segment
 	mov gs, ax   ; Yet another extra segment
 	mov ss, ax   ; Stack segment
-
-	mov esp, stack-8 ; Set up stack
 	
     call kernel_main ; Kernel time!
 

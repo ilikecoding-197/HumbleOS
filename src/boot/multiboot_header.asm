@@ -3,21 +3,39 @@
 
 section .multiboot_header ; The header has its own section
 
-%define MAGIC 0xe85250d6 ; Magic code for multiboot
-%define CODE 0 ; Protected mode code
-%define HEADER_LENGTH (header_end - header_start) ; Length of header
+; struct multiboot_header
+; {
+;   /* Must be MULTIBOOT_MAGIC - see above. */
+;   multiboot_uint32_t magic;
+
+;   /* Feature flags. */
+;   multiboot_uint32_t flags;
+
+;   /* The above fields plus this one must equal 0 mod 2^32. */
+;   multiboot_uint32_t checksum;
+
+;   /* These are only valid if MULTIBOOT_AOUT_KLUDGE is set. */
+;   multiboot_uint32_t header_addr;
+;   multiboot_uint32_t load_addr;
+;   multiboot_uint32_t load_end_addr;
+;   multiboot_uint32_t bss_end_addr;
+;   multiboot_uint32_t entry_addr;
+
+;   /* These are only valid if MULTIBOOT_VIDEO_MODE is set. */
+;   multiboot_uint32_t mode_type;
+;   multiboot_uint32_t width;
+;   multiboot_uint32_t height;
+;   multiboot_uint32_t depth;
+; };
+
+%define MAGIC 0x1BADB002 ; Magic code for multiboot
+%define FLAGS 0x00000003 ; Flags for multiboot (memory info and video mode)
+%define CHECKSUM -(MAGIC + FLAGS) ; Checksum for multiboot header
+; Multiboot header
 header_start:
-    dd MAGIC
-    dd CODE
-    dd header_end - header_start
-
-    ; Checksum
-    dd 0x100000000 - (MAGIC + CODE + HEADER_LENGTH)
-
-    ; Required end tag
-    dw 0    ; type
-    dw 0    ; flags
-    dd 8    ; size
-header_end:
+    dd MAGIC ; Magic number
+    dd FLAGS ; Flags
+    dd CHECKSUM ; Checksum
+header_end
 
 section .note.GNU-stack ; Needed for LD to not complain

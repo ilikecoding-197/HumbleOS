@@ -14,6 +14,7 @@
 #include <multiboot.h>
 #include <sys_info.h>
 #include <ints.h>
+
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
 	klog("main", NAME " v" VERSION);
@@ -32,5 +33,5 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	ps2_controller_init();
 
 	// Gather system information
-	sys_info_gather((multiboot_info_t*)magic);
+	sys_info_gather(mbd);
 }

@@ -158,7 +158,6 @@ KHEAPBM heap_heap;
 
 // I really know we should use real memory management, but who cares? We won't need that much
 // memory in HumbleOS anyway, (1MB is way more than enough).
-#define BLOCK_SIZE 16
 #define HEAP_SIZE 1000000
 
 char heap_heap_memory[HEAP_SIZE] __attribute__((aligned(16)));
@@ -174,7 +173,7 @@ void heap_free(void *ptr) {
 void heap_init() {
 	klog("HEAP", "initializing...");
 	k_heapBMInit(&heap_heap);
-	k_heapBMAddBlock(&heap_heap, (uintptr_t)&heap_heap_memory, HEAP_SIZE, BLOCK_SIZE);
+	k_heapBMAddBlock(&heap_heap, (uintptr_t)&heap_heap_memory, HEAP_SIZE, 16);
 	klog("HEAP", "done");
 }
 

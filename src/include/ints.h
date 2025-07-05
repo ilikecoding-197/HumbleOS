@@ -15,5 +15,7 @@ typedef unsigned int u32; // Unsigned 32-bit integer
 typedef unsigned long long u64; // Unsigned 64-bit integer
 typedef unsigned int uint; // Unsigned integer
 typedef u32 uintptr_t;
+typedef u64 intmax_t;
+typedef typeof((char*)0 - (char*)0) ptrdiff_t;
 
 #endif // INTS_H

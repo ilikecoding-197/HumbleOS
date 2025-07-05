@@ -6,5 +6,6 @@
 
 #define NULL 0
 typedef unsigned int size_t;
+typedef typeof((int*)NULL - (int*)NULL) ptrdiff_t;
 
 #endif // STDDEF_H

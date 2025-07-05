@@ -34,6 +34,7 @@ C_FILES=( \
 	"lib/sys_info" \
 	"lib/cpuid" \
 	"lib/rand" \
+	"lib/printf"
 )
 
 GCC_ARGS="-ffreestanding -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR -nostdinc" # Args for GCC

@@ -237,68 +237,7 @@ void klog(char *section, char *str)
 	print("\n"); // Print newline
 }
 
-void vprintf(char *fmt, va_list args)
-{
-	for (char *cPtr = fmt; *cPtr; cPtr++)
-	{					// Loop through characters
-		char c = *cPtr; // Get the character
 
-		// Check for %
-		if (c == '%')
-		{
-			cPtr++;	   // Advance
-			c = *cPtr; // Get the character
-			if (c == 0)
-			{
-				return;
-			} // NUL
-			switch (c)
-			{
-			case '%':
-				putchar('%'); // Print %
-				continue;
-			case 's':
-			{
-				char *str = va_arg(args, char *); // Get the string
-				print(str);						  // Print it
-				continue;
-			}
-			case 'c':
-			{
-				char c = va_arg(args, int); // Get the character
-				putchar(c);					// Print it
-				continue;
-			}
-			case 'd':
-			{
-				int i = va_arg(args, int);		  // Get the integer
-				char buf[GET_MAX_CHARS_BASE(10)]; // Create a buffer
-				num_to_str(i, buf, 10, 0);		  // Convert it to a string
-				print(buf);						  // Print it
-				continue;
-			}
-			case 'x':
-			{
-				uint i = va_arg(args, uint);		  // Get the integer
-				char buf[GET_MAX_CHARS_BASE(16)]; // Create a buffer
-				unsigned_num_to_str(i, buf, 16, 8);		  // Convert it to a string
-				print(buf);						  // Print it
-				continue;
-			}
-			}
-		}
-
-		putchar(c); // Print it
-	}
-}
-
-void printf(char *fmt, ...)
-{
-	va_list args;		 // Create a list of arguments
-	va_start(args, fmt); // Start it
-	vprintf(fmt, args);	 // Print it
-	va_end(args);		 // End it
-}
 
 void klogf(char *section, char *fmt, ...)
 {

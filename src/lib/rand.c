@@ -38,20 +38,20 @@ int (*rand)() = NULL; // Function pointer for the random number generator
 void rand_init() {
     // Check if RDSEED is supported
     if (cpuid_supports_rdseed()) {
-        klog("rand", "RDSEED is supported, using it for randomness.");
+        klog("rand", "RDSEED is supported, using it for randomness");
         rand = rand_rdseed;
         return;
     }
 
     // Check if RDRAND is supported
     if (cpuid_get_feat(RDRAND)) {
-        klog("rand", "RDRAND is supported, using it for randomness.");
+        klog("rand", "RDRAND is supported, using it for randomness");
         rand = rand_rdrand;
         return;
     }
 
     // Fallback to LCG
-    klog("rand", "No hardware RNG support, using LCG for randomness.");
+    klog("rand", "no hardware RNG support, using LCG for randomness");
     lcg_seed = time_ms; // Seed with current time in milliseconds
     rand = rand_lcg;
 }

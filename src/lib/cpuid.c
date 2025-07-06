@@ -133,8 +133,8 @@ void cpuid_init()
 
     klog("CPUID", "features gotten.");
 
-    klogf("CPUID", "ECX: %x", _cpuid_feat_ecx);
-    klogf("CPUID", "EDX: %x", _cpuid_feat_edx);
+    klogf("CPUID", "ECX: %08x", _cpuid_feat_ecx);
+    klogf("CPUID", "EDX: %08x", _cpuid_feat_edx);
 
     klog_prefix("CPUID");
     print("that means this processor supports the following features: ");

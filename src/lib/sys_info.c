@@ -10,6 +10,8 @@
 #include <ints.h>
 struct _sys_info sys_info;
 
+extern void* endKernel;
+
 void sys_info_gather(multiboot_info_t* mbd) {
     klog("sys_info", "gathering system information...");
 
@@ -28,8 +30,15 @@ void sys_info_gather(multiboot_info_t* mbd) {
     for (int i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
         multiboot_memory_map_t* mmmt = (multiboot_memory_map_t*) (mbd->mmap_addr + i);
 
-        klogf("sys_info", "memory map entry %d: addr=0x%x%x, len=0x%x%x, type=%d",
+        klogf("sys_info", "memory map entry %d: addr=0x%08x%08x, len=0x%08x%08x, type=%d",
               i / sizeof(multiboot_memory_map_t), mmmt->addr_high, mmmt->addr_low, mmmt->len_high,  mmmt->len_low, mmmt->type);
+
+        // Check for kernel memory
+        if (mmmt->addr_low == 0x100000) {
+            klog("sys_info", "kernel memory found, removing part where kernel is loaded");
+            mmmt->len_low -= (u32) &endKernel;
+            klogf("sys_info", "new length: 0x%08x%08x", mmmt->len_high, mmmt->len_low);
+        }
 
         if (mmmt->type != 1) {
             klogf("sys_info", "ignoring memory map entry %d, type is not 1 so its unusable", i / sizeof(multiboot_memory_map_t));

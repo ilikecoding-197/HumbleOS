@@ -43,6 +43,7 @@ KERNEL="kernel.bin" # Kernel output file
 LD_FILE="linker.ld" # Linker script
 LINK_ARGS="-T linker.ld -o $ISO_DIR/boot/$KERNEL -ffreestanding -O2 -nostdlib -z noexecstack -no-pie -nostdlib -static" # Args for LD
 GCC="$HOME/opt/cross/bin/i686-elf-gcc"
+STRIP="$HOME/opt/cross/bin/i686-elf-strip"
 
 # Build DIR
 mkdir -p $BUILD_DIR
@@ -79,7 +80,7 @@ $GCC $LINK_ARGS $LD_INPUT -lgcc
 # Strip
 echo "STRIP..."
 echo strip $ISO_DIR/boot/$KERNEL
-strip $ISO_DIR/boot/$KERNEL
+$STRIP $ISO_DIR/boot/$KERNEL
 
 # Grub ISO
 echo "ISO..."

@@ -14,7 +14,10 @@ Before you build HumbleOS, you need to install some **prerequisites**. To do tha
 Before you try to build HumbleOS, you need a cross-compiler. Really, just follow [the OSDev tutorial](https://wiki.osdev.org/GCC_Cross-Compiler), and post a issue if you have any issues.
 
 ## Build!
-Now just build by simply running `bash build.sh`.
+Now just build by simply running `make`.
 
 ## Running
 To run, make sure you have QEMU and start it with the ISO file `build/os.iso`.
+
+## Cleaning build files
+To clean, just run `make clean`.

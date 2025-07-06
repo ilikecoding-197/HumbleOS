@@ -24,7 +24,7 @@ C_OBJS := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/c/%.o, $(C_SRC))
 ASM_OBJS := $(patsubst $(SRC_DIR)/%.asm, $(BUILD_DIR)/asm/%.o, $(ASM_SRC))
 OBJS := $(C_OBJS) $(ASM_OBJS)
 
-.PHONY: all clean iso
+.PHONY: all clean iso run
 
 all: $(BUILD_DIR)/os.iso
 
@@ -51,3 +51,7 @@ $(BUILD_DIR)/os.iso: $(ISO_DIR)/boot/$(KERNEL)
 # Clean build artifacts
 clean:
 	rm -rf $(BUILD_DIR) $(ISO_DIR)/boot/$(KERNEL)
+
+# Run the OS
+run: $(BUILD_DIR)/os.iso
+	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso -boot d -m 128M

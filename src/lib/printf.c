@@ -116,7 +116,7 @@
 
 
 #if defined(PRINTF_SUPPORT_FLOAT)
-#define DBL_MAX 3.402823466e+38F
+#include <float.h>
 #endif
 
 

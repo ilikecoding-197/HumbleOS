@@ -37,12 +37,12 @@ C_FILES=( \
 	"lib/printf"
 )
 
-GCC_ARGS="-ffreestanding -Wall -Wextra -m32 -c -static -nostartfiles -I$INCLUDE_DIR -nostdinc" # Args for GCC
+GCC_ARGS="-ffreestanding -Wall -Wextra -O2 -c -static -nostartfiles -I$INCLUDE_DIR -fno-pic -fno-pie" # Args for GCC
 LD_INPUT="" # Input for LD
 KERNEL="kernel.bin" # Kernel output file
 LD_FILE="linker.ld" # Linker script
-LD_ARGS="--nmagic --output=$ISO_DIR/boot/$KERNEL --script=$LD_FILE -melf_i386" # Args for LD
-
+LINK_ARGS="-T linker.ld -o $ISO_DIR/boot/$KERNEL -ffreestanding -O2 -nostdlib -z noexecstack -no-pie -nostdlib -static" # Args for LD
+GCC="$HOME/opt/cross/bin/i686-elf-gcc"
 
 # Build DIR
 mkdir -p $BUILD_DIR
@@ -67,14 +67,14 @@ for i in "${C_FILES[@]}"
 do
    LD_INPUT="$LD_INPUT $BUILD_DIR/c/$i.o"
    mkdir -p $BUILD_DIR/c/$(dirname $i)
-   echo gcc -o $BUILD_DIR/c/$i.o $SRC_DIR/$i.c $GCC_ARGS
-   gcc -o $BUILD_DIR/c/$i.o $SRC_DIR/$i.c $GCC_ARGS
+   echo $GCC -o $BUILD_DIR/c/$i.o $SRC_DIR/$i.c $GCC_ARGS
+   $GCC -o $BUILD_DIR/c/$i.o $SRC_DIR/$i.c $GCC_ARGS
 done
 
 # Link
-echo "LD..."
-echo ld $LD_ARGS $LD_INPUT
-ld $LD_ARGS $LD_INPUT
+echo "LINK..."
+echo $GCC $LINK_ARGS $LD_INPUT
+$GCC $LINK_ARGS $LD_INPUT -lgcc
 
 # Strip
 echo "STRIP..."

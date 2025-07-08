@@ -1,7 +1,7 @@
 // HumbleOS file: ps2_controller.c
 // Purpose: PS2 controller
 
-#include <ps2_controller.h>
+#include <ps2/ps2_controller.h>
 #include <ints.h>
 #include <port.h>
 #include <console.h>

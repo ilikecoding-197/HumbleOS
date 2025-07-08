@@ -11,7 +11,7 @@ Before you build HumbleOS, you need to install some **prerequisites**. To do tha
 | **Arch Linux/Manjaro**             | `sudo pacman -S nasm xorriso grub`             |
 
 ## Cross-compilier
-Before you try to build HumbleOS, you need a cross-compiler. Really, just follow [the OSDev tutorial](https://wiki.osdev.org/GCC_Cross-Compiler), and post a issue if you have any issues.
+Before you try to build HumbleOS, you need a cross-compiler. Really, just follow [the OSDev tutorial](https://wiki.osdev.org/GCC_Cross-Compiler), to where your cross compiler and tools are at `~/opt/cross/bin/i686-elf-*`, and post a issue if you have any issues.
 
 ## Build!
 Now just build by simply running `make`.

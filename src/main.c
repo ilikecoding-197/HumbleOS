@@ -5,7 +5,7 @@
 #include <idt.h>
 #include <pic.h>
 #include <exception_handlers.h>
-#include <ps2_controller.h>
+#include <ps2/ps2_controller.h>
 #include <stdbool.h>
 #include <panic.h>
 #include "settings.h"

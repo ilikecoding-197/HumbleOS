@@ -53,4 +53,8 @@ void sys_info_gather(multiboot_info_t* mbd) {
 
     // CPUID
     cpuid_init();
+    
+    // kernel end
+    sys_info.kernel_end = (uintptr_t) &endKernel;
+    klogf("sys_info", "kernel end: 0x%08x%08x", (sys_info.kernel_end >> 32), (u32) sys_info.kernel_end);
 }

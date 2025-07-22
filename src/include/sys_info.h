@@ -5,6 +5,7 @@
 #define SYS_INFO_H
 
 #include <multiboot.h>
+#include <ints.h>
 
 struct _sys_info {
     /// @brief The name of the bootloader that started HumbleOS.
@@ -12,6 +13,9 @@ struct _sys_info {
 
     /// @brief The CPU vendor ID, gotten from CPUID.
     char cpu_vendor_id[13];
+
+    /// @brief End of the kernel.
+    uintptr_t kernel_end;
 };
 
 /// @brief The system information.

@@ -18,7 +18,7 @@
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
-	klog("main", NAME " v" VERSION);
+	klog("main", NAME " v" VERSION ", " RELEASE_TYPE " build");
 
 	// Check for correct magic
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {

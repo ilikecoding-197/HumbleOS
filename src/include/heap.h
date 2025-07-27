@@ -11,6 +11,11 @@
 /// @return On fail, returns NULL, else the pointer to the memory.
 void *heap_malloc(u32 size);
 
+/// @brief Dynamically allocate some memory, cleared with 0.
+/// @param size Amount to allocate.
+/// @return On fail, returns NULL, else the pointer to the memory.
+void *heap_calloc(u32 size);
+
 /// @brief Free a heap pointer.
 /// @param ptr Pointer to free. If NULL, return. If not a heap pointer, who knows what will happen.
 void heap_free(void *ptr);

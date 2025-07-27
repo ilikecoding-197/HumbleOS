@@ -11,8 +11,9 @@
 #include <heap.h>
 
 // All function defs (not the code) are taken from https://en.cppreference.com/w/c/header/string.
+// Removed restrict so I could call this from C++ code
 
-char* strcpy( char* restrict dest, const char* restrict src ) {
+char* strcpy( char* dest, const char* src ) {
     char* result = dest;
     while (*src != '\0') {
         *dest = *src;
@@ -23,7 +24,7 @@ char* strcpy( char* restrict dest, const char* restrict src ) {
     return result;
 }
 
-char *strncpy( char *restrict dest, const char *restrict src, size_t count ) {
+char *strncpy( char *dest, const char *src, size_t count ) {
     char* result = dest;
     while (count > 0 && *src != '\0') {
         *dest = *src;
@@ -35,7 +36,7 @@ char *strncpy( char *restrict dest, const char *restrict src, size_t count ) {
     return result;
 }
 
-char *strcat( char *restrict dest, const char *restrict src ) {
+char *strcat( char *dest, const char *src ) {
     char* result = dest;
     while (*dest != '\0') {
         dest++;
@@ -154,7 +155,7 @@ char* strstr( const char* str, const char* substr ) {
     return NULL;
 }
 
-char* strtok( char* restrict str, const char* restrict delim ) {
+char* strtok( char* str, const char* delim ) {
     static char* last_str = NULL;
     if (str != NULL) last_str = str;
     if (last_str == NULL) return NULL;
@@ -204,7 +205,7 @@ void *memset( void *dest, int ch, size_t count ) {
     return dest;
 }
 
-void* memcpy( void *restrict dest, const void *restrict src, size_t count ) {
+void* memcpy( void *dest, const void *src, size_t count ) {
     char* result = (char*) dest;
     char* s = (char*) src;
     while (count > 0) {
@@ -239,7 +240,7 @@ void* memmove( void* dest, const void* src, size_t count ) {
     return dest;
 }
 
-void* memccpy( void* restrict dest, const void* restrict src, int c, size_t count ) {
+void* memccpy( void* dest, const void* src, int c, size_t count ) {
     char* result = (char*) dest;
     char* s = (char*) src;
     while (count > 0) {

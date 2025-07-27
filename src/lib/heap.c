@@ -2,6 +2,7 @@
 #include <console.h>
 #include <panic.h>
 #include <stddef.h>
+#include <string.h>
 
 /*
     2014 Leonard Kevin McGuire Jr (www.kmcg3413.net) (kmcg3413@gmail.com)
@@ -164,6 +165,11 @@ char heap_heap_memory[HEAP_SIZE] __attribute__((aligned(16)));
 
 void *heap_malloc(u32 size) {
 	return k_heapBMAlloc(&heap_heap, size);
+}
+
+void *heap_calloc(u32 size) {
+	void *p = heap_malloc(size);
+	memset(p, 0, size);
 }
 
 void heap_free(void *ptr) {

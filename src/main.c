@@ -15,6 +15,18 @@
 #include <sys_info.h>
 #include <ints.h>
 #include <rand.h>
+#include "cpp/cpp_runtime.h"
+
+// Global constructors
+extern void (*__init_array_start)(void);
+extern void (*__init_array_end)(void);
+
+void call_global_constructors() {
+	for (void (**ctor)(void) = &__init_array_start; ctor < &__init_array_end; ++ctor) {
+		klogf("main", "calling global constructor at %p", *ctor);
+		(*ctor)(); // Call each constructor
+	}
+}
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
@@ -35,7 +47,11 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	sys_info_gather(mbd);
 	rand_init();
 
-	// randomness test
-	klogf("main", "random number: %d", rand());
-	klogf("main", "random number from -100 to 100: %d", rand_in_range(-100, 100));
+	klog("main", "calling global constructors for C++ support");
+	call_global_constructors();
+
+	klog("main", "calling cpp_runtime_init for other C++ stuff");
+	cpp_runtime_init();
+
+	klog("main", "initialization complete");
 }

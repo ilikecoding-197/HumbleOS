@@ -48,4 +48,7 @@ extern int first_ps2;
 /// @brief If the second PS2 controller is present.
 extern int second_ps2;
 
+/// @brief Restart the system using PS2 controller.
+void ps2_restart_system();
+
 #endif

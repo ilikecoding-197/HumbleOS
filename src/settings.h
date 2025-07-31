@@ -1,3 +1,6 @@
+// HumbleOS file: settings.h
+// Purpose: Settings for the kernel.
+
 #ifndef SETTINGS_H
 #define SETTINGS_H
 #define NAME "Humble OS"

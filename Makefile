@@ -5,6 +5,7 @@ BUILD_DIR := build
 ISO_DIR := iso
 SRC_DIR := src
 INCLUDE_DIR := $(SRC_DIR)/include
+CPP_INCLUDE_DIR := $(INCLUDE_DIR)/cpp
 
 GCC := $(HOME)/opt/cross/bin/i686-elf-gcc
 G++ := $(HOME)/opt/cross/bin/i686-elf-g++
@@ -15,9 +16,9 @@ GRUB_MKRESCUE := grub-mkrescue
 KERNEL := kernel.bin
 LD_FILE := linker.ld
 LINK_ARGS := -T $(LD_FILE) -o $(ISO_DIR)/boot/$(KERNEL) -ffreestanding -O2 -nostdlib -z noexecstack -no-pie -static
-GCC_ARGS := -ffreestanding -Wall -Wextra -O2 -c -static -nostartfiles -I$(INCLUDE_DIR) -fno-pic -fno-pie
-G++_ARGS := $(GCC_ARGS) -fno-exceptions -fno-rtti -Wno-write-strings -Wno-sized-deallocation
-
+GCC_ARGS := -ffreestanding -Wall -Wextra -O2 -c -static -nostartfiles -I$(INCLUDE_DIR) -fno-pic -fno-pie \
+	-Wno-unused-parameter -Wno-write-strings
+G++_ARGS := $(GCC_ARGS) -fno-exceptions -fno-rtti -Wno-sized-deallocation -I$(CPP_INCLUDE_DIR)
 # Auto-discover source files
 C_SRC := $(shell find $(SRC_DIR) -name '*.c')
 ASM_SRC := $(shell find $(SRC_DIR) -name '*.asm')

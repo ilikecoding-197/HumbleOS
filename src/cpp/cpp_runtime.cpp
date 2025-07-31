@@ -1,11 +1,13 @@
+// HumbleOS file: cpp_runtime.cpp
+// Purpose: C++ runtime support code
+
 extern "C" {
     #include <panic.h>
-    #include <console.h>
     #include <heap.h>
     #include <string.h>
 }
 
-#include "cpp_runtime.h"
+#include <console.hpp>
 
 // Pure virtual function
 extern "C" void __cxa_pure_virtual() {
@@ -61,7 +63,36 @@ void operator delete[](void *p)
     heap_free(p);
 }
 
+void operator delete(void *p, size_t size)
+{
+    heap_free(p);
+}
 
-extern "C" void cpp_runtime_init() {
-    klog("cpp_runtime", "nothing here for now, just a stub.");
+void operator delete[](void *p, size_t size)
+{
+    heap_free(p);
+}
+
+// Global destructor support
+extern "C" void __cxa_finalize(void *dso_handle) {
+    // For kernel, we probably don't need this, but some code expects it
+}
+
+extern "C" int __cxa_atexit(void (*func)(void*), void* arg, void* dso_handle) {
+    // Register destructor - for kernel, we might just ignore this
+    return 0;
+}
+
+// Exception handling stubs (since exceptions are disabled)
+extern "C" void __cxa_throw(void* thrown_exception, void* tinfo, void (*dest)(void*)) {
+    PANIC("C++ exception thrown but exceptions are disabled!");
+}
+
+extern "C" void* __cxa_begin_catch(void* exc_obj_in) {
+    PANIC("C++ exception handling attempted but exceptions are disabled!");
+    return nullptr;
+}
+
+extern "C" void __cxa_end_catch() {
+    PANIC("C++ exception handling attempted but exceptions are disabled!");
 }

@@ -150,3 +150,25 @@ int ps2_controller_init() {
 	klog("PS2", "CONTROLLER IS WORKING!");
 	return 1; // Just say it worked for now
 }
+
+void ps2_restart_system() {
+    klog("PS2", "restarting system...");
+    
+    // Method 1: Try PS/2 controller reset
+    controller_send_command(0xFE); // Reset command
+    
+    // Method 2: If that fails, try keyboard controller
+    u8 temp;
+    do {
+        temp = controller_read_status();
+        if (temp & 0x01) {
+            inb(CONTROLLER_DATA_PORT); // Clear input buffer
+        }
+    } while (temp & 0x02); // Wait for input buffer to be empty
+    
+    outb(CONTROLLER_STATUS_COMMAND_PORT, 0xFE); // Reset
+    
+    // Method 3: Last resort - triple fault
+	klog("PS2", "COULD NOT RESTART SYSTEM! do it yourself.");
+    __asm__ volatile("cli; hlt");
+}

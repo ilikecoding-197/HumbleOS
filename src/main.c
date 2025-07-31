@@ -15,9 +15,8 @@
 #include <sys_info.h>
 #include <ints.h>
 #include <rand.h>
-#include "cpp/cpp_runtime.h"
 
-// Global constructors
+// Global constructors for C++
 extern void (*__init_array_start)(void);
 extern void (*__init_array_end)(void);
 
@@ -27,6 +26,8 @@ void call_global_constructors() {
 		(*ctor)(); // Call each constructor
 	}
 }
+
+void user_main();
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
@@ -50,8 +51,7 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	klog("main", "calling global constructors for C++ support");
 	call_global_constructors();
 
-	klog("main", "calling cpp_runtime_init for other C++ stuff");
-	cpp_runtime_init();
-
 	klog("main", "initialization complete");
+
+	user_main();
 }

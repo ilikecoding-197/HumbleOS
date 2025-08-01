@@ -15,7 +15,7 @@
 
 
 // Actual options, comment out to disable
-// #define USE_USER_MAIN // call user_main() after kernel initialization
+//#define USE_USER_MAIN // call user_main() after kernel initialization
 #define USE_TESTS // call tests_run() after kernel initialization (disabling will also not compile tests.c) itself
 #define PANIC_ON_TEST_FAIL // panic if a test fails, disabled by default
 

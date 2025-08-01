@@ -43,6 +43,39 @@ struct stack_frame {
     void *ret_addr;
 };
 
+#ifdef DEBUG
+struct symbol_entry {
+    u32 addr;
+    const char* name;
+};
+
+// Only include if file exists, otherwise use empty array
+#if __has_include("../symbols_generated.h")
+static struct symbol_entry symbols[] = {
+#include "../symbols_generated.h"
+};
+#else
+static struct symbol_entry symbols[] = {
+    {0, ""}
+};
+#endif
+
+const char* lookup_symbol(u32 addr) {
+    const char* best_match = "unknown";
+    u32 best_addr = 0;
+    
+    // Find the symbol with the highest address that's still <= addr
+    for (int i = 0; symbols[i].addr != 0; i++) {
+        if (symbols[i].addr <= addr && symbols[i].addr > best_addr) {
+            best_addr = symbols[i].addr;
+            best_match = symbols[i].name;
+        }
+    }
+    
+    return best_match;
+}
+#endif
+
 __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ...) {
 	// Header
 	console_clear_screen();
@@ -91,6 +124,11 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 		sprintf_(buffer, "\n  0x%08x", frame->ret_addr);
 		print(buffer);
 		serial_print(buffer);
+		#ifdef DEBUG
+		sprintf_(buffer, " (%s)", lookup_symbol((u32)frame->ret_addr));
+		print(buffer);
+		serial_print(buffer);
+		#endif
 		frame = frame->prev;
 	}
 

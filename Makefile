@@ -60,8 +60,17 @@ $(BUILD_DIR)/cpp/%.o: $(SRC_DIR)/%.cpp
 # Link kernel
 $(ISO_DIR)/boot/$(KERNEL): $(OBJS)
 	@mkdir -p $(dir $@)
-	$(GCC) $(LINK_ARGS) $^ -lgcc
+	# Create empty symbols file if it doesn't exist
+	@test -f src/symbols_generated.h || echo '{0, ""}' > src/symbols_generated.h
 	$(STRIP_CMD)
+ifdef DEBUG
+	bash generate_symbols.sh
+	# Rebuild panic.o with new symbols
+	$(GCC) $(GCC_ARGS) -o $(BUILD_DIR)/c/lib/panic.o src/lib/panic.c
+	$(GCC) $(LINK_ARGS) $(OBJS) -lgcc
+	$(STRIP_CMD)
+endif
+	$(GCC) $(LINK_ARGS) $^ -lgcc
 
 # Create ISO
 $(BUILD_DIR)/os.iso: $(ISO_DIR)/boot/$(KERNEL)

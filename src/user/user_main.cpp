@@ -3,8 +3,10 @@
 
 #include <console.hpp>
 #include <ps2.hpp>
-
+#include <string.hpp>
 extern "C" void user_main() {
     console::clear_screen();
-    console::print("Hello, world!\n");
+
+    string hi("Hello World!");
+    console::print(hi);
 }

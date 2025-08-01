@@ -104,4 +104,7 @@ void klog_prefix(char *section);
 /// @brief Log a formatted string with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.
 void klogf(char *section, char *format, ...);
 
+/// @brief Set whether to only log klogs to serial.
+extern int klog_to_serial_only;
+
 #endif // CONSOLE_H

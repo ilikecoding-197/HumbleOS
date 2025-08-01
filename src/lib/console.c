@@ -23,6 +23,8 @@ uint console_cursorY;
 /// @brief Console color.
 u8 console_color;
 
+int klog_to_serial_only = 0;
+
 void console_move_cursor(uint x, uint y)
 {
 	x = (x > VGA_WIDTH - 1 ? VGA_WIDTH - 1 : x);   // Limit X
@@ -200,12 +202,14 @@ char getch()
 	return 'A';
 }
 
+#define klog_print(x) if (klog_to_serial_only) { serial_print(x); } else { print(x); serial_print(x); }
+
+
 void klog_prefix(char *section)
 {
 	if (!time_can_use_for_klog)
 	{
-		print("[KRNL] ");
-		serial_print("[KRNL] ");
+		klog_print("[KRNL] ");
 	}
 	else
 	{
@@ -217,23 +221,18 @@ void klog_prefix(char *section)
 		char time_buffer[32];
 		sprintf_(time_buffer, "[%02d:%02d.%03d] ", min, sec, ms);
 		
-		print(time_buffer);
-		serial_print(time_buffer);
+		klog_print(time_buffer);
 	}
 
-	print(section);
-	serial_print(section);
-	print(": ");
-	serial_print(": ");
+	klog_print(section);
+	klog_print(": ");
 }
 
 void klog(char *section, char *str)
 {
 	klog_prefix(section);
-	print(str);
-	serial_print(str);
-	print("\n");
-	serial_print("\r\n");
+	klog_print(str);
+	klog_print("\n");
 }
 
 void klogf(char *section, char *fmt, ...)
@@ -247,9 +246,7 @@ void klogf(char *section, char *fmt, ...)
 	vsnprintf_(buffer, sizeof(buffer), fmt, args);
 	va_end(args);
 	
-	print(buffer);
-	serial_print(buffer);
-	
+	klog_print(buffer);
 	console_handle_newline();
 	serial_print("\r\n");
 }

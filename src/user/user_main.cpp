@@ -10,4 +10,6 @@ extern "C" void user_main() {
 
     string hi("Hello World!");
     console::print(hi);
+
+    klog("USER", "Hello World! This should only appear on the serial.");
 }

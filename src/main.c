@@ -60,6 +60,7 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	#endif
 
 	#ifdef USE_USER_MAIN
+	klog_to_serial_only = 1;
 	user_main();
 	#endif
 }

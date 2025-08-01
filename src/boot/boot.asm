@@ -29,6 +29,7 @@ start:
 	mov gs, ax   ; Yet another extra segment
 	mov ss, ax   ; Stack segment
 	
+	xor %ebp, %ebp ; Clear EBP - for panic stack frame
     call kernel_main ; Kernel time!
 
     jmp $ ; Hang if kernel returns

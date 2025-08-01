@@ -15,7 +15,6 @@
 #include <sys_info.h>
 #include <ints.h>
 #include <rand.h>
-#include <tests.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);
@@ -29,6 +28,7 @@ void call_global_constructors() {
 }
 
 void user_main();
+void tests_run();
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();

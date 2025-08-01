@@ -170,6 +170,7 @@ void *heap_malloc(u32 size) {
 void *heap_calloc(u32 size) {
 	void *p = heap_malloc(size);
 	memset(p, 0, size);
+	return p;
 }
 
 void heap_free(void *ptr) {

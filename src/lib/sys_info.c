@@ -27,7 +27,7 @@ void sys_info_gather(multiboot_info_t* mbd) {
 
     // Read the memory map
     u32 mem_amt = 0;
-    for (int i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
+    for (unsigned int i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
         multiboot_memory_map_t* mmmt = (multiboot_memory_map_t*) (mbd->mmap_addr + i);
 
         klogf("sys_info", "memory map entry %d: addr=0x%08x%08x, len=0x%08x%08x, type=%d",
@@ -56,5 +56,5 @@ void sys_info_gather(multiboot_info_t* mbd) {
     
     // kernel end
     sys_info.kernel_end = (uintptr_t) &endKernel;
-    klogf("sys_info", "kernel end: 0x%08x%08x", (sys_info.kernel_end >> 32), (u32) sys_info.kernel_end);
+    klogf("sys_info", "kernel end: 0x%08x", sys_info.kernel_end);
 }

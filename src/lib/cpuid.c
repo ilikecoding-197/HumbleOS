@@ -138,7 +138,7 @@ void cpuid_init()
 
     klog_prefix("CPUID");
     print("that means this processor supports the following features: ");
-    for (int i = 0; i < sizeof(cpuid_feat_texts) / sizeof(cpuid_feat_texts[0]); i++) {
+    for (long unsigned i = 0; i < sizeof(cpuid_feat_texts) / sizeof(cpuid_feat_texts[0]); i++) {
         if (cpuid_get_feat(cpuid_feat_texts[i].feat)) {
             print(cpuid_feat_texts[i].text);
             print(" ");

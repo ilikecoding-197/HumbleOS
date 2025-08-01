@@ -15,16 +15,14 @@ void test_heap_allocation() {
 
     delete p;
 
-    p = new int[10];
+    int *p2 = new int[10];
     TEST_ASSERT(p != NULL, "failed to allocate int array");
     for (int i = 0; i < 10; i++) {
-        p[i] = i;
-        TEST_ASSERT(p[i] == i, "failed to write to int array");
+        p2[i] = i;
+        TEST_ASSERT(p2[i] == i, "failed to write to int array");
     }
-    delete[] p;
+    delete[] p2;
 
     TEST_PASS("heap_allocation");
-    
-    delete p;
 }
 

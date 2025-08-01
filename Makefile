@@ -64,4 +64,4 @@ clean:
 
 # Run the OS
 run: $(BUILD_DIR)/os.iso
-	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso -boot d -m 128M
+	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso -boot d -m 128M -serial stdio

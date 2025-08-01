@@ -7,6 +7,7 @@
 #include "../include/time.h"
 #include <numconvert.h>
 #include <stdarg.h>
+#include <serial.h>
 
 // Constants
 #define VGA_WIDTH 80
@@ -203,34 +204,52 @@ void klog_prefix(char *section)
 {
 	if (!time_can_use_for_klog)
 	{
-		print("[KRNL] "); // Print prefix
+		print("[KRNL] ");
+		serial_print("[KRNL] ");
 	}
 	else
 	{
-		// Print it
-		printf("[%02d:%02d.%03d] ", time_ms / (1000 * 60), (time_ms / 1000) % 60, time_ms % 1000);
+		uint min = time_ms / (1000 * 60);
+		uint sec = (time_ms / 1000) % 60;
+		uint ms = time_ms % 1000;
+		
+		// Format once, use for both
+		char time_buffer[32];
+		sprintf_(time_buffer, "[%02d:%02d.%03d] ", min, sec, ms);
+		
+		print(time_buffer);
+		serial_print(time_buffer);
 	}
 
-	print(section); // Print section
-	print(": ");	// Print colon
+	print(section);
+	serial_print(section);
+	print(": ");
+	serial_print(": ");
 }
 
 void klog(char *section, char *str)
 {
 	klog_prefix(section);
-	print(str);	 // Print string
-	print("\n"); // Print newline
+	print(str);
+	serial_print(str);
+	print("\n");
+	serial_print("\r\n");
 }
-
-
 
 void klogf(char *section, char *fmt, ...)
 {
 	klog_prefix(section);
 
-	va_list args;		 // Create a list of arguments
-	va_start(args, fmt); // Start it
-	vprintf(fmt, args);	 // Print it
+	// Format once into a buffer, then output to both
+	char buffer[2048];
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf_(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+	
+	print(buffer);
+	serial_print(buffer);
+	
 	console_handle_newline();
-	va_end(args); // End it
+	serial_print("\r\n");
 }

@@ -7,6 +7,7 @@
 #include <console.h>
 #include <sys_info.h>
 #include <stdbool.h>
+#include <serial.h>
 
 // Variables from cpuid.asm
 extern u8 _cpuid_supported;
@@ -138,13 +139,17 @@ void cpuid_init()
 
     klog_prefix("CPUID");
     print("that means this processor supports the following features: ");
+    serial_print("that means this processor supports the following features: ");
     for (long unsigned i = 0; i < sizeof(cpuid_feat_texts) / sizeof(cpuid_feat_texts[0]); i++) {
         if (cpuid_get_feat(cpuid_feat_texts[i].feat)) {
             print(cpuid_feat_texts[i].text);
+            serial_print(cpuid_feat_texts[i].text);
             print(" ");
+            serial_print(" ");
         }
     }
     print("\n");
+    serial_print("\r\n");
 
     klog("CPUID", "moving on to cpu vendor...");
 

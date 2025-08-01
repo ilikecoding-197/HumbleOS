@@ -40,6 +40,7 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	}
 
 	// Initalize stuff
+	serial_init(); // do this as early as possible
 	pic_init();
 	idt_init();
 	exception_handlers_init();

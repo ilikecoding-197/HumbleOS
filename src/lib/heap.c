@@ -3,6 +3,7 @@
 #include <panic.h>
 #include <stddef.h>
 #include <string.h>
+#include <sys_info.h>
 
 /*
     2014 Leonard Kevin McGuire Jr (www.kmcg3413.net) (kmcg3413@gmail.com)
@@ -157,12 +158,6 @@ void k_heapBMFree(KHEAPBM *heap, void *ptr) {
 // Wrapper functions
 KHEAPBM heap_heap;
 
-// I really know we should use real memory management, but who cares? We won't need that much
-// memory in HumbleOS anyway, (1MB is way more than enough).
-#define HEAP_SIZE 1000000
-
-char heap_heap_memory[HEAP_SIZE] __attribute__((aligned(16)));
-
 void *heap_malloc(u32 size) {
 	return k_heapBMAlloc(&heap_heap, size);
 }
@@ -180,7 +175,14 @@ void heap_free(void *ptr) {
 void heap_init() {
 	klog("HEAP", "initializing...");
 	k_heapBMInit(&heap_heap);
-	k_heapBMAddBlock(&heap_heap, (uintptr_t)&heap_heap_memory, HEAP_SIZE, 16);
+	
+	// Use memory from the memory map instead
+	extern struct _sys_info sys_info;
+	uintptr_t heap_start = sys_info.kernel_end;
+	u32 heap_size = 2 * 1024 * 1024; // 2MB heap
+	
+	k_heapBMAddBlock(&heap_heap, heap_start, heap_size, 16);
+	klogf("HEAP", "using %dMB at 0x%08x", heap_size / 1024 / 1024, heap_start);
 	klog("HEAP", "done");
 }
 

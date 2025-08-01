@@ -34,7 +34,7 @@ void tests_run();
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
 	serial_init(); // do this as early as possible
-	
+
 	klog("main", NAME " v" VERSION ", " RELEASE_TYPE " build");
 
 	// Check for correct magic
@@ -47,9 +47,9 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	idt_init();
 	exception_handlers_init();
 	time_init();
-	heap_init();
 	ps2_controller_init();
 	sys_info_gather(mbd);
+	heap_init();
 	rand_init();
 
 	klog("main", "calling global constructors for C++ support");

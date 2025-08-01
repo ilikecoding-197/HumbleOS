@@ -64,6 +64,7 @@ $(ISO_DIR)/boot/$(KERNEL): $(OBJS)
 	@test -f src/symbols_generated.h || echo '{0, ""}' > src/symbols_generated.h
 	$(STRIP_CMD)
 ifdef DEBUG
+	$(GCC) $(LINK_ARGS) $^ -lgcc
 	bash generate_symbols.sh
 	# Rebuild panic.o with new symbols
 	$(GCC) $(GCC_ARGS) -o $(BUILD_DIR)/c/lib/panic.o src/lib/panic.c
@@ -78,7 +79,7 @@ $(BUILD_DIR)/os.iso: $(ISO_DIR)/boot/$(KERNEL)
 
 # Clean build artifacts
 clean:
-	rm -rf $(BUILD_DIR) $(ISO_DIR)/boot/$(KERNEL)
+	rm -rf $(BUILD_DIR) $(ISO_DIR)/boot/$(KERNEL) src/symbols_generated.h
 
 # Run the OS
 run: $(BUILD_DIR)/os.iso

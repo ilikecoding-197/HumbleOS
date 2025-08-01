@@ -64,7 +64,6 @@ const char* lookup_symbol(u32 addr) {
     const char* best_match = "unknown";
     u32 best_addr = 0;
     
-    // Find the symbol with the highest address that's still <= addr
     for (int i = 0; symbols[i].addr != 0; i++) {
         if (symbols[i].addr <= addr && symbols[i].addr > best_addr) {
             best_addr = symbols[i].addr;

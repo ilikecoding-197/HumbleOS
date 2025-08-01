@@ -38,37 +38,35 @@ void _panic_print_hex(int val) {
 	print(buffer); // Print it
 }
 
+struct stack_frame {
+    struct stack_frame *prev;
+    void *ret_addr;
+};
+
 __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ...) {
 	// Header
 	console_clear_screen();
 	console_set_color(RED);
 	print("!!! KERNEL PANIC !!!\n");
+	serial_print("!!! KERNEL PANIC !!!\n");
 	console_set_color(LIGHTGRAY);
 	print("---REGS---\n");
+	serial_print("---REGS---\n");
 	
 	// Regs
-	print("EAX: ");
-	_panic_print_hex(panic_reg_eax);
-	print(" EBX: ");
-	_panic_print_hex(panic_reg_ebx);
-	print(" ECX: ");
-	_panic_print_hex(panic_reg_ecx);
-	print(" EDX: ");
-	_panic_print_hex(panic_reg_edx);
+	char buffer[256];
+	sprintf_(buffer, "EAX: 0x%08x EBX: 0x%08x ECX: 0x%08x EDX: 0x%08x\n", panic_reg_eax, panic_reg_ebx, panic_reg_ecx, panic_reg_edx);
+	print(buffer);
+	serial_print(buffer);
+	sprintf_(buffer, "ESI: 0x%08x EDI: 0x%08x ESP: 0x%08x EBP: 0x%08x\n", panic_reg_esi, panic_reg_edi, panic_reg_esp, panic_reg_ebp);
+	print(buffer);
+	serial_print(buffer);
 	console_handle_newline();
-	
-	print("ESI: ");
-	_panic_print_hex(panic_reg_esi);
-	print(" EDI: ");
-	_panic_print_hex(panic_reg_edi);
-	print(" ESP: ");
-	_panic_print_hex(panic_reg_esp);
-	print(" EBP: ");
-	_panic_print_hex(panic_reg_ebp);
-	console_handle_newline();
+	serial_print("\n");
 
 	// Footer
 	print("Reason: ");
+	serial_print("Reason: ");
 
 	va_list args;
 	va_start(args, line);
@@ -76,12 +74,31 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 	va_end(args);
 	
 	print("\nHappened in C file ");
+	serial_print("Happened in C file ");
 	print(file);
+	serial_print(file);
 	print(" at line ");
+	serial_print(" at line ");
 	print(line);
-	print(".\nSystem will now ");
+	serial_print(line);
+
+	// stack trace
+	print("\n\nStack trace: ");
+	serial_print("\n\nStack trace: ");
+	struct stack_frame *frame = (struct stack_frame *)panic_reg_ebp;
+
+	while (frame) {
+		sprintf_(buffer, "\n  0x%08x", frame->ret_addr);
+		print(buffer);
+		serial_print(buffer);
+		frame = frame->prev;
+	}
+
+	print("\nSystem will now ");
+	serial_print("\nSystem will now ");
 	console_set_color(RED);
 	print("halt.");
+	serial_print("halt.");
 
 	__asm__ __volatile__ ("cli; hlt"); // Halt
 

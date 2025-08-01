@@ -7,6 +7,15 @@ SRC_DIR := src
 INCLUDE_DIR := $(SRC_DIR)/include
 CPP_INCLUDE_DIR := $(INCLUDE_DIR)/cpp
 
+# Debug mode - set DEBUG=1 to enable
+ifdef DEBUG
+    DEBUG_FLAGS := -DDEBUG -g -O0
+    STRIP_CMD := @echo "Debug mode: not stripping symbols"
+else
+    DEBUG_FLAGS := -O2
+    STRIP_CMD := $(STRIP) $@
+endif
+
 GCC := $(HOME)/opt/cross/bin/i686-elf-gcc
 G++ := $(HOME)/opt/cross/bin/i686-elf-g++
 STRIP := $(HOME)/opt/cross/bin/i686-elf-strip
@@ -15,9 +24,9 @@ GRUB_MKRESCUE := grub-mkrescue
 
 KERNEL := kernel.bin
 LD_FILE := linker.ld
-LINK_ARGS := -T $(LD_FILE) -o $(ISO_DIR)/boot/$(KERNEL) -ffreestanding -O2 -nostdlib -z noexecstack -no-pie -static
-GCC_ARGS := -ffreestanding -Wall -Wextra -O2 -c -static -nostartfiles -I$(INCLUDE_DIR) -fno-pic -fno-pie \
-	-Wno-unused-parameter -Wno-write-strings
+LINK_ARGS := -T $(LD_FILE) -o $(ISO_DIR)/boot/$(KERNEL) -ffreestanding -nostdlib -z noexecstack -no-pie -static $(DEBUG_FLAGS)
+GCC_ARGS := -ffreestanding -Wall -Wextra -c -static -nostartfiles -I$(INCLUDE_DIR) -fno-pic -fno-pie \
+	-Wno-unused-parameter -Wno-write-strings -fno-omit-frame-pointer $(DEBUG_FLAGS)
 G++_ARGS := $(GCC_ARGS) -fno-exceptions -fno-rtti -Wno-sized-deallocation -I$(CPP_INCLUDE_DIR)
 # Auto-discover source files
 C_SRC := $(shell find $(SRC_DIR) -name '*.c')
@@ -52,7 +61,7 @@ $(BUILD_DIR)/cpp/%.o: $(SRC_DIR)/%.cpp
 $(ISO_DIR)/boot/$(KERNEL): $(OBJS)
 	@mkdir -p $(dir $@)
 	$(GCC) $(LINK_ARGS) $^ -lgcc
-	$(STRIP) $@
+	$(STRIP_CMD)
 
 # Create ISO
 $(BUILD_DIR)/os.iso: $(ISO_DIR)/boot/$(KERNEL)

@@ -15,6 +15,7 @@
 #include <sys_info.h>
 #include <ints.h>
 #include <rand.h>
+#include <serial.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);

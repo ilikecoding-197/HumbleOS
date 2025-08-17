@@ -22,7 +22,7 @@ namespace tui {
         }
     }
 
-    void paste(const u8 *data, Point at, Size size) {
+    void paste(u8 *data, Point at, Size size) {
         for (int y = 0; y < size.height; y++) {
             for (int x = 0; x < size.width; x++) {
                 u16 pos = (y * size.width + x) * 2;

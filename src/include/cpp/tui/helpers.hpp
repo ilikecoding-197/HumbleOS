@@ -9,10 +9,10 @@
 
 namespace tui {
     /// @brief Copy a certain portion of the screen.
-    void copy(u16 *data, Point at, Size size);
+    void copy(u8 *data, Point at, Size size);
 
     /// @brief Paste a certain portion of the screen.
-    void paste(const u8 *data, Point at, Size size);
+    void paste(u8 *data, Point at, Size size);
 
     /// @brief Fill a certain portion of the screen with a character.
     void fill_character(Point at, Size size, char character);

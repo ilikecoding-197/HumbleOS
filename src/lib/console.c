@@ -263,6 +263,5 @@ void klogf(char *section, char *fmt, ...)
 	va_end(args);
 	
 	klog_print(buffer);
-	console_handle_newline();
-	serial_print("\r\n");
+	klog_print("\n");
 }

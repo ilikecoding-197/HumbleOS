@@ -33,8 +33,11 @@ void time_init() {
 }
 
 void sleep(uint ms) {
+
+        asm volatile("sti");
     time_sleep_ms_start = time_ms;
     while (time_ms - time_sleep_ms_start < ms) {
-        // Do nothing
+        asm volatile("hlt"); // instead of doing nothing, halt. when a interrupt comes in,
+                             // the halting will stop, which will make us check.
     }
 }

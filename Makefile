@@ -43,17 +43,17 @@ OBJS := $(C_OBJS) $(ASM_OBJS) $(CPP_OBJS)
 all: $(BUILD_DIR)/os.iso
 
 # Compile .c files
-$(BUILD_DIR)/c/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/c/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/settings.h
 	@mkdir -p $(dir $@)
 	$(GCC) $(GCC_ARGS) -o $@ $<
 
 # Assemble .asm files
-$(BUILD_DIR)/asm/%.o: $(SRC_DIR)/%.asm
+$(BUILD_DIR)/asm/%.o: $(SRC_DIR)/%.asm $(SRC_DIR)/settings.h
 	@mkdir -p $(dir $@)
 	$(NASM) -felf32 $< -o $@
 
 # Compile .cpp files
-$(BUILD_DIR)/cpp/%.o: $(SRC_DIR)/%.cpp
+$(BUILD_DIR)/cpp/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/settings.h
 	@mkdir -p $(dir $@)
 	$(G++) $(G++_ARGS) $< -o $@
 

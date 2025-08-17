@@ -32,7 +32,8 @@ start:
 	xor ebp, ebp ; Clear EBP - for panic stack frame
     call kernel_main ; Kernel time!
 
-    jmp $ ; Hang if kernel returns
+    cli
+	hlt
 
 section .bss
 resb 32767 ; 32KB stack

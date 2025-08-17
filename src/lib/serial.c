@@ -33,6 +33,9 @@ void serial_init()
     outb(SERIAL_PORT + 4, 0x0F);
     serial_is_init = 1;
     klog("SERIAL", "serial is initalized!");
+
+    // clear the serial console with ANSI
+    serial_print("\033[H\033[2J");
 }
 
 static int is_transmit_empty()

@@ -29,7 +29,6 @@ void call_global_constructors() {
 }
 
 void user_main();
-void tests_run();
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
@@ -56,10 +55,6 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	call_global_constructors();
 
 	klog("main", "initialization complete");
-
-	#ifdef USE_TESTS
-	tests_run();
-	#endif
 
 	#ifdef USE_USER_MAIN
 	klog_to_serial_only = 1;

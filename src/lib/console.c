@@ -19,8 +19,6 @@ char *console_vgaBuff = (char *)0xB8000;
 
 uint console_cursorX;
 uint console_cursorY;
-
-/// @brief Console color.
 u8 console_color;
 
 int klog_to_serial_only = 0;

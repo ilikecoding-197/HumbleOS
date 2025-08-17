@@ -12,6 +12,7 @@ namespace tui {
 
         /// @brief Create the point.
         inline GenericPoint(T x, T y) : x(x), y(y) {}
+        inline GenericPoint() {}
     };
 
     /// @brief A standard point.

@@ -7,3 +7,4 @@
 #include <tui/size.hpp>
 #include <tui/helpers.hpp>
 #include <tui/box.hpp>
+#include <tui/menu.hpp>

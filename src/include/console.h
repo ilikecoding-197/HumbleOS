@@ -103,6 +103,9 @@ extern uint console_cursorX;
 /// @brief The current cursor Y.
 extern uint console_cursorY;
 
+/// @brief The current color.
+extern u8 console_color;
+
 #include <printf.h>
 
 /// @brief Log something with the [KRNL] prefix if time isnt ready, or the time in seconds if it is.

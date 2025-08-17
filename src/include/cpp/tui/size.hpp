@@ -12,6 +12,7 @@ namespace tui {
 
         /// @brief Create the size.
         inline GenericSize(T width, T height) : width(width), height(height) {}
+        inline GenericSize() {}
     };
 
     /// @brief A standard size.

@@ -1,3 +1,6 @@
+// HumbleOS file: string.cpp
+// Purpose: C++ string class code
+
 #include <string.hpp>
 
 string::string() : data(nullptr), len(0), capacity(0) {}

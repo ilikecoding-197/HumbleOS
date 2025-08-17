@@ -1,3 +1,6 @@
+// HumbleOS file: console.hpp
+// Purpose: C++ console header
+
 #pragma once
 
 extern "C" {

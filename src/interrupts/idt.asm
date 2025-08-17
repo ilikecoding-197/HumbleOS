@@ -1,3 +1,6 @@
+; HumbleOS file: idt.asm
+; Purpose: ASM code for the IDT (interrupt descriptior table)
+
 %macro interrupt 1
 interrupt_stub_%+%1:
 	pushad                 ; Push all registers

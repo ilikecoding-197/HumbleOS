@@ -1,3 +1,6 @@
+// HumbleOS file: serial.c
+// Purpose: Serial code
+
 #include <serial.h>
 #include <port.h>
 #include <console.h>

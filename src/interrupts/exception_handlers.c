@@ -1,3 +1,6 @@
+// HumbleOS file: exception_handlers.c
+// Purpose: Code for exception handlers
+
 #include <console.h>
 #include <idt.h>
 #include <stddef.h>

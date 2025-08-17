@@ -1,3 +1,6 @@
+// HumbleOS file: string.hpp
+// Purpose: C++ string class header
+
 #pragma once
 
 extern "C" {

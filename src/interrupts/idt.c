@@ -1,3 +1,6 @@
+// HumbleOS file: idt.c
+// Purpose: C code for the IDT
+
 #include <ints.h>
 #include <stdbool.h>
 #include <console.h>

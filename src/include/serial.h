@@ -1,3 +1,6 @@
+// HumbleOS file: serial.h
+// Purpose: Serial header
+
 #ifndef SERIAL_H
 #define SERIAL_H
 

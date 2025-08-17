@@ -16,6 +16,5 @@
 
 // Actual options, comment out to disable
 #define USE_USER_MAIN // call user_main() after kernel initialization
-#define PANIC_ON_TEST_FAIL // panic if a test fails, disabled by default
 
 #endif

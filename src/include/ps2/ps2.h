@@ -24,10 +24,6 @@ typedef struct {
     int present;           /* [if device is actually present] */
 } ps2_device;
 
-/// @brief initialize the ps/2 subsystem, including controller(s)
-/// @return 0 on success, non-zero on failure
-int ps2_init();
-
 /// @brief detect all connected devices
 /// @param devices pointer to array to fill
 /// @param max_devices maximum number of devices to fill

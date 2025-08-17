@@ -50,7 +50,6 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	exception_handlers_init();
 	time_init();
 	ps2_controller_init();
-	ps2_init();
 	ps2_detect_devices(ps2_devices, 2);
 	sys_info_gather(mbd);
 	heap_init();

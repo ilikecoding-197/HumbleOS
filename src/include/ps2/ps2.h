@@ -7,6 +7,7 @@
 
 #include <ints.h>
 #include "ps2/ps2_controller.h"
+#include <stdbool.h>
 
 /// @brief ps/2 device types
 typedef enum {
@@ -18,17 +19,17 @@ typedef enum {
 
 /// @brief ps/2 device descriptor
 typedef struct {
-    ps2_device_type type;  /* [type of device] */
-    int controller_index;  /* [0 for first, 1 for second] */
-    const char *name;      /* [optional friendly name] */
-    int present;           /* [if device is actually present] */
+    ps2_device_type type;
+    const char *name;
+    bool present;
 } ps2_device;
 
+extern ps2_device ps2_device_first;
+extern ps2_device ps2_device_second;
+extern ps2_device *ps2_keyboard;
+
 /// @brief detect all connected devices
-/// @param devices pointer to array to fill
-/// @param max_devices maximum number of devices to fill
-/// @return number of devices detected
-int ps2_detect_devices(ps2_device *devices, int max_devices);
+void ps2_detect_devices();
 
 /// @brief send a command to a specific device
 /// @param device the device descriptor
@@ -58,5 +59,11 @@ u8 ps2_device_send_command_with_output_and_argument(ps2_device *device, u8 comma
 /// @param device the device descriptor
 /// @return the data byte, or 0xff if nothing available
 u8 ps2_device_read(ps2_device *device);
+
+// commands
+
+#define PS2_DISABLE_SCANNING 0xF5
+#define PS2_ENABLE_SCANNING 0xF4
+#define PS2_IDENTIFY 0xF2
 
 #endif // PS2_H

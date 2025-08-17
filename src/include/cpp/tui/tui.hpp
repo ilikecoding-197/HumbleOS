@@ -5,4 +5,5 @@
 
 #include <tui/point.hpp>
 #include <tui/size.hpp>
-#include <tui/helpers.hpp>   
+#include <tui/helpers.hpp>
+#include <tui/box.hpp>

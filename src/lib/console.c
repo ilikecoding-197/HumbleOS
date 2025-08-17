@@ -196,6 +196,22 @@ void put_color_at(uint x, uint y, char color)
 	console_vgaBuff[pos + 1] = color;  // Set color
 }
 
+char get_char_at(uint x, uint y) {
+	x = (x > VGA_WIDTH - 1 ? VGA_WIDTH - 1 : x);   // Limit X
+	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
+
+	u16 pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
+	return console_vgaBuff[pos];  // Get character
+}
+
+char get_color_at(uint x, uint y) {
+	x = (x > VGA_WIDTH - 1 ? VGA_WIDTH - 1 : x);   // Limit X
+	y = (y > VGA_HEIGHT - 1 ? VGA_HEIGHT - 1 : y); // Limit Y
+
+	u16 pos = (y * VGA_WIDTH + x) * 2; // Calcuate pos
+	return console_vgaBuff[pos + 1];  // Get color
+}
+
 char getch()
 {
 	// We dont have the keyboard driver yet, so just return A

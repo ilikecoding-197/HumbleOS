@@ -84,6 +84,16 @@ void put_char_at(uint x, uint y, char ch);
 /// @param color Color to place.
 void put_color_at(uint x, uint y,char color);
 
+/// @brief Get a character at a certain position.
+/// @param x X position. (0-79)
+/// @param y Y position. (0-24)
+char get_char_at(uint x, uint y);
+
+/// @brief Get a color at a certain position.
+/// @param x X position. (0-79)
+/// @param y Y position. (0-24)
+char get_color_at(uint x, uint y);
+
 /// @brief Get a character from the user
 char getch();
 

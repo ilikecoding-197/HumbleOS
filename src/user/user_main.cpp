@@ -5,6 +5,7 @@
 #include <ps2.hpp>
 #include <string.hpp>
 #include <panic.hpp>
+#include <tui/tui.hpp>
 
 extern "C" void user_main() {
     std::clear_screen();
@@ -13,4 +14,8 @@ extern "C" void user_main() {
     std::print(hi);
 
     klog("USER", "Hello World! This should only appear on the serial.");
+
+    // tui testing
+
+    tui::fill(tui::Point(0, 0), tui::Size(10, 10), 'A', 0x70);
 }

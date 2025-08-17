@@ -10,7 +10,7 @@ extern "C" {
 #include <cstdarg>
 #include "../../include/printf.h"
 
-namespace console {
+namespace std {
     inline void print(char *str) {
         ::print(str);
     }

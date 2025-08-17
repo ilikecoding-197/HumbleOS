@@ -7,10 +7,10 @@
 #include <panic.hpp>
 
 extern "C" void user_main() {
-    console::clear_screen();
+    std::clear_screen();
 
-    string hi("Hello World!");
-    console::print(hi);
+    std::string hi("Hello World!");
+    std::print(hi);
 
     klog("USER", "Hello World! This should only appear on the serial.");
 }

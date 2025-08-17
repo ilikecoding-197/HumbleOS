@@ -221,6 +221,9 @@ char getch()
 
 void klog_prefix(char *section)
 {
+	console_set_color(LIGHTBLUE);
+	serial_print("\x1b[94m");
+
 	if (!time_can_use_for_klog)
 	{
 		klog_print("[KRNL] ");
@@ -238,19 +241,31 @@ void klog_prefix(char *section)
 		klog_print(time_buffer);
 	}
 
+	console_set_color(LIGHTGREEN);
+	serial_print("\x1b[92m");
 	klog_print(section);
 	klog_print(": ");
+
+	console_set_color(WHITE);
+	serial_print("\x1b[97m");
 }
 
 void klog(char *section, char *str)
 {
+	u8 oldColor = console_color;
+
 	klog_prefix(section);
+
 	klog_print(str);
 	klog_print("\n");
+
+	console_set_color(oldColor);
+	serial_print("\x1b[0m");
 }
 
 void klogf(char *section, char *fmt, ...)
 {
+	u8 oldColor = console_color;
 	klog_prefix(section);
 
 	// Format once into a buffer, then output to both
@@ -262,4 +277,7 @@ void klogf(char *section, char *fmt, ...)
 	
 	klog_print(buffer);
 	klog_print("\n");
+
+	console_set_color(oldColor);
+	serial_print("\x1b[0m");
 }

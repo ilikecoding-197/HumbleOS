@@ -17,6 +17,7 @@
 #include <rand.h>
 #include <serial.h>
 #include <ps2/ps2.h>
+#include <ps2/ps2_keyboard.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);
@@ -51,6 +52,7 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	time_init();
 	ps2_controller_init();
 	ps2_detect_devices(ps2_devices, 2);
+	ps2_keyboard_init();
 	sys_info_gather(mbd);
 	heap_init();
 	rand_init();

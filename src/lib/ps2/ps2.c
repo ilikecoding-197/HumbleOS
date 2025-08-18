@@ -2,6 +2,8 @@
 // Purpose: PS2 drivers
 
 #include <ps2/ps2.h>
+#include <port.h>
+#include <stddef.h>
 
 ps2_device ps2_device_first;
 ps2_device ps2_device_second;
@@ -18,6 +20,7 @@ void _ps2_print_device(ps2_device *device, int id) {
 void ps2_detect_devices() {
     // we will expect the first ps2 to be keyboard. yeah, i know, its bad but..
     klog("PS2", "detecting devices...");
+    ps2_keyboard = NULL;
 
     ps2_device_first.type = PS2_DEVICE_KEYBOARD;
     ps2_device_first.name = "PS/2 Keyboard";

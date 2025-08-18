@@ -32,6 +32,7 @@ namespace tui {
         bool isDone;
         u8 prevContent[80*25*2];
         u8 background, foreground;
+        uint keyEvent;
 
         inline MenuContext() {};
     };
@@ -41,9 +42,6 @@ namespace tui {
 
     // Draw the menu from a context.
     void draw_menu(MenuContext *context);
-
-    // Update the menu from a context (handle input). Returns true if the menu is done.
-    bool update_menu(MenuContext *context);
 
     // Get the ID of the selected item
     uint get_menu(MenuContext *context);

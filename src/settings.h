@@ -15,6 +15,6 @@
 
 
 // Actual options, comment out to disable
-//#define USE_USER_MAIN // call user_main() after kernel initialization
+#define USE_USER_MAIN // call user_main() after kernel initialization
 
 #endif

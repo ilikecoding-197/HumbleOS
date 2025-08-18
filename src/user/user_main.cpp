@@ -9,12 +9,27 @@
 
 using namespace tui;
 
-extern "C" {
-    #include <time.h>
-    #include <rand.h>
+extern "C"
+{
+#include <time.h>
+#include <rand.h>
+#include <serial.h>
+#include <events.h>
 }
 
-extern "C" void user_main() {
+void timer_event(Event *e)
+{
+    if (e->type != EVENT_TIMER)
+        return;
+
+    console_move_cursor(0, 24);
+    printf("                                     ");
+    console_move_cursor(0, 24);
+    printf("%d", e->event.timer_ms);
+}
+
+extern "C" void user_main()
+{
     // tui testing
     std::clear_screen();
 
@@ -30,7 +45,22 @@ extern "C" void user_main() {
     menu.items[2].text = "Hello, world! (3)";
     menu.items[2].description = nullptr;
     menu.items[2].id = 3;
-    
-    uint id = menu_block(&menu, Point(2, 1), Size(76, 23));
-    printf("You selected: %d\n", id);
+
+    uint timeEvent = add_event(timer_event, NULL);
+    while (true)
+    {
+        MenuContext context;
+
+        open_menu(&context, &menu, Point(2, 1), Size(76, 23));
+
+        while (!context.isDone);
+
+        uint id = get_menu(&context);
+        close_menu(&context);
+
+        console_move_cursor(0, 0);
+        std::clear_screen();
+        printf("You selected: %d. Press any key to go again.\n", id);
+        getch();
+    }
 }

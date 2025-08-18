@@ -210,12 +210,6 @@ char get_color_at(uint x, uint y) {
 	return console_vgaBuff[pos + 1];  // Get color
 }
 
-char getch()
-{
-	// We dont have the keyboard driver yet, so just return A
-	return 'A';
-}
-
 #define klog_print(x) if (klog_to_serial_only) { serial_print(x); } else { print(x); serial_print(x); }
 
 

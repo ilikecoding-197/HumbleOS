@@ -95,7 +95,10 @@ char get_char_at(uint x, uint y);
 char get_color_at(uint x, uint y);
 
 /// @brief Get a character from the user
-char getch();
+u16 getch();
+
+/// @brief Returns true if you have a key you can get.
+bool has_key();
 
 /// @brief The current cursor X.
 extern uint console_cursorX;
@@ -119,5 +122,12 @@ void klogf(char *section, char *format, ...);
 
 /// @brief Set whether to only log klogs to serial.
 extern int klog_to_serial_only;
+
+// key codes
+
+#define KEY_UP 0xE075
+#define KEY_DOWN 0xE072
+#define KEY_RIGHT 0xE074
+#define KEY_LEFT 0xE06B
 
 #endif // CONSOLE_H

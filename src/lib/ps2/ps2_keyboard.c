@@ -10,28 +10,17 @@
 #include <time.h>
 #include <port.h>
 #include <ints.h>
+#include <events.h>
+
+static struct
+{
+    bool shift;
+    bool caps_lock;
+} flags;
 
 static volatile u8 keyboard_scancode_buffer[256];
 static volatile u8 keyboard_scancode_buffer_read = 0;
 static volatile u8 keyboard_scancode_buffer_write = 0;
-
-// really simple!
-static void ps2_interrupt()
-{
-    u8 scancode = inb(0x60);
-    keyboard_scancode_buffer[keyboard_scancode_buffer_write++] = scancode;
-}
-
-static u8 wait_for_scancode()
-{
-    while (keyboard_scancode_buffer_read == keyboard_scancode_buffer_write)
-    {
-        asm volatile("hlt");
-    }
-
-    u8 scancode = keyboard_scancode_buffer[keyboard_scancode_buffer_read++];
-    return scancode;
-}
 
 // scan code set 2
 static char scan_code_set[256] = {
@@ -52,12 +41,6 @@ static char scan_code_set[256] = {
     '0', '.', '2', '5', '6', '8', '\0', '\0',
     '\0', '+', '3', '-', '*', '9', '\0', '\0',
     '\0', '\0', '\0', '\0'};
-
-static struct
-{
-    bool shift;
-    bool caps_lock;
-} flags;
 
 char flip_case(char input)
 {
@@ -87,7 +70,98 @@ static char shift(char input)
     return input; // only handle numbers for now
 }
 
-u16 kbd_getch()
+bool has_key()
+{
+    if (keyboard_scancode_buffer_read != keyboard_scancode_buffer_write)
+        serial_print("has_key called and gthere is one ");
+    else
+        serial_print("nope ");
+    return keyboard_scancode_buffer_read != keyboard_scancode_buffer_write;
+}
+
+static u8 wait_for_scancode()
+{
+    while (!has_key())
+    {
+        asm volatile("hlt");
+    }
+
+    u8 scancode = keyboard_scancode_buffer[keyboard_scancode_buffer_read++];
+    return scancode;
+}
+
+static void ps2_interrupt()
+{
+    u8 scancode = inb(0x60);
+
+    Event e;
+
+    /* handle special keys first */
+    if (scancode == 0xF0)
+    {
+        u8 released = inb(0x60); // next byte
+        e.type = EVENT_KEY_UP;
+        e.event.keycode = released;
+        trigger_event(&e);
+        if (released == 0x12)
+            flags.shift = false;
+        return;
+    }
+
+    if (scancode == 0x58)
+    { /* caps lock */
+        flags.caps_lock = !flags.caps_lock;
+        return; /* optional: no event for caps toggle */
+    }
+
+    if (scancode == 0x12)
+    { /* shift press */
+        flags.shift = true;
+        e.type = EVENT_KEY_DOWN;
+        e.event.keycode = 0x12;
+        trigger_event(&e);
+        return;
+    }
+
+    /* extended keys */
+    if (scancode == 0xE0)
+    {
+        scancode = inb(0x60);
+        if (scancode == 0xF0)
+        {
+            scancode = inb(0x60);
+            e.type = EVENT_KEY_UP;
+            e.event.keycode = 0xE000 | scancode;
+            trigger_event(&e);
+            return;
+        }
+        else
+        {
+            e.type = EVENT_KEY_DOWN;
+            e.event.keycode = 0xE000 | scancode;
+            trigger_event(&e);
+            return;
+        }
+    }
+
+    /* normal keys */
+    char character = scan_code_set[scancode];
+    if (isalpha(character))
+    {
+        if (flags.caps_lock ^ flags.shift)
+            character = flip_case(character);
+    }
+    else if (flags.shift)
+    {
+        character = shift(character);
+    }
+
+    e.type = EVENT_KEY_DOWN;
+    e.event.keycode = (u16)character;
+    trigger_event(&e);
+}
+
+u16 getch()
 {
     while (1)
     {

@@ -5,6 +5,7 @@
 #include <console.h>
 #include <idt.h>
 #include <ints.h>
+#include <events.h>
 
 uint time_ms;
 uint time_can_use_for_klog = 0;
@@ -12,6 +13,11 @@ uint time_sleep_ms_start;
 
 void time_interrupt() {
     time_ms++;
+
+    Event timeEvent;
+    timeEvent.type = EVENT_TIMER;
+    timeEvent.event.timer_ms = time_ms;
+    trigger_event(&timeEvent);
 }
 
 void time_init() {

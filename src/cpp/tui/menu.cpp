@@ -9,6 +9,8 @@ extern "C"
 {
 #include <console.h>
 #include <events.h>
+#include <serial.h>
+#include <ps2/ps2_keyboard.h>
 }
 
 extern "C" uint time_ms;
@@ -29,6 +31,7 @@ namespace {
         case KEY_RIGHT:
         case '\n':
             context->isDone = true;
+            ps2_keyboard_flush();
             return;
         }
 
@@ -116,7 +119,9 @@ namespace tui
 
         open_menu(&context, menu, at, size, startingIndex);
 
-        while (!context.isDone);
+        while (!context.isDone) {
+            asm volatile("hlt");
+        }
 
         uint id = get_menu(&context);
         close_menu(&context);

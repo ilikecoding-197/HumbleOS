@@ -72,10 +72,6 @@ static char shift(char input)
 
 bool has_key()
 {
-    if (keyboard_scancode_buffer_read != keyboard_scancode_buffer_write)
-        serial_print("has_key called and gthere is one ");
-    else
-        serial_print("nope ");
     return keyboard_scancode_buffer_read != keyboard_scancode_buffer_write;
 }
 
@@ -99,6 +95,7 @@ static void ps2_interrupt()
     /* handle special keys first */
     if (scancode == 0xF0)
     {
+        serial_print("a");
         u8 released = inb(0x60); // next byte
         e.type = EVENT_KEY_UP;
         e.event.keycode = released;
@@ -161,59 +158,28 @@ static void ps2_interrupt()
     trigger_event(&e);
 }
 
+static u16 getch_value;
+
+static void getch_event(Event *e) {
+    if (e->type != EVENT_KEY_DOWN) return; 
+
+    getch_value = e->event.keycode;
+}
+
 u16 getch()
 {
-    while (1)
-    {
-        u8 scancode = wait_for_scancode();
+    getch_value = 0;
+    uint event_id = add_event(getch_event, NULL);
 
-        if (scancode == 0xF0)
-        {
-            u8 released = wait_for_scancode();
-            if (released == 0x12)
-                flags.shift = false;
-            continue; /* skip all releases */
-        }
+    while (getch_value == 0)
+        asm volatile("hlt");
 
-        if (scancode == 0x58)
-        { /* caps lock */
-            flags.caps_lock = !flags.caps_lock;
-            continue;
-        }
+    remove_event(event_id);
+    return getch_value;
+}
 
-        if (scancode == 0x12)
-        { /* shift press */
-            flags.shift = true;
-            continue;
-        }
-
-        if (scancode == 0xE0)
-        {
-            scancode = wait_for_scancode();
-
-            if (scancode == 0xF0)
-            {
-                wait_for_scancode();
-                continue;
-            }
-
-            return 0xE000 | scancode;
-        }
-
-        char character = scan_code_set[scancode];
-
-        if (isalpha(character))
-        {
-            if (flags.caps_lock ^ flags.shift)
-                character = flip_case(character);
-        }
-        else if (flags.shift)
-        {
-            character = shift(character);
-        }
-
-        return (u16)character;
-    }
+void ps2_keyboard_flush() {
+    keyboard_scancode_buffer_read = keyboard_scancode_buffer_write;
 }
 
 void ps2_keyboard_init()

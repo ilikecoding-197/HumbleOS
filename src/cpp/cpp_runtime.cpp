@@ -96,3 +96,6 @@ extern "C" void* __cxa_begin_catch(void* exc_obj_in) {
 extern "C" void __cxa_end_catch() {
     PANIC("C++ exception handling attempted but exceptions are disabled!");
 }
+
+// i need this i guess
+extern "C" void* __dso_handle = nullptr;

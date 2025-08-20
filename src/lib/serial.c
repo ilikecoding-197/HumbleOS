@@ -72,29 +72,6 @@ void serial_print(char* str) {
     serial_flush(); // Ensure it's sent before returning
 }
 
-void serial_printf(char *format, ...)
-{
-    if (!serial_is_init)
-    {
-        return;
-    }
-
-    va_list args;
-    va_start(args, format);
-    serial_vprintf(format, args);
-    va_end(args);
-}
-
-static void serial_out_char(char character, void *arg) {
+void _serial_out_char(char character, void *arg) {
     serial_print_char(character);
-}
-
-void serial_vprintf(char *format, va_list args)
-{
-    if (!serial_is_init)
-    {
-        return;
-    }
-
-    fctprintf(serial_out_char, NULL, format, args);
 }

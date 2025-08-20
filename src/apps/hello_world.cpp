@@ -3,9 +3,10 @@
 // Author: Thomas Shrader
 
 #include "app.hpp"
+#include <console.hpp>
 
 static void app_main(void) {
-
+    std::print("Hello, world!");
 }
 
 App hello_world_app = {

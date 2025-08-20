@@ -73,10 +73,7 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	klog("main", "calling global constructors for C++ support");
 	call_global_constructors();
 
-	klog("main", "initialization complete");
-
-	u8 echo_response = ps2_device_send_command_with_output(ps2_keyboard, 0xEE);
-	if (echo_response == 0xEE) klog("main", "yay");
+	klog("main", "initialization complete"); 
 
 	#if USE_USER_MAIN
 	klog_to_serial_only = 1;

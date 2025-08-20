@@ -8,7 +8,7 @@
 #include <ps2/ps2_controller.h>
 #include <stdbool.h>
 #include <panic.h>
-#include "settings.h"
+#include "config.h"
 #include <heap.h>
 #include <time.h>
 #include <multiboot.h>
@@ -33,6 +33,15 @@ void call_global_constructors() {
 void user_main();
 
 ps2_device ps2_devices[2];
+
+// info
+#define NAME "Humble OS"
+#define VERSION "0.0.1"
+#ifdef DEBUG
+#define RELEASE_TYPE "Debug"
+#else
+#define RELEASE_TYPE "Release"
+#endif
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
@@ -65,7 +74,7 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	u8 echo_response = ps2_device_send_command_with_output(ps2_keyboard, 0xEE);
 	if (echo_response == 0xEE) klog("main", "yay");
 
-	#ifdef USE_USER_MAIN
+	#if USE_USER_MAIN
 	klog_to_serial_only = 1;
 	user_main();
 	#endif

@@ -21,6 +21,7 @@ G++ := $(HOME)/opt/cross/bin/i686-elf-g++
 STRIP := $(HOME)/opt/cross/bin/i686-elf-strip
 NASM := nasm
 GRUB_MKRESCUE := grub-mkrescue
+PYTHON := python3
 
 KERNEL := kernel.bin
 LD_FILE := linker.ld
@@ -43,22 +44,23 @@ OBJS := $(C_OBJS) $(ASM_OBJS) $(CPP_OBJS)
 all: $(BUILD_DIR)/os.iso
 
 # Compile .c files
-$(BUILD_DIR)/c/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/settings.h
+$(BUILD_DIR)/c/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/config.h
 	@mkdir -p $(dir $@)
 	$(GCC) $(GCC_ARGS) -o $@ $<
 
 # Assemble .asm files
-$(BUILD_DIR)/asm/%.o: $(SRC_DIR)/%.asm $(SRC_DIR)/settings.h
+$(BUILD_DIR)/asm/%.o: $(SRC_DIR)/%.asm $(SRC_DIR)/config.h
 	@mkdir -p $(dir $@)
 	$(NASM) -felf32 $< -o $@
 
 # Compile .cpp files
-$(BUILD_DIR)/cpp/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/settings.h
+$(BUILD_DIR)/cpp/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/config.h
 	@mkdir -p $(dir $@)
 	$(G++) $(G++_ARGS) $< -o $@
 
 # Link kernel
 $(ISO_DIR)/boot/$(KERNEL): $(OBJS)
+	$(PYTHON) config/create_config_h.py
 	@mkdir -p $(dir $@)
 	# Create empty symbols file if it doesn't exist
 	@test -f src/symbols_generated.h || echo '{0, ""}' > src/symbols_generated.h
@@ -84,3 +86,11 @@ clean:
 # Run the OS
 run: $(BUILD_DIR)/os.iso
 	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso -boot d -m 128M -serial stdio $(QEMUFLAGS)
+
+# Generate default config
+defconfig:
+	$(PYTHON) config/default_config.py
+
+# Change the config
+menuconfig:
+	$(PYTHON) config/config_editor.py

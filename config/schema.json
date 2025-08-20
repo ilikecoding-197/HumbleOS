@@ -1,0 +1,8 @@
+[
+    {
+        "text": "call user_main after kernel",
+        "define": "USE_USER_MAIN",
+        "type": "boolean",
+        "default": true
+    }
+]

@@ -28,12 +28,23 @@ class MyForm(npyscreen.Form):
                     name=f"{option['text']} [{define}]",
                     value=config.get(define, False)
                 )
-                self.widgets.append((define, opt_type, w))
+            elif opt_type == "string":
+                w = self.add(
+                    npyscreen.TitleText,
+                    name=f"{option['text']} [{define}]",
+                    value=str(config.get(define, ""))
+                )
+            else:
+                continue
+
+            self.widgets.append((define, opt_type, w))
 
     def push_values(self):
         for define, opt_type, widget in self.widgets:
             if opt_type == "boolean":
                 config[define] = bool(widget.value)
+            elif opt_type == "string":
+                config[define] = str(widget.value)
 
     def afterEditing(self):
         self.push_values()

@@ -4,5 +4,12 @@
         "define": "USE_USER_MAIN",
         "type": "boolean",
         "default": true
+    },
+    {
+        "text": "build name (leave blank for general build)",
+        "define": "BUILD_NAME",
+        "type": "string",
+        "doEmptyFlag": true,
+        "default": ""
     }
 ]

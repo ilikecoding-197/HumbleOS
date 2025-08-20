@@ -47,7 +47,11 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
 	serial_init(); // do this as early as possible
 
+#if BUILD_NAME_IS_EMPTY
 	klog("main", NAME " v" VERSION ", " RELEASE_TYPE " build");
+#else
+	klog("main", NAME " (" BUILD_NAME ") v" VERSION ", " RELEASE_TYPE " build");
+#endif
 
 	// Check for correct magic
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {

@@ -17,6 +17,7 @@ extern "C"
 #include <serial.h>
 #include <events.h>
 #include <ps2/ps2_keyboard.h>
+#include <cpu.h>
 }
 
 extern "C" void user_main()
@@ -33,7 +34,7 @@ extern "C" void user_main()
         open_menu(&context, &menu, Point(0, 0), Size(80, 25));
 
         while (!context.isDone) {
-            asm volatile("hlt");
+            cpu_hlt();
         }
 
         uint id = get_menu(&context);

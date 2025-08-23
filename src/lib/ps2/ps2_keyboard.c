@@ -11,6 +11,7 @@
 #include <port.h>
 #include <ints.h>
 #include <events.h>
+#include <cpu.h>
 
 static struct
 {
@@ -79,7 +80,7 @@ static u8 wait_for_scancode()
 {
     while (!has_key())
     {
-        asm volatile("hlt");
+        cpu_hlt();
     }
 
     u8 scancode = keyboard_scancode_buffer[keyboard_scancode_buffer_read++];
@@ -172,7 +173,7 @@ u16 getch()
     uint event_id = add_event(getch_event, NULL);
 
     while (getch_value == 0)
-        asm volatile("hlt");
+        cpu_hlt();
 
     remove_event(event_id);
     return getch_value;

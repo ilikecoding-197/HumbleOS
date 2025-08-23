@@ -6,6 +6,7 @@
 #include <idt.h>
 #include <ints.h>
 #include <events.h>
+#include <cpu.h>
 
 uint time_ms;
 uint time_can_use_for_klog = 0;
@@ -39,11 +40,9 @@ void time_init() {
 }
 
 void sleep(uint ms) {
-
-        asm volatile("sti");
     time_sleep_ms_start = time_ms;
     while (time_ms - time_sleep_ms_start < ms) {
-        asm volatile("hlt"); // instead of doing nothing, halt. when a interrupt comes in,
+        cpu_hlt(); // instead of doing nothing, halt. when a interrupt comes in,
                              // the halting will stop, which will make us check.
     }
 }

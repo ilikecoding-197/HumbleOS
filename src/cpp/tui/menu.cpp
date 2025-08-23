@@ -11,6 +11,7 @@ extern "C"
 #include <events.h>
 #include <serial.h>
 #include <ps2/ps2_keyboard.h>
+#include <cpu.h>
 }
 
 extern "C" uint time_ms;
@@ -120,7 +121,7 @@ namespace tui
         open_menu(&context, menu, at, size, startingIndex);
 
         while (!context.isDone) {
-            asm volatile("hlt");
+            cpu_hlt();
         }
 
         uint id = get_menu(&context);

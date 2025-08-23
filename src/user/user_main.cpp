@@ -12,7 +12,6 @@ using namespace tui;
 
 extern "C"
 {
-#include <time.h>
 #include <rand.h>
 #include <serial.h>
 #include <events.h>

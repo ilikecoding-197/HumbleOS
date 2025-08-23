@@ -38,7 +38,7 @@ with open(SCHEMA, mode="r") as schema_fp, open(CONFIG, mode="r") as config_fp:
             config_h += "\"" + value + "\""
             
             if option["doEmptyFlag"]:
-                config_h += "\n#define " + option["define"] + "_IS_EMPTY " + ("1" if len(value) == 0 else "0)")
+                config_h += "\n#define " + option["define"] + "_IS_EMPTY " + ("1" if len(value) == 0 else "0")
 
         config_h += "\n\n"
 

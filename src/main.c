@@ -44,8 +44,6 @@ ps2_device ps2_devices[2];
 #endif
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
-	const char *cmdline = (const char *) (uintptr_t) mbd->cmdline;
-
 	console_init();
 	serial_init(); // do this as early as possible
 
@@ -54,8 +52,6 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 #else
 	klog("main", NAME " (" BUILD_NAME ") v" VERSION ", " RELEASE_TYPE " build");
 #endif
-
-	klogf("main", "command line: \"%s\"", cmdline);
 
 	// Check for correct magic
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {

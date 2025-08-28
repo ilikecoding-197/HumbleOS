@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <panic.h>
 #include "config.h"
+#include "info.h"
 #include <heap.h>
 #include <time.h>
 #include <multiboot.h>
@@ -34,15 +35,6 @@ void call_global_constructors() {
 void user_main();
 
 ps2_device ps2_devices[2];
-
-// info
-#define NAME "Humble OS"
-#define VERSION "0.0.1"
-#ifdef DEBUG
-#define RELEASE_TYPE "Debug"
-#else
-#define RELEASE_TYPE "Release"
-#endif
 
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();

@@ -34,4 +34,8 @@ namespace std {
         va_end(args);
         return ret;
     }
+
+    inline void set_color(u8 color) {
+        ::console_set_color(color);
+    }
 }

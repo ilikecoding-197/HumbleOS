@@ -18,6 +18,7 @@
 #include <serial.h>
 #include <ps2/ps2.h>
 #include <ps2/ps2_keyboard.h>
+#include <pcspk.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);
@@ -73,7 +74,11 @@ void kernel_main(multiboot_info_t* mbd, uint magic) {
 	klog("main", "calling global constructors for C++ support");
 	call_global_constructors();
 
-	klog("main", "initialization complete"); 
+	klog("main", "initialization complete");
+
+	#if BEEP_ON_INIT_DONE
+	beep();
+	#endif
 
 	#if USE_USER_MAIN
 	klog_to_serial_only = 1;

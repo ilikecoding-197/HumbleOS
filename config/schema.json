@@ -11,5 +11,17 @@
         "type": "string",
         "doEmptyFlag": true,
         "default": ""
+    },
+    {
+        "text": "beep after initalization is complete",
+        "define": "BEEP_ON_INIT_DONE",
+        "type": "boolean",
+        "default": false
+    },
+    {
+        "text": "beep after a panic",
+        "define": "BEEP_ON_PANIC",
+        "type": "boolean",
+        "default": true
     }
 ]

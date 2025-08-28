@@ -2,6 +2,7 @@
 // Purpose: C file for panic
 
 #include <panic.h>
+#include "../config.h"
 #include <console.h>
 #include <stdarg.h>
 
@@ -136,6 +137,10 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 	console_set_color(RED);
 	print("halt.");
 	serial_print("halt.");
+
+	#if BEEP_ON_PANIC
+	beep();
+	#endif
 
 	__asm__ __volatile__ ("cli; hlt"); // Halt
 

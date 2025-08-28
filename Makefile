@@ -85,7 +85,8 @@ clean:
 
 # Run the OS
 run: $(BUILD_DIR)/os.iso
-	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso -boot d -m 128M -serial stdio $(QEMUFLAGS)
+	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso -boot d -m 128M -serial stdio $(QEMUFLAGS) \
+		-audiodev pa,id=speaker -machine pcspk-audiodev=speaker
 
 # Generate default config
 defconfig:

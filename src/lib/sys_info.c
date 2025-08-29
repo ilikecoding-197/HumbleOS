@@ -50,6 +50,7 @@ void sys_info_gather(multiboot_info_t* mbd) {
     else if (mem_amt < 1024 * 1024) klogf("sys_info", "total memory: %dK", mem_amt / 1024);
     else if (mem_amt < 1024 * 1024 * 1024) klogf("sys_info", "total memory: %dM", mem_amt / 1024 / 1024);
     else klogf("sys_info", "total memory: %dG", mem_amt / 1024 / 1024 / 1024);
+    sys_info.mem_amt = mem_amt;
 
     // CPUID
     cpuid_init();

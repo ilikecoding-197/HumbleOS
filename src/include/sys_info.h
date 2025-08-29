@@ -19,6 +19,9 @@ struct _sys_info {
 
     /// @brief After boot, stores the time_ms value after boot (boot time).
     uint boot_time;
+
+    /// @brief Amount of memory avaiable.
+    uint mem_amt;
 };
 
 /// @brief The system information.

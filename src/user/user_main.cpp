@@ -28,7 +28,7 @@ void banner()
 {
     /* banner (bunch of random numbers time!) */
     std::clear_screen();
-    tui::fill_color(Point(0, 0), Size(80, 7), VGA_ATTR(WHITE, LIGHTBLUE));
+    tui::fill_color(Point(0, 0), Size(80, 9), VGA_ATTR(WHITE, LIGHTBLUE));
     std::set_color(VGA_ATTR(WHITE, LIGHTBLUE));
     for (int i = 0; i < 5; i++)
     {
@@ -41,6 +41,11 @@ void banner()
     ::print("v" VERSION);
     ::console_move_cursor(50, 2);
     ::print(RELEASE_TYPE);
+
+    ::console_move_cursor(1, 7);
+    std::printf("Booted in %dms (%ds) %dMB total memory", ::sys_info.boot_time, ::sys_info.boot_time / 1000,
+        ::sys_info.mem_amt / (1024 * 1024));
+    ::console_move_cursor(0, 10);
 
     /* palette test (8x2 blocks) */
     for (int i = 0; i < 16; i++)
@@ -60,8 +65,6 @@ void banner()
 extern "C" void user_main()
 {
     banner();
-
-    ::console_move_cursor(1, 8);
-    std::printf("Booted in %dms (%ds)", ::sys_info.boot_time, ::sys_info.boot_time / 1000);
     ::console_move_cursor(0, 10);
+    
 }

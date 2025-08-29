@@ -31,40 +31,38 @@ char *HUMBLE_OS_BANNER[] = {
 
 void banner()
 {
-    // banner (bunch of random numbers time!)
+    /* banner (bunch of random numbers time!) */
     std::clear_screen();
-    tui::fill_color(Point(0, 0), Size(80, 7), 0x1F);
-    std::set_color(0x16); // white on blue
+    tui::fill_color(Point(0, 0), Size(80, 7), VGA_ATTR(WHITE, LIGHTBLUE));
+    std::set_color(VGA_ATTR(WHITE, LIGHTBLUE));
     for (int i = 0; i < 5; i++)
     {
         char *line = HUMBLE_OS_BANNER[i];
 
-        ::console_move_cursor(15, 1 + i);
+        ::console_move_cursor(1, 1 + i);
         std::print(line);
     }
-    ::console_move_cursor(64, 1);
+    ::console_move_cursor(50, 1);
     ::print("v" VERSION);
-    ::console_move_cursor(64, 2);
-    ::print(" " RELEASE_TYPE);
-    std::set_color(0x07); // normal
+    ::console_move_cursor(50, 2);
+    ::print(RELEASE_TYPE);
+
+    /* palette test (8x2 blocks) */
+    for (int i = 0; i < 16; i++)
+    {
+        int x = 50 + (i % 8) * 2;
+        int y = 4 + (i / 8);
+
+        std::set_color((i << 4) | 0x0F); /* background = i, foreground = white */
+        ::console_move_cursor(x, y);
+        std::print("  "); /* two spaces = a “block” */
+    }
+
+    std::set_color(0x07); /* normal */
 }
+
 
 extern "C" void user_main()
 {
-    // banner();
-
-    // Color pallette test
-    for (int bg = 0; bg < 16; bg++)
-    {
-        for (int fg = 0; fg < 16; fg++)
-        {
-            u8 attr = (bg << 4) | fg;
-            std::set_color(attr);
-            std::print("A");
-        }
-        std::set_color(0);
-        std::print("\n");
-    }
-    
-    std::set_color(VGA_ATTR(LIGHTGRAY, BLACK));
+    banner();
 }

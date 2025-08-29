@@ -22,8 +22,6 @@ extern "C"
 #include <sys_info.h>
 }
 
-
-
 void banner()
 {
     /* banner (bunch of random numbers time!) */

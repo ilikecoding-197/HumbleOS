@@ -29,16 +29,17 @@ char *HUMBLE_OS_BANNER[] = {
     "|_| |_|\\__,_|_| |_| |_|_.__/|_|\\___|\\___/|____/ ",
 };
 
-extern "C" void user_main()
+void banner()
 {
     // banner (bunch of random numbers time!)
     std::clear_screen();
     tui::fill_color(Point(0, 0), Size(80, 7), 0x1F);
-    std::set_color(0x1F); // white on blue
-    for (int i = 0; i < 5; i++) {
+    std::set_color(0x16); // white on blue
+    for (int i = 0; i < 5; i++)
+    {
         char *line = HUMBLE_OS_BANNER[i];
 
-        ::console_move_cursor(15, 1+i);
+        ::console_move_cursor(15, 1 + i);
         std::print(line);
     }
     ::console_move_cursor(64, 1);
@@ -46,4 +47,24 @@ extern "C" void user_main()
     ::console_move_cursor(64, 2);
     ::print(" " RELEASE_TYPE);
     std::set_color(0x07); // normal
+}
+
+extern "C" void user_main()
+{
+    // banner();
+
+    // Color pallette test
+    for (int bg = 0; bg < 16; bg++)
+    {
+        for (int fg = 0; fg < 16; fg++)
+        {
+            u8 attr = (bg << 4) | fg;
+            std::set_color(attr);
+            std::print("A");
+        }
+        std::set_color(0);
+        std::print("\n");
+    }
+    
+    std::set_color(VGA_ATTR(LIGHTGRAY, BLACK));
 }

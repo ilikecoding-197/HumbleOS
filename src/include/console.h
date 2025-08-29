@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <ints.h>
 #include <stdarg.h>
+#include <vga.h>
 
 #ifndef CONSOLE_H
 #define CONSOLE_H

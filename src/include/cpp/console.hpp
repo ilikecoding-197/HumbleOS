@@ -5,6 +5,9 @@
 
 extern "C" {
     #include <console.h>
+
+    #undef vprintf
+    #undef printf
 }
 
 #include <cstdarg>

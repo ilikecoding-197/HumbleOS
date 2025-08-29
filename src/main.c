@@ -20,6 +20,7 @@
 #include <ps2/ps2.h>
 #include <ps2/ps2_keyboard.h>
 #include <pcspk.h>
+#include <vga.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);
@@ -39,6 +40,8 @@ ps2_device ps2_devices[2];
 void kernel_main(multiboot_info_t* mbd, uint magic) {
 	console_init();
 	serial_init(); // do this as early as possible
+
+	vga_set_color_palette16(vga_ubuntu_palette);
 
 #if BUILD_NAME_IS_EMPTY
 	klog("main", NAME " v" VERSION ", " RELEASE_TYPE " build");

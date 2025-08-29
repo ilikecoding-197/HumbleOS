@@ -95,3 +95,7 @@ defconfig:
 # Change the config
 menuconfig:
 	$(PYTHON) config/config_editor.py
+
+# Generate config.h
+genconfig:
+	$(PYTHON) config/create_config_h.py

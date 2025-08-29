@@ -16,6 +16,9 @@ struct _sys_info {
 
     /// @brief End of the kernel.
     uintptr_t kernel_end;
+
+    /// @brief After boot, stores the time_ms value after boot (boot time).
+    uint boot_time;
 };
 
 /// @brief The system information.

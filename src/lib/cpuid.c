@@ -137,20 +137,6 @@ void cpuid_init()
     klogf("CPUID", "ECX: %08x", _cpuid_feat_ecx);
     klogf("CPUID", "EDX: %08x", _cpuid_feat_edx);
 
-    klog_prefix("CPUID");
-    print("that means this processor supports the following features: ");
-    serial_print("that means this processor supports the following features: ");
-    for (long unsigned i = 0; i < sizeof(cpuid_feat_texts) / sizeof(cpuid_feat_texts[0]); i++) {
-        if (cpuid_get_feat(cpuid_feat_texts[i].feat)) {
-            print(cpuid_feat_texts[i].text);
-            serial_print(cpuid_feat_texts[i].text);
-            print(" ");
-            serial_print(" ");
-        }
-    }
-    print("\n");
-    serial_print("\r\n");
-
     klog("CPUID", "moving on to cpu vendor...");
 
     result = cpuid(CPUID_GET_VENDOR_ID);

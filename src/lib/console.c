@@ -5,12 +5,13 @@
 #include <port.h>
 #include <ints.h>
 #include "../include/time.h"
+#include "../config.h"
 #include <numconvert.h>
 #include <stdarg.h>
 #include <serial.h>
 
 // Constants
-#define INITIAL_COLOR LIGHTGRAY
+#define INITIAL_COLOR WHITE
 
 /// @brief The VGA buffer.
 char *console_vgaBuff = (char *)0xB8000;
@@ -124,6 +125,18 @@ void console_advance_cursor(int amt)
 	console_update_cursor(); // Update the cursor
 }
 
+void console_hide_cursor() {
+    outb(0x3D4, 0x0A);
+    outb(0x3D5, 0x20);
+}
+
+void console_show_cursor() {
+    outb(0x3D4, 0x0A);
+    outb(0x3D5, 14);
+    outb(0x3D4, 0x0B);
+    outb(0x3D5, 15);
+}
+
 void putchar(char c)
 {
 	switch (c)
@@ -210,8 +223,11 @@ char get_color_at(uint x, uint y) {
 	return console_vgaBuff[pos + 1];  // Get color
 }
 
+#if LOADING_SCREEN
+#define klog_print(x) serial_print(x);
+#else
 #define klog_print(x) if (klog_to_serial_only) { serial_print(x); } else { print(x); serial_print(x); }
-
+#endif
 
 void klog_prefix(char *section)
 {

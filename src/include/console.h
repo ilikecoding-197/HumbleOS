@@ -59,6 +59,9 @@ void console_update_cursor();
 /// @param amt Amount to advance
 void console_advance_cursor(int amt);
 
+void console_hide_cursor();
+void console_show_cursor();
+
 /// @brief Print a character to the screen.
 /// @param c What character to print.
 void putchar(char c);

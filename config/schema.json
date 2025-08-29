@@ -23,5 +23,11 @@
         "define": "BEEP_ON_PANIC",
         "type": "boolean",
         "default": true
+    },
+    {
+        "text": "loading screen",
+        "define": "LOADING_SCREEN",
+        "type": "boolean",
+        "default": true
     }
 ]

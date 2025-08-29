@@ -8,6 +8,7 @@
 #include <tui/tui.hpp>
 #include "../apps/apps.hpp"
 #include "../info.h"
+#include <humbleoslogo.h>
 
 using namespace tui;
 
@@ -18,16 +19,10 @@ extern "C"
 #include <events.h>
 #include <ps2/ps2_keyboard.h>
 #include <cpu.h>
+#include <sys_info.h>
 }
 
-// acsii art
-char *HUMBLE_OS_BANNER[] = {
-    " _   _                 _     _       ___  ____  ",
-    "| | | |_   _ _ __ ___ | |__ | | ___ / _ \\/ ___| ",
-    "| |_| | | | | '_ ` _ \\| '_ \\| |/ _ \\ | | \\___ \\ ",
-    "|  _  | |_| | | | | | | |_) | |  __/ |_| |___) |",
-    "|_| |_|\\__,_|_| |_| |_|_.__/|_|\\___|\\___/|____/ ",
-};
+
 
 void banner()
 {
@@ -58,11 +53,15 @@ void banner()
         std::print("  "); /* two spaces = a “block” */
     }
 
-    std::set_color(0x07); /* normal */
+    std::set_color(0x0F); /* normal */
 }
 
 
 extern "C" void user_main()
 {
     banner();
+
+    ::console_move_cursor(1, 8);
+    std::printf("Booted in %dms (%ds)", ::sys_info.boot_time, ::sys_info.boot_time / 1000);
+    ::console_move_cursor(0, 10);
 }

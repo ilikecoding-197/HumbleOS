@@ -4,6 +4,7 @@
 #include <ps2/ps2.h>
 #include <port.h>
 #include <stddef.h>
+#include <console.h>
 
 ps2_device ps2_device_first;
 ps2_device ps2_device_second;

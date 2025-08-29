@@ -72,7 +72,7 @@ namespace tui
             uint oldCursorY = console_cursorY;
             uint oldColor = console_color;
 
-            for (int i = 0; i < context->menu->amtItems; i++)
+            for (uint i = 0; i < context->menu->amtItems; i++)
             {
                 MenuItem *item = &context->menu->items[i];
 

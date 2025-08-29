@@ -27,7 +27,7 @@ KERNEL := kernel.bin
 LD_FILE := linker.ld
 LINK_ARGS := -T $(LD_FILE) -o $(ISO_DIR)/boot/$(KERNEL) -ffreestanding -nostdlib -z noexecstack -no-pie -static $(DEBUG_FLAGS)
 GCC_ARGS := -ffreestanding -Wall -Wextra -c -static -nostartfiles -I$(INCLUDE_DIR) -fno-pic -fno-pie \
-	-Wno-unused-parameter -Wno-write-strings -fno-omit-frame-pointer $(DEBUG_FLAGS)
+	-Wno-unused-parameter -Wno-write-strings -fno-omit-frame-pointer $(DEBUG_FLAGS) -Wno-sign-compare
 G++_ARGS := $(GCC_ARGS) -fno-exceptions -fno-rtti -Wno-sized-deallocation -I$(CPP_INCLUDE_DIR)
 # Auto-discover source files
 C_SRC := $(shell find $(SRC_DIR) -name '*.c')

@@ -3,6 +3,7 @@
 
 #include <pcspk.h>
 #include <time.h>
+#include <port.h>
 
 void pcspk_play_sound(u32 hz)
 {

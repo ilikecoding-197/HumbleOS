@@ -2,6 +2,7 @@
 // Purpose: VGA code file
 
 #include <vga.h>
+#include <port.h>
 
 void vga_disable_blink() {
     u8 mode;

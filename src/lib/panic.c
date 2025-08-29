@@ -5,6 +5,8 @@
 #include "../config.h"
 #include <console.h>
 #include <stdarg.h>
+#include <pcspk.h>
+#include <serial.h>
 
 // Get a nibble from a value.
 #define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)

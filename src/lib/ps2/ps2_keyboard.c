@@ -76,17 +76,6 @@ bool has_key()
     return keyboard_scancode_buffer_read != keyboard_scancode_buffer_write;
 }
 
-static u8 wait_for_scancode()
-{
-    while (!has_key())
-    {
-        cpu_hlt();
-    }
-
-    u8 scancode = keyboard_scancode_buffer[keyboard_scancode_buffer_read++];
-    return scancode;
-}
-
 static void ps2_interrupt()
 {
     u8 scancode = inb(0x60);

@@ -8,9 +8,12 @@ extern "C" {
 
     #undef vprintf
     #undef printf
+    #undef sprintf
+    #undef snprintf
 }
 
 #include <cstdarg>
+#include <climits>
 #include "../../include/printf.h"
 
 namespace std {
@@ -34,6 +37,22 @@ namespace std {
         va_list args;
         va_start(args, format);
         int ret = vprintf(format, args);
+        va_end(args);
+        return ret;
+    }
+
+    inline int snprintf(char *buf, size_t count, char* format, ...) {
+        va_list args;
+        va_start(args, format);
+        int ret = vsnprintf_(buf, count, format, args);
+        va_end(args);
+        return ret;
+    }
+
+    inline int sprintf(char *buf, char* format, ...) {
+        va_list args;
+        va_start(args, format);
+        int ret = vsnprintf_(buf, ULONG_MAX, format, args);
         va_end(args);
         return ret;
     }

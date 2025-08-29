@@ -9,6 +9,7 @@
 #include "../apps/apps.hpp"
 #include "../info.h"
 #include <humbleoslogo.h>
+#include <user/shell.h>
 
 using namespace tui;
 
@@ -65,4 +66,5 @@ extern "C" void user_main()
     banner();
     ::console_move_cursor(0, 10);
     
+    shell::run();
 }

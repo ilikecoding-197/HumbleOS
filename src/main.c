@@ -24,6 +24,7 @@
 #include <humbleoslogo.h>
 #include <string.h>
 #include <events.h>
+#include <build_info.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);
@@ -115,6 +116,8 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	klog("main", NAME " (" BUILD_NAME ") v" VERSION ", " RELEASE_TYPE " build");
 #endif
 
+	klog("main", "compiled with: " COMPILER_HUMAN_READABLE);
+
 	// Check for correct magic
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
 	{
@@ -160,4 +163,6 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	klog_to_serial_only = 1;
 	user_main();
 #endif
+
+	printf("\e[5A\e[5C");
 }

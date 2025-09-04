@@ -84,7 +84,7 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 	console_set_color(RED);
 	print("!!! KERNEL PANIC !!!\n");
 	serial_print("!!! KERNEL PANIC !!!\n");
-	console_set_color(LIGHTGRAY);
+	console_set_color(WHITE);
 	print("---REGS---\n");
 	serial_print("---REGS---\n");
 	

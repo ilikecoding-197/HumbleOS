@@ -164,5 +164,5 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	user_main();
 #endif
 
-	printf("\e[5A\e[5C");
+	PANIC("test");
 }

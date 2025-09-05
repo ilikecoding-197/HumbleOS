@@ -20,6 +20,9 @@ uint console_cursorX;
 uint console_cursorY;
 u8 console_color;
 
+u8 console_shape_start;
+u8 console_shape_end;
+
 int klog_to_serial_only = 0;
 
 void console_move_cursor(uint x, uint y)
@@ -132,9 +135,16 @@ void console_hide_cursor() {
 
 void console_show_cursor() {
     outb(0x3D4, 0x0A);
-    outb(0x3D5, 14);
+    outb(0x3D5, console_shape_start);
     outb(0x3D4, 0x0B);
-    outb(0x3D5, 15);
+    outb(0x3D5, console_shape_end);
+}
+
+void console_set_cursor_shape(u8 start, u8 end) {
+	console_shape_start = start;
+	console_shape_end = end;
+
+	console_show_cursor();
 }
 
 void putchar(char c)
@@ -174,6 +184,9 @@ void console_init()
 {
 	console_color = INITIAL_COLOR; // Set color
 	console_clear_screen();		   // Clear screen
+
+	console_shape_start = 14;
+	console_shape_end = 15;
 
 	vga_disable_blink();
 }

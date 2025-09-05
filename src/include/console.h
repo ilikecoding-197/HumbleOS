@@ -61,6 +61,7 @@ void console_advance_cursor(int amt);
 
 void console_hide_cursor();
 void console_show_cursor();
+void console_set_cursor_shape(u8 start, u8 end);
 
 /// @brief Print a character to the screen.
 /// @param c What character to print.
@@ -112,6 +113,9 @@ extern uint console_cursorY;
 
 /// @brief The current color.
 extern u8 console_color;
+
+extern u8 console_shape_start;
+extern u8 console_shape_end;
 
 #include <printf.h>
 

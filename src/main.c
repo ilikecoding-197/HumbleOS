@@ -163,6 +163,4 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	klog_to_serial_only = 1;
 	user_main();
 #endif
-
-	while (1) console_set_cursor_shape(rand() % 16, rand() % 16);
 }

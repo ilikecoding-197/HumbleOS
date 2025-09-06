@@ -1,6 +1,5 @@
 build
 iso/boot/kernel.bin
-.vscode
 src/config.h
 config/config.json
 src/symbols_generated.h

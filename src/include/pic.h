@@ -1,29 +1,44 @@
-// HumbleOS file: pic.h
-// Purpose: Header file for PIC.
+/*
+    pic.h - header file for pic
 
-#include <ints.h>
+    Part of HumbleOS
 
+    Copyright 2025 Thomas Shrader
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+    and associated documentation files (the “Software”), to deal in the Software without restriction,
+    including without limitation the rights to use, copy, modify, merge, publish, distribute,
+    sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial
+    portions of the Software.
+
+    THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
 #ifndef PIC_H
 #define PIC_H
 
-/// @brief Send a EOI to the PIC.
-/// @param irq IRQ used to send to EOI.
+#include <ints.h>
+
+// send a EOI to the PIC
 void PIC_sendEOI(u8 irq);
 
-/// @brief Remaps the PIC.
-/// @param offset1 Vector offset for master PIC
-/// @param offset2 Vector offset for slave PIC
+// remaps the PIC
 void PIC_remap(int offset1, int offset2);
 
-/// @brief Initalize the PIC.
+// initalize the PIC
 void pic_init();
 
-/// @brief Set a mask for a IRQ.
-/// @param IRQline The IRQ to set.
+// set a mask for a IRQ
 void IRQ_set_mask(u8 IRQline);
 
-/// @brief Clear a mask for a IRQ.
-/// @param IRQline The IRQ to clear.
+// clear a mask for a IRQ
 void IRQ_clear_mask(u8 IRQline);
 
-#endif
+#endif /* PIC_H */

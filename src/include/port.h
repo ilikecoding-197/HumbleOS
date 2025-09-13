@@ -6,27 +6,48 @@
 #ifndef PORT_H
 #define PORT_H
 
-/// @brief Output a byte to a port.
-/// @param port The port to send the byte to.
-/// @param value What to send.
-void outb(u16 port, u8 value);
+// output a byte to a port
+static inline void outb(u16 port, u8 value)
+{
+    __asm__ volatile("outb %0, %1"
+                     :
+                     : "a"(value),
+                       "d"(port));
+}
 
-/// @brief Input a byte from a port.
-/// @param port The port to get the byte from.
-/// @return The byte gotten.
-u8 inb(u16 port);
+// input a byte from a port
+static inline u8 inb(u16 port)
+{
+    u8 result;
+    __asm__ volatile("inb %1, %0"
+                     : "=a"(result)
+                     : "d"(port));
+    return result;
+}
 
-/// @brief Output a word to a port.
-/// @param port The port to send the word to.
-/// @param value What to send.
-void outw(u16 port, u16 value);
+// output a word to a port
+static inline void outw(u16 port, u16 value)
+{
+    __asm__ volatile("outw %0, %1"
+                     :
+                     : "a"(value),
+                       "d"(port));
+}
 
-/// @brief Input a word from a port.
-/// @param port The port to get the word from.
-/// @return The word gotten.
-u16 inw(u16 port);
+// input a word from a port
+static inline u16 inw(u16 port)
+{
+    u16 result;
+    __asm__ volatile("inw %1, %0"
+                     : "=a"(result)
+                     : "d"(port));
+    return result;
+}
 
-/// @brief Wait for I/O. (Write from 0x80)
-void io_wait();
+// wait for I/O (write from 0x80)
+static inline void io_wait()
+{
+    outb(0x80, 0);
+}
 
 #endif

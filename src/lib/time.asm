@@ -1,16 +1,29 @@
-; HumbleOS file: time.asm
-; Purpose: NASM part of time module (only used so we can use the code from OSDev... sorry again.)]
-
-[bits 32]
-
-section .bss
-extern time_ms                           ; time_ms from C file
-IRQ0_fractions:          resd 1          ; Fractions of 1 ms between IRQs
-IRQ0_ms:                 resd 1          ; Number of whole ms between IRQs
-IRQ0_frequency:          resd 1          ; Actual frequency of PIT
-PIT_reload_value:        resw 1          ; Current PIT reload value
+;
+; time.asm - asm code for time
+;
+; Part of HumbleOS
+;
+; Copyright 2025 Thomas Shrader
+;
+; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+; and associated documentation files (the "Software"), to deal in the Software without restriction,
+; including without limitation the rights to use, copy, modify, merge, publish, distribute,
+; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+; furnished to do so, subject to the following conditions:
+;
+; The above copyright notice and this permission notice shall be included in all copies or substantial
+; portions of the Software.
+;
+; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+; NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+; NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+; DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+;
 
 section .text
+bits 32
+
 global init_PIT
 ; Code from https://wiki.osdev.org/Programmable_Interval_Timer
 init_PIT:
@@ -108,4 +121,11 @@ init_PIT:
     popad
     ret
 
-section .note.GNU-stack ; Stop LD from complaining
+section .bss
+extern time_ms                           ; time_ms from C file
+IRQ0_fractions:          resd 1          ; Fractions of 1 ms between IRQs
+IRQ0_ms:                 resd 1          ; Number of whole ms between IRQs
+IRQ0_frequency:          resd 1          ; Actual frequency of PIT
+PIT_reload_value:        resw 1          ; Current PIT reload value
+
+section .note.GNU-stack

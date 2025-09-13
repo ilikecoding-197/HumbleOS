@@ -9,7 +9,7 @@
 #include "../apps/apps.hpp"
 #include "../info.h"
 #include <humbleoslogo.h>
-#include <user/shell.h>
+#include <user/shell.hpp>
 
 using namespace tui;
 

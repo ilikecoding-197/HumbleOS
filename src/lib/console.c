@@ -1,19 +1,40 @@
-// HumbleOS file: console.c
-// Purpose: Console functions
+/*
+	console.c - console code
+
+	Part of HumbleOS
+
+	Copyright 2025 Thomas Shrader
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+	and associated documentation files (the “Software”), to deal in the Software without restriction,
+	including without limitation the rights to use, copy, modify, merge, publish, distribute,
+	sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all copies or substantial
+	portions of the Software.
+
+	THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+	NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
+
 
 #include <console.h>
 #include <port.h>
 #include <ints.h>
 #include "../include/time.h"
 #include "../config.h"
-#include <numconvert.h>
 #include <stdarg.h>
 #include <serial.h>
 
-// Constants
 #define INITIAL_COLOR WHITE
 
-/// @brief The VGA buffer.
+// vga buffer
 char *console_vgaBuff = (char *)0xB8000;
 
 uint console_cursorX;
@@ -27,105 +48,107 @@ int klog_to_serial_only = 0;
 
 void console_move_cursor(uint x, uint y)
 {
-	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);   // Limit X
-	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y); // Limit Y
+	// limits
+	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x); 
+	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y);
 
-	console_cursorX = x; // Set X
-	console_cursorY = y; // Set Y
+	console_cursorX = x;
+	console_cursorY = y;
 
-	console_update_cursor(); // update cursor
+	console_update_cursor();
 }
 
 void console_scroll_up(uint amt)
 {
 	if (amt == 0 || amt >= VGA_TEXT_MODE_HEIGHT)
-		return; // If amount is out of bounds, it does nothing.
+		return; // if amount is out of bounds, it does nothing.
 
-	// Scroll everything up
+	// scroll everything up
 	for (uint row = amt; row < VGA_TEXT_MODE_HEIGHT; row++)
 	{
-		// For each column
 		for (uint col = 0; col < VGA_TEXT_MODE_WIDTH; col++)
 		{
-			console_vgaBuff[((row - amt) * VGA_TEXT_MODE_WIDTH + col) * 2] = console_vgaBuff[(row * VGA_TEXT_MODE_WIDTH + col) * 2];		 // Character
-			console_vgaBuff[((row - amt) * VGA_TEXT_MODE_WIDTH + col) * 2 + 1] = console_vgaBuff[(row * VGA_TEXT_MODE_WIDTH + col) * 2 + 1]; // Color
+			console_vgaBuff[((row - amt) * VGA_TEXT_MODE_WIDTH + col) * 2] = 
+				console_vgaBuff[(row * VGA_TEXT_MODE_WIDTH + col) * 2]; // character
+
+			console_vgaBuff[((row - amt) * VGA_TEXT_MODE_WIDTH + col) * 2 + 1] = 
+				console_vgaBuff[(row * VGA_TEXT_MODE_WIDTH + col) * 2 + 1]; // color
 		}
 	}
 
-	// Clear bottom lines
+	// clear bottom lines
 	for (uint row = VGA_TEXT_MODE_HEIGHT - amt; row < VGA_TEXT_MODE_HEIGHT; row++)
 	{
-		// For each column
 		for (uint col = 0; col < VGA_TEXT_MODE_WIDTH; col++)
 		{
-			console_vgaBuff[(col + row * VGA_TEXT_MODE_WIDTH) * 2] = ' ';				  // Space (blank character)
-			console_vgaBuff[(col + row * VGA_TEXT_MODE_WIDTH) * 2 + 1] = console_color; // Color
+			console_vgaBuff[(col + row * VGA_TEXT_MODE_WIDTH) * 2] = ' ';
+			console_vgaBuff[(col + row * VGA_TEXT_MODE_WIDTH) * 2 + 1] = console_color;
 		}
 	}
 }
 
 void console_handle_carriage_return()
 {
-	console_move_cursor(0, console_cursorY); // Move cursor to start
+	console_move_cursor(0, console_cursorY);
 }
 
 void console_handle_line_feed()
 {
 	if (console_cursorY < VGA_TEXT_MODE_HEIGHT - 1)
-	{															   // Before end of screen
-		console_move_cursor(console_cursorX, console_cursorY + 1); // Move down
+	{
+		console_move_cursor(console_cursorX, console_cursorY + 1);
 
 		return;
 	}
 
-	console_scroll_up(1);								  // Scroll up screen
-	console_move_cursor(console_cursorX, VGA_TEXT_MODE_HEIGHT - 1); // Move to start of line
+	console_scroll_up(1);
+	console_move_cursor(console_cursorX, VGA_TEXT_MODE_HEIGHT - 1);
 }
 
 void console_handle_newline()
 {
-	console_handle_carriage_return(); // Carriage return
-	console_handle_line_feed();		  // ...and line feed
+	console_handle_carriage_return();
+	console_handle_line_feed();
 }
 
 void console_set_color(u8 colorToSet)
 {
-	console_color = colorToSet; // Set the color
+	console_color = colorToSet;
 }
 
 void console_update_cursor()
 {
-	u16 pos = console_cursorY * VGA_TEXT_MODE_WIDTH + console_cursorX; // Get position of cursor
+	u16 pos = console_cursorY * VGA_TEXT_MODE_WIDTH + console_cursorX;
 
-	outb(0x3D4, 0x0F);					  // Low byte command
-	outb(0x3D5, (u8)(pos & 0xFF));		  // Low byte
-	outb(0x3D4, 0x0E);					  // High byte command
-	outb(0x3D5, (u8)((pos >> 8) & 0xFF)); // High byte
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (u8)(pos & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (u8)((pos >> 8) & 0xFF));
 }
 
 void console_advance_cursor(int amt)
 {
-	console_cursorX += amt; // Increase X
+	console_cursorX += amt;
 
-	int scroll_up_amt = 0; // Amount to scroll up by at the end - initialize to 0
+	int scroll_up_amt = 0;
 
 	while (console_cursorX >= VGA_TEXT_MODE_WIDTH)
-	{								  // While it is overflowing
-		console_cursorX -= VGA_TEXT_MODE_WIDTH; // Decreaase
-		console_cursorY++;			  // And change Y
+	{
+		console_cursorX -= VGA_TEXT_MODE_WIDTH;
+		console_cursorY++;
 
 		if (console_cursorY >= VGA_TEXT_MODE_HEIGHT)
-		{									  // Before end of screen
-			scroll_up_amt++;				  // Add a scroll up
-			console_cursorY = VGA_TEXT_MODE_HEIGHT - 1; // And fix cursor Y
+		{
+			scroll_up_amt++;
+			console_cursorY = VGA_TEXT_MODE_HEIGHT - 1;
 		}
 	}
 
 	if (scroll_up_amt > 0) {
-		console_scroll_up(scroll_up_amt); // Scroll screen up
+		console_scroll_up(scroll_up_amt);
 	}
 
-	console_update_cursor(); // Update the cursor
+	console_update_cursor();
 }
 
 void console_hide_cursor() {
@@ -151,39 +174,39 @@ void putchar(char c)
 {
 	switch (c)
 	{
-	case '\r':							  // Carriage return
-		console_handle_carriage_return(); // Handle it
+	case '\r':
+		console_handle_carriage_return();
 		break;
-	case '\n':					  // New line
-		console_handle_newline(); // Handle it
+	case '\n':
+		console_handle_newline();
 		break;
-	case '\t': // Tab
+	case '\t':
 		for (int i = 0; i < 4; i++)
-			putchar(' '); // 4 spaces for tab
+			putchar(' ');
 		break;
 	default:
-		u16 pos = ((console_cursorY * VGA_TEXT_MODE_WIDTH) + console_cursorX) * 2; // Calcuate Position
-		console_vgaBuff[pos] = c;										 // Set character
-		console_vgaBuff[pos + 1] = console_color;						 // Set color
+		u16 pos = ((console_cursorY * VGA_TEXT_MODE_WIDTH) + console_cursorX) * 2;
+		console_vgaBuff[pos] = c;
+		console_vgaBuff[pos + 1] = console_color;
 
-		console_advance_cursor(1); // Advance cursor
+		console_advance_cursor(1);
 	}
 }
 
 void print(char *str)
 {
 	for (char *cPtr = str; *cPtr; cPtr++)
-	{					// Loop through characters
-		char c = *cPtr; // Get the character
+	{
+		char c = *cPtr;
 
-		putchar(c); // Print it
+		putchar(c);
 	}
 }
 
 void console_init()
 {
-	console_color = INITIAL_COLOR; // Set color
-	console_clear_screen();		   // Clear screen
+	console_color = INITIAL_COLOR;
+	console_clear_screen();
 
 	console_shape_start = 14;
 	console_shape_end = 15;
@@ -194,46 +217,46 @@ void console_init()
 void console_clear_screen()
 {
 	for (int i = 0; i < VGA_TEXT_MODE_WIDTH * VGA_TEXT_MODE_HEIGHT * 2; i += 2)
-	{											// Loop through buffer
-		console_vgaBuff[i] = ' ';				// Set character
-		console_vgaBuff[i + 1] = console_color; // Set color
+	{
+		console_vgaBuff[i] = ' ';
+		console_vgaBuff[i + 1] = console_color;
 	}
 
-	console_move_cursor(0, 0); // Update cursor
+	console_move_cursor(0, 0);
 }
 
 void put_char_at(uint x, uint y, char ch)
 {
-	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);   // Limit X
-	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y); // Limit Y
+	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);
+	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y);
 
-	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2; // Calcuate pos
-	console_vgaBuff[pos] = ch;		   // Set character
+	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2;
+	console_vgaBuff[pos] = ch;
 }
 
 void put_color_at(uint x, uint y, char color)
 {
-	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);   // Limit X
-	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y); // Limit Y
+	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);
+	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y);
 
-	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2; // Calcuate pos
-	console_vgaBuff[pos + 1] = color;  // Set color
+	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2;
+	console_vgaBuff[pos + 1] = color;
 }
 
 char get_char_at(uint x, uint y) {
-	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);   // Limit X
-	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y); // Limit Y
+	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);
+	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y);
 
-	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2; // Calcuate pos
-	return console_vgaBuff[pos];  // Get character
+	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2;
+	return console_vgaBuff[pos];
 }
 
 char get_color_at(uint x, uint y) {
-	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);   // Limit X
-	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y); // Limit Y
+	x = (x > VGA_TEXT_MODE_WIDTH - 1 ? VGA_TEXT_MODE_WIDTH - 1 : x);
+	y = (y > VGA_TEXT_MODE_HEIGHT - 1 ? VGA_TEXT_MODE_HEIGHT - 1 : y);
 
-	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2; // Calcuate pos
-	return console_vgaBuff[pos + 1];  // Get color
+	u16 pos = (y * VGA_TEXT_MODE_WIDTH + x) * 2;
+	return console_vgaBuff[pos + 1];
 }
 
 #if LOADING_SCREEN
@@ -257,7 +280,6 @@ void klog_prefix(char *section)
 		uint sec = (time_ms / 1000) % 60;
 		uint ms = time_ms % 1000;
 		
-		// Format once, use for both
 		char time_buffer[32];
 		sprintf_(time_buffer, "[%02d:%02d.%03d] ", min, sec, ms);
 		
@@ -291,7 +313,6 @@ void klogf(char *section, char *fmt, ...)
 	u8 oldColor = console_color;
 	klog_prefix(section);
 
-	// Format once into a buffer, then output to both
 	char buffer[2048];
 	va_list args;
 	va_start(args, fmt);

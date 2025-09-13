@@ -1,6 +1,26 @@
-// HumbleOS file: vga.h
-// Purpose: VGA header file
+/*
+    vga.h - header for vga
 
+    Part of HumbleOS
+
+    Copyright 2025 Thomas Shrader
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+    and associated documentation files (the “Software”), to deal in the Software without restriction,
+    including without limitation the rights to use, copy, modify, merge, publish, distribute,
+    sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial
+    portions of the Software.
+
+    THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
 #ifndef VGA_H
 #define VGA_H
 
@@ -31,15 +51,15 @@ enum {
     VGA_COLOR_WHITE         = 15
 };
 
-// Create a text mode attribute from a background and foreground
+// create a text mode attribute from a background and foreground
 #define VGA_ATTR(fg, bg) ((u8)((fg) | ((bg) << 4)))
 
-// A VGA RGB value for the DAC. 0-64, not 0-255
+// a VGA RGB value for the DAC. 0-64, not 0-255
 typedef struct {
     u8 r, g, b;
 } vga_rgb;
 
-// Disable VGA text mode blinking
+// disable VGA text mode blinking
 void vga_disable_blink();
 
 // DAC registers
@@ -47,13 +67,13 @@ void vga_disable_blink();
 #define PALETTE_WRITE 0x3C8
 #define PALETTE_DATA 0x3C9
 
-// Set a VGA color pallete
+// set a VGA color pallete
 void vga_set_color_palette(vga_rgb *palette, u8 amtColors);
 
-// Set a VGA color pallette, with 16 colors
+// set a VGA color pallette, with 16 colors
 void vga_set_color_palette16(vga_rgb *palette);
 
-// The color palette Ubuntu uses for the VGA colors. (16, text-mode)
+// the color palette Ubuntu uses for the VGA colors. (16, text-mode)
 extern vga_rgb vga_ubuntu_palette[16];
 
-#endif // VGA_H
+#endif /* VGA_H */

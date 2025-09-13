@@ -1,5 +1,26 @@
-// HumbleOS file: cpuid.c
-// Purpose: Code for cpuid.h
+/*
+    cpuid.c - code for CPUID
+
+    Part of HumbleOS
+
+    Copyright 2025 Thomas Shrader
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+    and associated documentation files (the “Software”), to deal in the Software without restriction,
+    including without limitation the rights to use, copy, modify, merge, publish, distribute,
+    sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial
+    portions of the Software.
+
+    THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
 
 #include <cpuid.h>
 #include <ints.h>
@@ -9,7 +30,7 @@
 #include <stdbool.h>
 #include <serial.h>
 
-// Variables from cpuid.asm
+// variables from cpuid.asm
 extern u8 _cpuid_supported;
 
 struct {
@@ -119,7 +140,7 @@ u32 _cpuid_feat_ecx, _cpuid_feat_edx;
 void cpuid_init()
 {
     klog("CPUID", "checking for cpuid...");
-    __asm__("call _cpuid_check"); // Check for CPUID
+    __asm__("call _cpuid_check");
     if (!_cpuid_supported)
     {
         PANIC("CPUID NOT SUPPPORTED");
@@ -129,8 +150,8 @@ void cpuid_init()
 
     cpuid_result result;
     result = cpuid(CPUID_GET_FEATURES);
-    _cpuid_feat_ecx = result.ecx; // Store ECX features
-    _cpuid_feat_edx = result.edx; // Store EDX features
+    _cpuid_feat_ecx = result.ecx;
+    _cpuid_feat_edx = result.edx;
 
     klog("CPUID", "features gotten.");
 
@@ -141,16 +162,16 @@ void cpuid_init()
 
     result = cpuid(CPUID_GET_VENDOR_ID);
 
-    // So the vendor ID is stored in EBX, ECX, and EDX. Below is a table where each character is.
+    // so the vendor ID is stored in EBX, ECX, and EDX. below is a table where each character is.
     // MSB = Most Significant Byte
     // LSB = Least Significant Byte
-    // Cell in table - character position
+    // cell in table - character position
     //       MSB         LSB
     // EBX = '3' '2' '1' '0'
     // EDX = '7' '6' '5' '4'
     // ECX = 'B' 'A' '9' '8'
     //
-    // So this part gets each character.
+    // yeah, its messy, but it works.
     sys_info.cpu_vendor_id[0] =  GET_BYTE(result.ebx, 0);
     sys_info.cpu_vendor_id[1] =  GET_BYTE(result.ebx, 1);
     sys_info.cpu_vendor_id[2] =  GET_BYTE(result.ebx, 2);
@@ -178,5 +199,5 @@ u8 cpuid_get_feat(cpuid_feat feat) {
 
 bool cpuid_supports_rdseed() {
     cpuid_result result = cpuid_with_subleaf(7, 0);
-    return (result.ebx >> 18) & 1; // Check the RDSEED
+    return (result.ebx >> 18) & 1;
 }

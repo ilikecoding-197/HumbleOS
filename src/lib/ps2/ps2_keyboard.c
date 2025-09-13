@@ -1,5 +1,26 @@
-// HumbleOS file: ps2_keyboard.c
-// Purpose: PS2 keyboard code
+/*
+    ps2_keyboard.c - ps2 keyboard code
+
+    Part of HumbleOS
+
+    Copyright 2025 Thomas Shrader
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+    and associated documentation files (the “Software”), to deal in the Software without restriction,
+    including without limitation the rights to use, copy, modify, merge, publish, distribute,
+    sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial
+    portions of the Software.
+
+    THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
 
 #include <ps2/ps2_keyboard.h>
 #include <ps2/ps2.h>
@@ -13,12 +34,14 @@
 #include <events.h>
 #include <cpu.h>
 
+// keyboard flags
 static struct
 {
     bool shift;
     bool caps_lock;
 } flags;
 
+// scancode buffer
 static volatile u8 keyboard_scancode_buffer[256];
 static volatile u8 keyboard_scancode_buffer_read = 0;
 static volatile u8 keyboard_scancode_buffer_write = 0;
@@ -43,6 +66,7 @@ static char scan_code_set[256] = {
     '\0', '+', '3', '-', '*', '9', '\0', '\0',
     '\0', '\0', '\0', '\0'};
 
+// flip a character's case
 char flip_case(char input)
 {
     if (input >= 'A' && input <= 'Z')
@@ -57,13 +81,16 @@ char flip_case(char input)
         return input;
 }
 
+// check if a character is a letter (a-z OR A-Z)
 static inline int isalpha(char c)
 {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
+// the number keys, shifted
 static char numbers_shift[] = ")!@#$%^&*(";
 
+// transform a character when the shidt key is held
 static char shift(char input)
 {
     if (input >= '0' && input <= '9')
@@ -76,13 +103,14 @@ bool has_key()
     return keyboard_scancode_buffer_read != keyboard_scancode_buffer_write;
 }
 
+// ps2 interrupt handler
 static void ps2_interrupt()
 {
     u8 scancode = inb(0x60);
 
     Event e;
 
-    /* handle special keys first */
+    // handle special keys first 
     if (scancode == 0xF0)
     {
         serial_print("a");
@@ -96,13 +124,13 @@ static void ps2_interrupt()
     }
 
     if (scancode == 0x58)
-    { /* caps lock */
+    { // caps lock
         flags.caps_lock = !flags.caps_lock;
-        return; /* optional: no event for caps toggle */
+        return;
     }
 
     if (scancode == 0x12)
-    { /* shift press */
+    { // shift press
         flags.shift = true;
         e.type = EVENT_KEY_DOWN;
         e.event.keycode = 0x12;
@@ -110,7 +138,7 @@ static void ps2_interrupt()
         return;
     }
 
-    /* extended keys */
+    // extended keys
     if (scancode == 0xE0)
     {
         scancode = inb(0x60);
@@ -131,7 +159,7 @@ static void ps2_interrupt()
         }
     }
 
-    /* normal keys */
+    // normal keys
     char character = scan_code_set[scancode];
     if (isalpha(character))
     {
@@ -148,6 +176,7 @@ static void ps2_interrupt()
     trigger_event(&e);
 }
 
+// getch stuff
 static u16 getch_value;
 
 static void getch_event(Event *e) {

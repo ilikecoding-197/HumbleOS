@@ -70,6 +70,7 @@ static void draw_time(uint right, uint y)
 
 static void draw_loading_screen(uint x, uint y)
 {
+	console_set_color(VGA_ATTR(WHITE, LIGHTBLUE));
 	for (int ly = 0; ly < 9; ly++)
 	{
 		for (int lx = 0; lx < 50; lx++)
@@ -93,6 +94,7 @@ static void loading_screen_time_event(Event *e)
 	if (e->type != EVENT_TIMER)
 		return;
 
+	console_set_color(VGA_ATTR(WHITE, LIGHTBLUE));
 	draw_time(LOADING_SCREEN_X + 48, LOADING_SCREEN_Y + 6);
 }
 #endif // LOADING_SCREEN
@@ -108,6 +110,7 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	console_hide_cursor();
 	console_set_color(VGA_ATTR(WHITE, LIGHTBLUE));
 	draw_loading_screen(LOADING_SCREEN_X, LOADING_SCREEN_Y);
+	klog_to_serial_only = 1;
 #endif // LOADING_SCREEN
 
 #if BUILD_NAME_IS_EMPTY

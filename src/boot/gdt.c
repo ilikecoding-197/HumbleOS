@@ -1,49 +1,68 @@
-// HumbleOS file: gdt.c
-// Purpose: C code for GDT. Called from boot.asm.
-// Mainly tooken from https://wiki.osdev.org/Global_Descriptor_Table; see that
-// for GDT info.
+/*
+	gdt.c - C code for GDT. called from boot.asm
+
+	Part of HumbleOS
+
+	Copyright 2025 Thomas Shrader
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+	and associated documentation files (the “Software”), to deal in the Software without restriction,
+	including without limitation the rights to use, copy, modify, merge, publish, distribute,
+	sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all copies or substantial
+	portions of the Software.
+
+	THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+	NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
 
 #include <ints.h>
-#define GDT_ENTRIES 0xFF // Amount of GDT entries
+#define GDT_ENTRIES 0xFF // amount of GDT entries
 
 // GDT structure
 struct GDT {
-	u32 base;       // Base
-	u32 limit;      // Limit
-	u8 access_byte; // Access byte
-	u8 flags;       // flag
+	u32 base;
+	u32 limit;
+	u8 access_byte;
+	u8 flags;
 };
 
 // GDTR structure
 struct GDTR {
-	u16 limit; // Limit
-	u32 base;  // base
+	u16 limit;
+	u32 base;
 }__attribute((packed));
 
 struct GDTR gdt_gdtr; // GDTR to GDT, used in boot.asm
 
 u8 gdt_gdt[GDT_ENTRIES * 8]; // GDT bytes
 
-// Encode a GDT entry.
+// encode a GDT entry.
 void gdt_encodeGdtEntry(
-	u8 *target, // Target (where to encode to)
-	struct GDT source // Source (where to encode from)
+	u8 *target, // target (where to encode to)
+	struct GDT source // source (where to encode from)
 ) {
-    // Encode the limit
+    // encode the limit
     target[0] = source.limit & 0xFF;
     target[1] = (source.limit >> 8) & 0xFF;
     target[6] = (source.limit >> 16) & 0x0F;
     
-    // Encode the base
+    // encode the base
     target[2] = source.base & 0xFF;
     target[3] = (source.base >> 8) & 0xFF;
     target[4] = (source.base >> 16) & 0xFF;
     target[7] = (source.base >> 24) & 0xFF;
     
-    // Encode the access byte
+    // encode the access byte
     target[5] = source.access_byte;
     
-    // Encode the flags
+    // encode the flags
     target[6] |= (source.flags << 4);
 }
 
@@ -69,12 +88,12 @@ void gdt_gdt_c() {
 	entries[2].access_byte = 0x92;
 	entries[2].flags = 0xC;
 
-	// Encode entries
+	// encode entries
 	for (u8 i = 0; i < GDT_ENTRIES; i++) {
-		gdt_encodeGdtEntry((u8*)&gdt_gdt[i*8], entries[i]); // Encode the segment.
+		gdt_encodeGdtEntry((u8*)&gdt_gdt[i*8], entries[i]);
 	}
 
-	// Set GDTR
+	// set GDTR
 	gdt_gdtr.base = (u32)((void *)&gdt_gdt);
 	gdt_gdtr.limit = GDT_ENTRIES * 8 - 1;
 }

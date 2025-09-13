@@ -1,5 +1,26 @@
-// HumbleOS file: panic.c
-// Purpose: C file for panic
+/*
+	panic.c - C code for panic
+
+	Part of HumbleOS
+
+	Copyright 2025 Thomas Shrader
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+	and associated documentation files (the “Software”), to deal in the Software without restriction,
+	including without limitation the rights to use, copy, modify, merge, publish, distribute,
+	sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all copies or substantial
+	portions of the Software.
+
+	THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+	NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
 
 #include <panic.h>
 #include "../config.h"
@@ -8,38 +29,14 @@
 #include <pcspk.h>
 #include <serial.h>
 
-// Get a nibble from a value.
-#define GET_NIBBLE(val, nibble) (val & (0xF << (nibble * 4))) >> (nibble * 4)
-
-extern int panic_reg_eax; // Saved EAX
-extern int panic_reg_ebx; // Saved EBX
-extern int panic_reg_ecx; // Saved ECX
-extern int panic_reg_edx; // Saved EDX
-extern int panic_reg_esi; // Saved ESI
-extern int panic_reg_edi; // Saved EDI
-extern int panic_reg_esp; // Saved ESP
-extern int panic_reg_ebp; // Saved EBP
-
-/// @brief Print a hex value.
-/// @param val Value to print.
-void _panic_print_hex(int val) {
-	char hexChars[] = "0123456789ABCDEF"; // Hex character
-	
-	char buffer[11]; // Buffer
-	buffer[0] = '0';
-	buffer[1] = 'x';
-	buffer[2] = hexChars[GET_NIBBLE(val, 7)]; // 0xX0000000
-	buffer[3] = hexChars[GET_NIBBLE(val, 6)]; // 0x0X000000
-	buffer[4] = hexChars[GET_NIBBLE(val, 5)]; // 0x00X00000
-	buffer[5] = hexChars[GET_NIBBLE(val, 4)]; // 0x000X0000
-	buffer[6] = hexChars[GET_NIBBLE(val, 3)]; // 0x0000X000
-	buffer[7] = hexChars[GET_NIBBLE(val, 2)]; // 0x00000X00
-	buffer[8] = hexChars[GET_NIBBLE(val, 1)]; // 0x000000X0
-	buffer[9] = hexChars[GET_NIBBLE(val, 0)]; // 0x0000000X
-	buffer[10] = 0;
-
-	print(buffer); // Print it
-}
+extern int panic_reg_eax;
+extern int panic_reg_ebx;
+extern int panic_reg_ecx;
+extern int panic_reg_edx;
+extern int panic_reg_esi;
+extern int panic_reg_edi;
+extern int panic_reg_esp;
+extern int panic_reg_ebp;
 
 struct stack_frame {
     struct stack_frame *prev;
@@ -52,7 +49,7 @@ struct symbol_entry {
     const char* name;
 };
 
-// Only include if file exists, otherwise use empty array
+// only include if file exists, otherwise use empty array
 #if __has_include("../symbols_generated.h")
 static struct symbol_entry symbols[] = {
 #include "../symbols_generated.h"
@@ -79,7 +76,7 @@ const char* lookup_symbol(u32 addr) {
 #endif
 
 __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ...) {
-	// Header
+	// header
 	console_clear_screen();
 	console_set_color(RED);
 	print("!!! KERNEL PANIC !!!\n");
@@ -88,7 +85,7 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 	print("---REGS---\n");
 	serial_print("---REGS---\n");
 	
-	// Regs
+	// regs
 	char buffer[256];
 	sprintf_(buffer, "EAX: 0x%08x EBX: 0x%08x ECX: 0x%08x EDX: 0x%08x\n", panic_reg_eax, panic_reg_ebx, panic_reg_ecx, panic_reg_edx);
 	print(buffer);
@@ -99,7 +96,7 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 	console_handle_newline();
 	serial_print("\n");
 
-	// Footer
+	// footer
 	print("Reason: ");
 	serial_print("Reason: ");
 
@@ -144,8 +141,8 @@ __attribute__((noreturn)) void panic_panic(char *msg, char *file, char *line, ..
 	beep();
 	#endif
 
-	__asm__ __volatile__ ("cli; hlt"); // Halt
+	__asm__ __volatile__ ("cli; hlt");
 
-	while (1) {} // Infinte loop to stop GCC from complaining (it doesnt notice the __asm__ line 
+	while (1) {} // infinte loop to stop GCC from complaining (it doesnt notice the __asm__ line 
 	             // halts the computer.)
 }

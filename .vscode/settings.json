@@ -2,6 +2,8 @@
     "files.associations": {
         "printf.h": "c",
         "stddef.h": "c",
-        "console.h": "c"
+        "console.h": "c",
+        "block_device.h": "c",
+        "stdbool.h": "c"
     }
 }

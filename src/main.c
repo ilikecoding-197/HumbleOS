@@ -25,6 +25,7 @@
 #include <string.h>
 #include <events.h>
 #include <build_info.h>
+#include <block/ramdisk.h>
 
 // Global constructors for C++
 extern void (*__init_array_start)(void);
@@ -156,6 +157,7 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	remove_event(loading_screen_time_event_id);
 	console_show_cursor();
 	console_set_color(WHITE);
+	console_clear_screen();
 #endif
 
 #if BEEP_ON_INIT_DONE
@@ -166,4 +168,15 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	klog_to_serial_only = 1;
 	user_main();
 #endif
+
+	u8 ramdisk_data[4096] = { 0 };
+	block_device_t *ramdisk = ramdisk_create(ramdisk_data, 4096);
+
+	char data[] = "Hello, world!";
+	block_write(ramdisk, 0, data, sizeof(data));
+
+	char read[512];
+	block_read(ramdisk, 0, read, 512);
+	
+	print(read); // "Hello, world!"
 }

@@ -168,15 +168,4 @@ void kernel_main(multiboot_info_t *mbd, uint magic)
 	klog_to_serial_only = 1;
 	user_main();
 #endif
-
-	u8 ramdisk_data[4096] = { 0 };
-	block_device_t *ramdisk = ramdisk_create(ramdisk_data, 4096);
-
-	char data[] = "Hello, world!";
-	block_write(ramdisk, 0, data, sizeof(data));
-
-	char read[512];
-	block_read(ramdisk, 0, read, 512);
-	
-	print(read); // "Hello, world!"
 }

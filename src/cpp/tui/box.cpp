@@ -25,10 +25,7 @@
 #include <tui/box.hpp>
 #include <tui/helpers.hpp>
 #include <ints.h>
-
-extern "C" {
-    #include <console.h>
-}
+#include <console.hpp>
 
 // exposed tui namesoace
 namespace tui {
@@ -37,21 +34,21 @@ namespace tui {
         int bottom = at.y + size.height - 1;
 
         // corners
-        put_char_at(at.x, at.y, BOX_TL);
-        put_char_at(right, at.y, BOX_TR);
-        put_char_at(at.x, bottom, BOX_BL);
-        put_char_at(right, bottom, BOX_BR);
+        std::put_char_at(at.x, at.y, BOX_TL);
+        std::put_char_at(right, at.y, BOX_TR);
+        std::put_char_at(at.x, bottom, BOX_BL);
+        std::put_char_at(right, bottom, BOX_BR);
 
         // horizontal lines
         for (int x = at.x+1; x < right; x++) {
-            put_char_at(x, at.y, BOX_HR);
-            put_char_at(x, bottom, BOX_HR);
+            std::put_char_at(x, at.y, BOX_HR);
+            std::put_char_at(x, bottom, BOX_HR);
         }
 
         // vertical lines
         for (int y = at.y+1; y < bottom; y++) {
-            put_char_at(at.x, y, BOX_VR);
-            put_char_at(right, y, BOX_VR);
+            std::put_char_at(at.x, y, BOX_VR);
+            std::put_char_at(right, y, BOX_VR);
         }
     }
 
@@ -65,21 +62,21 @@ namespace tui {
         int bottom = at.y + size.height - 1;
 
         // corners
-        put_char_at(at.x, at.y, DBOX_TL);
-        put_char_at(right, at.y, DBOX_TR);
-        put_char_at(at.x, bottom, DBOX_BL);
-        put_char_at(right, bottom, DBOX_BR);
+        std::put_char_at(at.x, at.y, DBOX_TL);
+        std::put_char_at(right, at.y, DBOX_TR);
+        std::put_char_at(at.x, bottom, DBOX_BL);
+        std::put_char_at(right, bottom, DBOX_BR);
 
         // horizontal lines
         for (int x = at.x+1; x < right; x++) {
-            put_char_at(x, at.y, DBOX_HR);
-            put_char_at(x, bottom, DBOX_HR);
+            std::put_char_at(x, at.y, DBOX_HR);
+            std::put_char_at(x, bottom, DBOX_HR);
         }
 
         // vertical lines
         for (int y = at.y+1; y < bottom; y++) {
-            put_char_at(at.x, y, DBOX_VR);
-            put_char_at(right, y, DBOX_VR);
+            std::put_char_at(at.x, y, DBOX_VR);
+            std::put_char_at(right, y, DBOX_VR);
         }
     }
 

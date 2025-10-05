@@ -23,17 +23,14 @@
 */
 
 #include <tui/helpers.hpp>
-
-extern "C" {
-    #include <console.h>
-}
+#include <console.hpp>
 
 namespace tui {
     void copy(u8 *data, Point at, Size size) {
         for (int y = 0; y < size.height; y++) {
             for (int x = 0; x < size.width; x++) {
-                char character = get_char_at(at.x + x, at.y + y);
-                char color = get_color_at(at.x + x, at.y + y);
+                char character = std::get_char_at(at.x + x, at.y + y);
+                char color = std::get_color_at(at.x + x, at.y + y);
 
                 u16 pos = (y * size.width + x) * 2;
 
@@ -51,8 +48,8 @@ namespace tui {
                 char character = data[pos];
                 char color = data[pos + 1];
 
-                put_char_at(at.x + x, at.y + y, character);
-                put_color_at(at.x + x, at.y + y, color);
+                std::put_char_at(at.x + x, at.y + y, character);
+                std::put_color_at(at.x + x, at.y + y, color);
             }
         }
     }
@@ -60,7 +57,7 @@ namespace tui {
     void fill_character(Point at, Size size, char character) {
         for (int y = 0; y < size.height; y++) {
             for (int x = 0; x < size.width; x++) {
-                put_char_at(at.x + x, at.y + y, character);
+                std::put_char_at(at.x + x, at.y + y, character);
             }
         }
     }
@@ -68,7 +65,7 @@ namespace tui {
     void fill_color(Point at, Size size, char color) {
         for (int y = 0; y < size.height; y++) {
             for (int x = 0; x < size.width; x++) {
-                put_color_at(at.x + x, at.y + y, color);
+                std::put_color_at(at.x + x, at.y + y, color);
             }
         }
     }
@@ -76,8 +73,8 @@ namespace tui {
     void fill(Point at, Size size, char character, char color) {
         for (int y = 0; y < size.height; y++) {
             for (int x = 0; x < size.width; x++) {
-                put_char_at(at.x + x, at.y + y, character);
-                put_color_at(at.x + x, at.y + y, color);
+                std::put_char_at(at.x + x, at.y + y, character);
+                std::put_color_at(at.x + x, at.y + y, color);
             }
         }
     }

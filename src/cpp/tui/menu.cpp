@@ -25,15 +25,10 @@
 #include <tui/menu.hpp>
 #include <tui/helpers.hpp>
 #include <tui/box.hpp>
-
-extern "C"
-{
-#include <console.h>
-#include <events.h>
-#include <serial.h>
-#include <ps2/ps2_keyboard.h>
-#include <cpu.h>
-}
+#include <console.hpp>
+#include <cpu.hpp>
+#include <events.hpp>
+#include <kbd.hpp>
 
 extern "C" uint time_ms;
 
@@ -53,7 +48,7 @@ namespace {
         case KEY_RIGHT:
         case '\n':
             context->isDone = true;
-            ps2_keyboard_flush();
+            kbd::flush();
             return;
         }
 
@@ -74,7 +69,7 @@ namespace tui
         context->foreground = YELLOW;
         context->background = BLUE;
         context->isDone = false;
-        context->keyEvent = add_event(menu_key_event, (void *) context);
+        context->keyEvent = events::add(menu_key_event, (void *) context);
 
         tui::copy(context->prevContent, at, size);
 
@@ -107,9 +102,9 @@ namespace tui
                     foreground = temp;
                 }
 
-                console_move_cursor(context->at.x + 1, context->at.y + 1 + i);
-                console_set_color((background << 4) | foreground);
-                print(item->text);
+                std::move_cursor(context->at.x + 1, context->at.y + 1 + i);
+                std::set_color((background << 4) | foreground);
+                std::print(item->text);
 
                 while (console_cursorX < context->at.x + context->size.width - 1)
                 {
@@ -117,8 +112,8 @@ namespace tui
                 }
             }
 
-            console_move_cursor(oldCursorX, oldCursorY);
-            console_set_color(oldColor);
+            std::move_cursor(oldCursorX, oldCursorY);
+            std::set_color(oldColor);
         }
 
         context->lastIndex = context->currentIndex;
@@ -132,7 +127,7 @@ namespace tui
     void close_menu(MenuContext *context)
     {
         tui::paste(context->prevContent, context->at, context->size);
-        remove_event(context->keyEvent);
+        events::remove(context->keyEvent);
     }
 
     uint menu_block(Menu *menu, tui::Point at, tui::Size size, uint startingIndex)
@@ -142,7 +137,7 @@ namespace tui
         open_menu(&context, menu, at, size, startingIndex);
 
         while (!context.isDone) {
-            cpu_hlt();
+            sys::hlt();
         }
 
         uint id = get_menu(&context);

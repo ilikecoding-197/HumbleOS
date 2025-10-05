@@ -90,4 +90,29 @@ namespace std {
     inline void set_color(u8 color) {
         ::console_set_color(color);
     }
+    
+    // move cursor
+    inline void move_cursor(uint x, uint y) {
+        ::console_move_cursor(x, y);
+    }
+
+    // put character at position
+    inline void put_char_at(uint x, uint y, char ch) {
+        ::put_char_at(x, y, ch);
+    }
+
+    // put color at position
+    inline void put_color_at(uint x, uint y, char color) {
+        ::put_color_at(x, y, color);
+    }
+
+    // get character at position
+    inline char get_char_at(uint x, uint y) {
+        return ::get_char_at(x, y);
+    }
+
+    // get color at position
+    inline char get_color_at(uint x, uint y) {
+        return ::get_color_at(x, y);
+    }
 }
